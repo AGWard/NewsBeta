@@ -46,6 +46,7 @@ class MenuCell: UICollectionViewCell {
         didSet {
             
             menuIconB.backgroundColor = isHighlighted ? selectedColor : .white
+           
         }
         
     
@@ -57,6 +58,7 @@ class MenuCell: UICollectionViewCell {
         didSet {
             
             menuIconB.backgroundColor = isSelected ? selectedColor : .white
+            
         }
         
     }

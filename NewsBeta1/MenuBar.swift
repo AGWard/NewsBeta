@@ -70,6 +70,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
 //        cell.menuLabel.text = menuLabels[indexPath.item]
         cell.menuIconB.image = menuIcons[indexPath.item]
        
+       
         
         cell.awakeFromNib()
 

@@ -31,12 +31,12 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     
-    lazy var titleButtonLabel: UIButton = {
+    lazy var titleButtonLabel: UILabel = {
         
-        let button = UIButton(type: .custom)
-        button.setTitle("TriniNews", for: .normal)
-        button.setTitleColor(.red, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
+        let button = UILabel()
+        button.text = "TriniNews"
+        button.textColor = .red
+        button.font = UIFont.boldSystemFont(ofSize: 18)
         button.frame = CGRect(x: 0, y: 0, width: 60, height: 30) //CGRectMake(0, 0, 30, 30)
 //        button.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
         
