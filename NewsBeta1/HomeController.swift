@@ -65,7 +65,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         let pic = UIImageView()
         pic.translatesAutoresizingMaskIntoConstraints = false
         pic.contentMode = .scaleAspectFill
-        pic.layer.cornerRadius = 0.5 * 50
+        pic.layer.cornerRadius = 0.5 * 40
         pic.layer.borderWidth = 1
         pic.clipsToBounds = true
         pic.image = UIImage(named: "default")
@@ -182,10 +182,10 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
 //        rightButtonView.addSubview(rightButtonLabel)
         
         
-        rightbarPic.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        rightbarPic.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        rightbarPic.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        rightbarPic.heightAnchor.constraint(equalToConstant: 40).isActive = true
         rightbarPic.centerXAnchor.constraint(equalTo: rightButtonView.centerXAnchor).isActive = true
-        rightbarPic.bottomAnchor.constraint(equalTo: rightButtonView.bottomAnchor, constant: -2).isActive = true
+        rightbarPic.centerYAnchor.constraint(equalTo: rightButtonView.centerYAnchor).isActive = true
         
 //        rightButtonLabel.widthAnchor.constraint(equalToConstant: 70).isActive = true
 //        rightButtonLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true

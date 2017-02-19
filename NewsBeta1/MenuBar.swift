@@ -12,7 +12,7 @@ import UIKit
 class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     
-    let menuIcons = [UIImage(named: "favs"), UIImage(named: "trending"), UIImage(named: "T&T Flag"), UIImage(named: "globe35")]
+    let menuIcons = [UIImage(named: "T&T Flag"), UIImage(named: "globe35"), UIImage(named: "favs"), UIImage(named: "trending")]
     
     let menuLabels: [String] = ["Top Stories", "Trini News", "My Favs", "Popular"]
     
