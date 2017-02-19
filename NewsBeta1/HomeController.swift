@@ -96,18 +96,18 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }()
     
     
-    lazy var leftButton: UIButton = {
-        
-        let button = UIButton(type: .custom)
-        button.setTitle("<Logout", for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        button.frame = CGRect(x: 0, y: 0, width: 60, height: 30) //CGRectMake(0, 0, 30, 30)
-        button.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
-       
-       
-        return button
-        
-    }()
+//    lazy var leftButton: UIButton = {
+//        
+//        let button = UIButton(type: .custom)
+//        button.setTitle("<Logout", for: .normal)
+//        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+//        button.frame = CGRect(x: 0, y: 0, width: 60, height: 30) //CGRectMake(0, 0, 30, 30)
+//        button.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
+//       
+//       
+//        return button
+//        
+//    }()
     
 
 ///******************************************************************************VIEW DID LOAD*******************************************************************************************************//    
@@ -141,11 +141,11 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         
         addCollectionView()
-        let barButton = UIBarButtonItem(customView: leftButton)
+//        let barButton = UIBarButtonItem(customView: leftButton)
         let rightBarButton = UIBarButtonItem(customView: rightButtonView)
         
         navigationController?.navigationBar.barTintColor = .darkText
-        self.navigationItem.leftBarButtonItem = barButton
+//        self.navigationItem.leftBarButtonItem = barButton
         self.navigationItem.rightBarButtonItem = rightBarButton
         self.navigationItem.titleView = titleButtonLabel
         
