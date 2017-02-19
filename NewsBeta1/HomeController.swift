@@ -66,7 +66,8 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         pic.translatesAutoresizingMaskIntoConstraints = false
         pic.contentMode = .scaleAspectFill
         pic.layer.cornerRadius = 0.5 * 40
-        pic.layer.borderWidth = 1
+//        pic.layer.borderWidth = 2
+//        pic.layer.borderColor = UIColor.red.cgColor
         pic.clipsToBounds = true
         pic.image = UIImage(named: "default")
         pic.isUserInteractionEnabled = true
