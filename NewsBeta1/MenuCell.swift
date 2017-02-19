@@ -10,6 +10,8 @@ import UIKit
 
 class MenuCell: UICollectionViewCell {
     
+    let selectedColor = UIColor(red: 240/255, green: 240/255, blue: 240/255, alpha: 1)
+    
     let menuLabel: UILabel = {
         
         let label = UILabel()
@@ -43,7 +45,7 @@ class MenuCell: UICollectionViewCell {
         
         didSet {
             
-            menuIconB.backgroundColor = isHighlighted ? .white : .darkText
+            menuIconB.backgroundColor = isHighlighted ? selectedColor : .white
         }
         
     
@@ -54,7 +56,7 @@ class MenuCell: UICollectionViewCell {
         
         didSet {
             
-            menuIconB.backgroundColor = isSelected ? .white : .darkText
+            menuIconB.backgroundColor = isSelected ? selectedColor : .white
         }
         
     }
@@ -63,7 +65,7 @@ class MenuCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         
-        contentView.backgroundColor = .darkText
+        contentView.backgroundColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
 //        contentView.addSubview(menuLabel)
         contentView.addSubview(menuIconB)
         setupConstraints()

@@ -144,7 +144,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
 //        let barButton = UIBarButtonItem(customView: leftButton)
         let rightBarButton = UIBarButtonItem(customView: rightButtonView)
         
-        navigationController?.navigationBar.barTintColor = .darkText
+        navigationController?.navigationBar.barTintColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
 //        self.navigationItem.leftBarButtonItem = barButton
         self.navigationItem.rightBarButtonItem = rightBarButton
         self.navigationItem.titleView = titleButtonLabel
