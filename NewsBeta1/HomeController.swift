@@ -79,22 +79,22 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     
-    lazy var rightButtonLabel: UILabel = {
-        
-       let button = UILabel()
-        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-        button.backgroundColor = .clear
-        button.text = "Welcome"
-        button.textColor = .white
-        button.font = UIFont(name: "Avenir Next", size: 13)
-        button.textAlignment = .center
-        
-        
-        
-        return button
-    }()
-    
+//    lazy var rightButtonLabel: UILabel = {
+//        
+//       let button = UILabel()
+//        button.translatesAutoresizingMaskIntoConstraints = false
+////        button.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
+//        button.backgroundColor = .clear
+//        button.text = "Welcome"
+//        button.textColor = .white
+//        button.font = UIFont(name: "Avenir Next", size: 13)
+//        button.textAlignment = .center
+//        
+//        
+//        
+//        return button
+//    }()
+//    
     
 //    lazy var leftButton: UIButton = {
 //        
@@ -179,7 +179,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func rightBarViewConstraints() {
         
         rightButtonView.addSubview(rightbarPic)
-        rightButtonView.addSubview(rightButtonLabel)
+//        rightButtonView.addSubview(rightButtonLabel)
         
         
         rightbarPic.widthAnchor.constraint(equalToConstant: 50).isActive = true
@@ -187,10 +187,10 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         rightbarPic.centerXAnchor.constraint(equalTo: rightButtonView.centerXAnchor).isActive = true
         rightbarPic.bottomAnchor.constraint(equalTo: rightButtonView.bottomAnchor, constant: -2).isActive = true
         
-        rightButtonLabel.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        rightButtonLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        rightButtonLabel.topAnchor.constraint(equalTo: rightButtonView.topAnchor, constant: 0).isActive = true
-        rightButtonLabel.centerXAnchor.constraint(equalTo: rightButtonView.centerXAnchor).isActive = true
+//        rightButtonLabel.widthAnchor.constraint(equalToConstant: 70).isActive = true
+//        rightButtonLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+//        rightButtonLabel.topAnchor.constraint(equalTo: rightButtonView.topAnchor, constant: 0).isActive = true
+//        rightButtonLabel.centerXAnchor.constraint(equalTo: rightButtonView.centerXAnchor).isActive = true
         
         
     }
@@ -218,7 +218,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
                     
                     if let profileImageURLs = dictionary["profileImageURL"] as? String {
                     
-                    self.rightButtonLabel.text = dictionary["name"] as? String
+//                    self.rightButtonLabel.text = dictionary["name"] as? String
                     self.rightbarPic.loadImagesUsingCacheWithURLString(urlString: profileImageURLs)
                    
                     
@@ -262,7 +262,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         let navC = UINavigationController(rootViewController: userHome)
         
-//        viewWillDisappear(true)
+
         present(navC, animated: true, completion: nil)
         
     }
