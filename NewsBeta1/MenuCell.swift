@@ -33,6 +33,7 @@ class MenuCell: UICollectionViewCell {
         icons.contentMode = .scaleAspectFit
         icons.clipsToBounds = true
         
+        
 
         
         return icons
@@ -72,6 +73,9 @@ class MenuCell: UICollectionViewCell {
         contentView.addSubview(menuIconB)
         setupConstraints()
         
+        
+       
+        
     }
     
     
@@ -79,9 +83,31 @@ class MenuCell: UICollectionViewCell {
     func setupConstraints() {
         
 //        menuLabel.frame = contentView.frame
-        menuIconB.frame = contentView.frame
+        
+        
+     
+      menuIconB.frame = contentView.frame
+        
+        
         
     }
     
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

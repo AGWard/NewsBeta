@@ -8,6 +8,6 @@
 
 import UIKit
 
-class NewsCell: UICollectionViewCell {
+class TriniNewsCell: UICollectionViewCell {
     
 }

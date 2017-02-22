@@ -23,6 +23,22 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
+    let logoutButton: UIButton = {
+        
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "logout"), for: .normal)
+        button.layer.borderWidth = 3
+        button.layer.borderColor = UIColor.white.cgColor
+        button.layer.cornerRadius = 5
+        button.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
+        
+        
+        return button
+    }()
+    
+    
+    
     let genderLabel: UILabel = {
         
        let gender = UILabel()
@@ -137,13 +153,31 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         checkIfUserIsLoggedIn()
         setBackground()
+        logoutButtonConstraints()
+        
         
         super.viewWillAppear(true)
+        
         
         
     }
     
 ///*****************************************************************************CONSTRAINT FUNCTIONS*************************************************************************************************//
+    
+    
+    func logoutButtonConstraints() {
+        
+        view.addSubview(logoutButton)
+        
+        logoutButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        logoutButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        logoutButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10).isActive = true
+        logoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        
+    }
+    
+    
     
   
     func backgroundImageConstraints() {

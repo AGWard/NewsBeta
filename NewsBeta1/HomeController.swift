@@ -9,35 +9,89 @@
 import UIKit
 import Firebase
 
+
+
+
+class BaseCell: UICollectionViewCell {
+    
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupViews()
+        
+    }
+    
+    func setupViews() {
+        
+        
+    }
+    
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    
+}
+
+
+
+
+
 class HomeController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     ///*************************************************************************PROPERTY/VIEWS SETUP*****************************************************************************************************//
+
+    
+    
+    lazy var collectionVw: UICollectionView = {
+        
+        
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionHeadersPinToVisibleBounds = true
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 0
+        
+        let collectionV = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionV.translatesAutoresizingMaskIntoConstraints = false
+        collectionV.backgroundColor = .white
+        collectionV.delegate = self
+        collectionV.dataSource = self
+        collectionV.isPagingEnabled = true
+        collectionV.contentInset = UIEdgeInsetsMake(60, 0, 0, 0)
+        
+        
+        return collectionV
+    }()
     
  
     let cellId = "cellID"
-    
+   
 
     
-    let menuBar: MenuBar = {
+    lazy var menuBar: MenuBar = {
         
         let mb = MenuBar()
         mb.backgroundColor = .darkText
         mb.translatesAutoresizingMaskIntoConstraints = false
         mb.layer.masksToBounds = true
         mb.clipsToBounds = true
+        mb.homeController = self
         
         return mb
     }()
     
     
     
-    lazy var titleButtonLabel: UILabel = {
+    lazy var leftNavLabel: UILabel = {
         
         let button = UILabel()
         button.text = "TriniNews"
         button.textColor = .red
-        button.font = UIFont.boldSystemFont(ofSize: 18)
-        button.frame = CGRect(x: 0, y: 0, width: 60, height: 30) //CGRectMake(0, 0, 30, 30)
+        button.font = UIFont.boldSystemFont(ofSize: 16)
+        button.frame = CGRect(x: 0, y: 0, width: 90, height: 30) //CGRectMake(0, 0, 30, 30)
 //        button.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
         
         
@@ -71,7 +125,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         pic.clipsToBounds = true
         pic.image = UIImage(named: "default")
         pic.isUserInteractionEnabled = true
-        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(NavtitleTapped)))
+        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
         
         
         return pic
@@ -97,18 +151,22 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
 //    }()
 //    
     
-//    lazy var leftButton: UIButton = {
-//        
-//        let button = UIButton(type: .custom)
-//        button.setTitle("<Logout", for: .normal)
-//        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-//        button.frame = CGRect(x: 0, y: 0, width: 60, height: 30) //CGRectMake(0, 0, 30, 30)
-//        button.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
-//       
-//       
-//        return button
-//        
-//    }()
+    lazy var titleLogo: UIImageView = {
+        
+        let pic = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 30))
+        pic.contentMode = .scaleAspectFit
+        pic.layer.cornerRadius = 0.5 * 40
+        //        pic.layer.borderWidth = 2
+        //        pic.layer.borderColor = UIColor.red.cgColor
+        pic.clipsToBounds = true
+        pic.image = UIImage(named: "logoNews")
+        pic.isUserInteractionEnabled = false
+//        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
+        
+        
+        return pic
+    }()
+
     
 
 ///******************************************************************************VIEW DID LOAD*******************************************************************************************************//    
@@ -116,8 +174,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-
+        view.backgroundColor = .darkText
         
         
 
@@ -141,17 +198,22 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         super.viewWillAppear(true)
         
         
-        addCollectionView()
-//        let barButton = UIBarButtonItem(customView: leftButton)
+        collectionViewConstraints()
+        let leftLabel = UIBarButtonItem(customView: leftNavLabel)
         let rightBarButton = UIBarButtonItem(customView: rightButtonView)
         
-        navigationController?.navigationBar.barTintColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
-//        self.navigationItem.leftBarButtonItem = barButton
+        self.navigationController?.navigationBar.barTintColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
+        self.navigationItem.leftBarButtonItem = leftLabel
         self.navigationItem.rightBarButtonItem = rightBarButton
-        self.navigationItem.titleView = titleButtonLabel
+        
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationItem.titleView = titleLogo
         
         rightBarViewConstraints()
         menuBarConstraints()
+        
+        
         
         
         
@@ -160,14 +222,31 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     ///*****************************************************************************CONSTRAINT FUNCTIONS*************************************************************************************************//
     
     
+    
+    func collectionViewConstraints() {
+        
+        collectionVw.register(FeedCell.self, forCellWithReuseIdentifier: cellId)
+
+        
+        view.addSubview(collectionVw)
+
+        collectionVw.frame = view.frame
+        
+    }
+    
+    
+    
+    
     private func menuBarConstraints() {
         
         view.addSubview(menuBar)
         
+        navigationController?.hidesBarsOnSwipe = true
+        
         menuBar.widthAnchor.constraint(equalToConstant: 380).isActive = true
         menuBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        menuBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 60).isActive = true
         menuBar.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        menuBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
         
         
         
@@ -256,7 +335,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
     }
     
-    func NavtitleTapped() {
+    func profilePicTapped() {
         
         let userHome = UserHomePageController()
         userHome.modalPresentationStyle = .pageSheet
@@ -274,28 +353,69 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     
-    func addCollectionView() {
+//    func addCollectionView() {
+//        
+//        
+//        
+//        let layout = UICollectionViewFlowLayout()
+//        layout.sectionHeadersPinToVisibleBounds = true
+//        layout.scrollDirection = .horizontal
+//        layout.minimumLineSpacing = 0
+//        
+//        let collectionV = UICollectionView(frame: view.frame, collectionViewLayout: layout)
+//        collectionV.register(NewsCell.self, forCellWithReuseIdentifier: cellId)
+//        collectionV.backgroundColor = .white
+//        collectionV.delegate = self
+//        collectionV.dataSource = self
+//        collectionV.isPagingEnabled = true
+//        collectionV.contentInset = UIEdgeInsetsMake(140, 0, 0, 0)
+//        
+//        view.addSubview(collectionV)
+//        
+//    }
+    
+    
+    
+    func scrollToMenuIndex(menuIndex: Int) {
         
-        
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.sectionHeadersPinToVisibleBounds = true
-        layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 0
-        
-        let collectionV = UICollectionView(frame: view.frame, collectionViewLayout: layout)
-        collectionV.register(NewsCell.self, forCellWithReuseIdentifier: cellId)
-        collectionV.backgroundColor = .white
-        collectionV.delegate = self
-        collectionV.dataSource = self
-        collectionV.isPagingEnabled = true
-        collectionV.contentInset = UIEdgeInsetsMake(140, 0, 0, 0)
-        
-        view.addSubview(collectionV)
+        let indexPath = IndexPath(item: menuIndex, section: 0)
+        collectionVw.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         
     }
     
+  
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        menuBar.barLeftAnchor?.constant = scrollView.contentOffset.x / 4
+        
+        
+    }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        let index = targetContentOffset.pointee.x / view.frame.width
+        
+        let intIndex = Int(index)
+        
+        let indexPath = IndexPath(item: Int(index), section: 0)
+        menuBar.collecV.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+        
+        
+        switch intIndex {
+        case 0:
+            leftNavLabel.text = "Trini News"
+        case 1:
+            leftNavLabel.text = "Top Stories"
+        case 2:
+            leftNavLabel.text = "Favourites"
+        case 3:
+            leftNavLabel.text = "Trending"
+        default:
+            print("oither")
+        }
+        
+    }
   
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -304,28 +424,21 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! NewsCell
-        let colors: [UIColor] = [.blue, .green, .yellow, .red]
         
-       cell.backgroundColor = colors[indexPath.item]
-        
-        
-        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! FeedCell
+//        let colors: [UIColor] = [.blue, .green, .yellow, .red]
+//        
+//       cell.backgroundColor = colors[indexPath.item]
+        cell.backgroundColor = .green
+               
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: view.frame.height)
+        return CGSize(width: view.frame.width, height: view.frame.height - 40)
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
     
