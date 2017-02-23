@@ -304,17 +304,24 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     
     var containerViewHeightAnchor: NSLayoutConstraint?
     var containerViewTop: NSLayoutConstraint?
+    var containerViewYPriority: NSLayoutConstraint?
     
     func containerContstraint() {
         
         view.addSubview(continerView)
         
         containerViewTop = continerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 300)
-        containerViewTop?.isActive = true
+        containerViewTop?.isActive = false
         containerViewHeightAnchor = continerView.heightAnchor.constraint(equalToConstant: 80)
         containerViewHeightAnchor?.isActive = true
-        continerView.widthAnchor.constraint(equalToConstant: 330).isActive = true
+        containerViewHeightAnchor?.priority = 1000
+        continerView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor, constant: 10).isActive = true
+        continerView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor, constant: -10).isActive = true
         continerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        containerViewYPriority = continerView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        containerViewYPriority?.isActive = true
+        
+        
         
         
         
@@ -755,7 +762,9 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     func keyboardWillShow(notification: Notification) {
         
         UIView.animate(withDuration: 0.8) {
-            self.containerViewTop?.constant = 180
+            self.containerViewTop?.isActive = true
+            self.containerViewTop?.constant = 130
+            self.containerViewYPriority?.isActive = false
             self.view.layoutIfNeeded()
         }
         
@@ -768,7 +777,8 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     func keyboardWillHide(notification: Notification) {
         UIView.animate(withDuration: 0.8) {
             
-            self.containerViewTop?.constant = 300
+            self.containerViewTop?.isActive = false
+            self.containerViewYPriority?.isActive = true
             self.view.layoutIfNeeded()
         }
     }

@@ -29,7 +29,7 @@ class MenuCell: UICollectionViewCell {
     let menuIconB: UIImageView = {
         
        let icons = UIImageView()
-        icons.translatesAutoresizingMaskIntoConstraints = true
+        icons.translatesAutoresizingMaskIntoConstraints = false
         icons.contentMode = .scaleAspectFit
         icons.clipsToBounds = true
         

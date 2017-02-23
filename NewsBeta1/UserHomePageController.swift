@@ -53,7 +53,6 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         let profile = UIImageView()
         profile.translatesAutoresizingMaskIntoConstraints = false
         profile.contentMode = .scaleAspectFill
-        profile.layer.cornerRadius = 0.5 * 150
         profile.layer.borderWidth = 3
         profile.clipsToBounds = true
         profile.image = UIImage(named: "default")
@@ -188,17 +187,20 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         backgroundImage1.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
     }
     
+
     
     func profileRealImageConstraints() {
         
         view.addSubview(profileRealImage)
         
-        profileRealImage.widthAnchor.constraint(equalToConstant: 150).isActive = true
-        profileRealImage.heightAnchor.constraint(equalToConstant: 150).isActive = true
-        profileRealImage.topAnchor.constraint(equalTo: view.topAnchor, constant: 150).isActive = true
+        profileRealImage.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1/3).isActive = true
+        profileRealImage.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1/3).isActive = true
+        profileRealImage.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: 100).isActive = true
         profileRealImage.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-
         
+        //added the corner radius(aka making the frame edges curve) in the constraints so I can have access to "view"
+
+        profileRealImage.layer.cornerRadius = (view.frame.width * 1/3) * 0.5
         
     }
     

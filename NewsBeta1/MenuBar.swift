@@ -24,10 +24,12 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
     lazy var collecV: UICollectionView = {
         
        let layout  = UICollectionViewFlowLayout()
+        
         let collec = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collec.translatesAutoresizingMaskIntoConstraints = false
         collec.dataSource = self
         collec.delegate = self
+        collec.backgroundColor = .white
         
         
         
@@ -143,13 +145,13 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: frame.width / 4, height: frame.height)
+        return CGSize(width: frame.width / 4.05, height: frame.height)
     }
     
     //gets rid of default spacing between cells
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
+        return 0.0
     }
     
     

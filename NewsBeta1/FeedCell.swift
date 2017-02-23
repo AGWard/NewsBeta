@@ -47,8 +47,8 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         addSubview(collectionViews)
         collectionViews.register(TriniNewsCell.self, forCellWithReuseIdentifier: cellID)
         
-        collectionViews.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        collectionViews.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        collectionViews.topAnchor.constraint(equalTo: self.topAnchor, constant: 20).isActive = true
+        collectionViews.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -40).isActive = true
         collectionViews.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         collectionViews.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         
@@ -60,7 +60,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return 5
+        return 6
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

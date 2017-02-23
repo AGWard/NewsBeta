@@ -53,6 +53,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         layout.sectionHeadersPinToVisibleBounds = true
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
         
         let collectionV = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionV.translatesAutoresizingMaskIntoConstraints = false
@@ -243,9 +244,11 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         navigationController?.hidesBarsOnSwipe = true
         
-        menuBar.widthAnchor.constraint(equalToConstant: 380).isActive = true
+        
+//        menuBar.widthAnchor.constraint(equalToConstant: 380).isActive = true
         menuBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
         menuBar.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        menuBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         menuBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
         
         
