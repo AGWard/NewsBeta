@@ -81,7 +81,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     var backgroundImage: UIImageView = {
         
         let bkImage = UIImageView()
-        bkImage.image = UIImage(named: "Tobago")
+        bkImage.image = UIImage(named: "SignIn")
         bkImage.translatesAutoresizingMaskIntoConstraints = false
         bkImage.contentMode = .scaleAspectFit
         
@@ -224,6 +224,8 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
         view.isUserInteractionEnabled = true
         indicatorContainerView.isHidden = true
         activityIndicator.stopAnimating()

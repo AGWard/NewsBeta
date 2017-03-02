@@ -80,16 +80,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
     
