@@ -11,7 +11,92 @@ import Firebase
 
 class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
     
-///*************************************************************************PROPERTY/VIEWS SETUP*****************************************************************************************************//
+
+    
+    ///*************************************************************************CREATING ICONS*****************************************************************************************************//
+    
+    let emailIcon: UIImageView = {
+        
+       let iconV = UIImageView()
+        iconV.backgroundColor = .clear
+        iconV.image = UIImage(named: "EmailIcon")
+        
+        
+        
+        iconV.translatesAutoresizingMaskIntoConstraints = false
+        
+        return iconV
+        
+        
+    }()
+
+    
+    let passwordIcons: UIImageView = {
+        
+        let iconVs = UIImageView()
+        iconVs.backgroundColor = .clear
+        iconVs.image = UIImage(named: "passwordIcon")
+        
+        
+        
+        iconVs.translatesAutoresizingMaskIntoConstraints = false
+        
+        return iconVs
+        
+        
+    }()
+
+    
+    let userIcon: UIImageView = {
+        
+        let iconVs = UIImageView()
+        iconVs.backgroundColor = .clear
+        iconVs.image = UIImage(named: "userIcon")
+        
+        
+        
+        iconVs.translatesAutoresizingMaskIntoConstraints = false
+        
+        return iconVs
+        
+        
+    }()
+    
+    
+    
+    let appLogo: UIImageView = {
+        
+       let app = UIImageView()
+        app.backgroundColor = .clear
+        app.image = UIImage(named: "Dlogo")
+        
+        app.translatesAutoresizingMaskIntoConstraints = false
+        
+        return app
+    }()
+        
+        
+        
+
+    
+    
+    
+    ///*************************************************************************PROPERTY/VIEWS SETUP*****************************************************************************************************//
+    
+    
+    
+    lazy var forgotPassword: UILabel = {
+        
+       let forgotLabel = UILabel()
+        forgotLabel.text = "Forgot your password?"
+        forgotLabel.textColor = UIColor(red: 114/255.0, green: 110/255.0, blue: 133/255.0, alpha: 1)
+        forgotLabel.font = UIFont(name: "Avenir", size: 12)
+        forgotLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        return forgotLabel
+        
+    }()
+    
     
     
     lazy var loadingIndicatorText: UILabel = {
@@ -93,7 +178,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     lazy var continerView: UIView = {
        
         let containV = UIView()
-        containV.backgroundColor = .blue
+        containV.backgroundColor = .clear
         containV.layer.cornerRadius = 10
         containV.translatesAutoresizingMaskIntoConstraints = false
         containV.layer.masksToBounds = true
@@ -105,7 +190,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     lazy var genderLabel: UITextField = {
         
         let gpicker = UITextField()
-        gpicker.backgroundColor = .gray
+        gpicker.backgroundColor = .clear
         gpicker.text = "gender"
         gpicker.font = UIFont.boldSystemFont(ofSize: 12)
         gpicker.textAlignment = .center
@@ -123,9 +208,18 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     
     lazy var userNameLabel: UITextField = {
         
+        
+        var mutableString = NSMutableAttributedString()
+        let textEmail = "username"
+        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSFontAttributeName:UIFont(name: "Avenir Next", size: 16)!])
+        mutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
+    
+        
         let user = UITextField()
-        user.placeholder = "username"
-        user.backgroundColor = .gray
+        user.attributedPlaceholder = mutableString
+        user.textColor = .white
+
+        user.backgroundColor = .clear
         user.delegate = self
 
         user.translatesAutoresizingMaskIntoConstraints = false
@@ -136,11 +230,18 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     
     lazy var passwordLabel: UITextField = {
         
+        
+        var mutableString = NSMutableAttributedString()
+        let textEmail = "password"
+        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSFontAttributeName:UIFont(name: "Avenir Next", size: 16)!])
+        mutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
+        
         let password = UITextField()
-        password.placeholder = "password"
+        password.attributedPlaceholder = mutableString
         password.isSecureTextEntry = true
-        password.backgroundColor = .gray
+        password.backgroundColor = .clear
         password.delegate = self
+        password.textColor = .white
        
         password.translatesAutoresizingMaskIntoConstraints = false
         
@@ -148,14 +249,14 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     }()
     
     
-    lazy var loginRegisterButton: UIButton = {
+    lazy var signUpSignInButton: UIButton = {
         
         let button = UIButton()
-        button.setTitle("Login", for: .normal)
+        button.setTitle("Sign In", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
-        button.layer.borderColor = UIColor.white.cgColor
-        button.layer.borderWidth = 3
+        button.titleLabel?.font = UIFont(name: "Avenir Next", size: 16)
+//        button.layer.cornerRadius = 60 * 0.5
+       button.backgroundColor = UIColor(red: 72/255.0, green: 68/255.0, blue: 86/255.0, alpha: 1)
         
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(loginTapped), for: .touchUpInside)
@@ -167,7 +268,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     lazy var seperatorLine: UIView = {
        
         let line = UIView()
-        line.backgroundColor = .white
+        line.backgroundColor = UIColor(red: 165/255.0, green: 163/255.0, blue: 173/255.0, alpha: 1)
         line.layer.cornerRadius = 3
         line.translatesAutoresizingMaskIntoConstraints = false
         
@@ -178,10 +279,8 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     
     lazy var segmentedLoginRegToggle: UISegmentedControl = {
         
-       let sc = UISegmentedControl(items: ["Login", "Register"])
+       let sc = UISegmentedControl(items: ["Sign In", "Sign Up"])
         sc.tintColor = .white
-        sc.layer.borderColor = UIColor.white.cgColor
-        sc.layer.borderWidth = 1
         sc.selectedSegmentIndex = 0
         
         sc.translatesAutoresizingMaskIntoConstraints = false
@@ -192,10 +291,19 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     
     lazy var emailLabel: UITextField = {
         
+        var mutableString = NSMutableAttributedString()
+        let textEmail = "email"
+        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSFontAttributeName:UIFont(name: "Avenir Next", size: 14)!])
+        mutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
+        
         let email = UITextField()
-        email.placeholder = "email"
-        email.backgroundColor = .gray
+        email.attributedPlaceholder = mutableString
+        email.backgroundColor = .clear
         email.delegate = self
+        email.textColor = .white
+        
+        
+        
         
         email.translatesAutoresizingMaskIntoConstraints = false
         
@@ -205,7 +313,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     lazy var seperatorLine2: UIView = {
         
         let line = UIView()
-        line.backgroundColor = .white
+        line.backgroundColor = UIColor(red: 165/255.0, green: 163/255.0, blue: 173/255.0, alpha: 1)
         line.layer.cornerRadius = 3
         line.translatesAutoresizingMaskIntoConstraints = false
         
@@ -213,9 +321,28 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         return line
     }()
     
+    lazy var seperatorLine3: UIView = {
+        
+        let line = UIView()
+        line.backgroundColor = UIColor(red: 165/255.0, green: 163/255.0, blue: 173/255.0, alpha: 1)
+        line.layer.cornerRadius = 3
+        line.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        return line
+    }()
+
+
+    var containerViewHeightAnchor: NSLayoutConstraint?
+    var containerViewTop: NSLayoutConstraint?
+    var containerViewYPriority: NSLayoutConstraint?
+
     
-
-
+    var emailViewHeightAnchor: NSLayoutConstraint?
+    var sepLine2ViewHeightAnchor: NSLayoutConstraint?
+    var userNameViewHeightAnchor: NSLayoutConstraint?
+    var passwordViewHeightAnchor: NSLayoutConstraint?
+    var genderLabelHeightAnchor: NSLayoutConstraint?
 
     
     
@@ -226,11 +353,15 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         super.viewDidLoad()
         
         
+        segmentedLoginRegToggle.removeBorders()
+        UIApplication.shared.statusBarStyle = .lightContent
+        view.backgroundColor = UIColor(red: 77/255.0, green: 74/255.0, blue: 92/255.0, alpha: 1)
+        
         view.isUserInteractionEnabled = true
         indicatorContainerView.isHidden = true
         activityIndicator.stopAnimating()
         
-        backgroundConstrainst()
+//        backgroundConstrainst()
         containerContstraint()
         textFieldContraints()
         loginRegisButtonConstraints()
@@ -238,8 +369,8 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         indicatorConstraints()
         indicatorActivityContainerConstraints()
         loadingIndicatorTextConstraints()
-
-        
+        forgotPasswordConstraints()
+        appLogoConstraints()
         
         
         
@@ -248,6 +379,10 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         genderLabel.inputView = getGender
         
     }
+    
+    
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -255,168 +390,6 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     }
     
     
-///*****************************************************************************CONSTRAINT FUNCTIONS*************************************************************************************************//
-   
-    
-    func loadingIndicatorTextConstraints() {
-        
-        indicatorContainerView.addSubview(loadingIndicatorText)
-        
-        loadingIndicatorText.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: 10).isActive = true
-        loadingIndicatorText.widthAnchor.constraint(equalTo: indicatorContainerView.widthAnchor).isActive = true
-        loadingIndicatorText.centerXAnchor.constraint(equalTo: indicatorContainerView.centerXAnchor).isActive = true
-        
-        
-        
-        
-    }
-    
-    
-
-    func indicatorActivityContainerConstraints() {
-        
-        view.addSubview(indicatorContainerView)
-        indicatorContainerView.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        indicatorContainerView.widthAnchor.constraint(equalToConstant: 150).isActive = true
-        indicatorContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
-        indicatorContainerView.bottomAnchor.constraint(equalTo: segmentedLoginRegToggle.topAnchor, constant: -5).isActive = true
-        
-        
-    }
-    
-    
-    func indicatorConstraints() {
-        
-        
-        indicatorContainerView.addSubview(activityIndicator)
-        
-        activityIndicator.centerXAnchor.constraint(equalTo: indicatorContainerView.centerXAnchor).isActive = true
-        activityIndicator.centerYAnchor.constraint(equalTo: indicatorContainerView.centerYAnchor, constant: -20).isActive = true
-        
-    }
-
-    
-    func backgroundConstrainst() {
-        
-        view.addSubview(backgroundImage)
-        
-        backgroundImage.frame = view.frame
-        
-    }
-    
-    var containerViewHeightAnchor: NSLayoutConstraint?
-    var containerViewTop: NSLayoutConstraint?
-    var containerViewYPriority: NSLayoutConstraint?
-    
-    func containerContstraint() {
-        
-        view.addSubview(continerView)
-        
-        containerViewTop = continerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 300)
-        containerViewTop?.isActive = false
-        containerViewHeightAnchor = continerView.heightAnchor.constraint(equalToConstant: 80)
-        containerViewHeightAnchor?.isActive = true
-        containerViewHeightAnchor?.priority = 1000
-        continerView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor, constant: 10).isActive = true
-        continerView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor, constant: -10).isActive = true
-        continerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        containerViewYPriority = continerView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        containerViewYPriority?.isActive = true
-        
-        
-        
-        
-        
-    }
-    
-    var emailViewHeightAnchor: NSLayoutConstraint?
-    var sepLine2ViewHeightAnchor: NSLayoutConstraint?
-    var userNameViewHeightAnchor: NSLayoutConstraint?
-    var passwordViewHeightAnchor: NSLayoutConstraint?
-    var genderLabelHeightAnchor: NSLayoutConstraint?
-    
-    
-    func textFieldContraints() {
-        
-        continerView.addSubview(userNameLabel)
-        continerView.addSubview(passwordLabel)
-        continerView.addSubview(seperatorLine)
-        continerView.addSubview(emailLabel)
-        continerView.addSubview(seperatorLine2)
-        continerView.addSubview(genderLabel)
-        
-        
-        userNameLabel.widthAnchor.constraint(equalTo: continerView.widthAnchor, multiplier: 3/4).isActive = true
-        userNameViewHeightAnchor = userNameLabel.heightAnchor.constraint(equalToConstant: 40)
-        userNameViewHeightAnchor?.isActive = false
-        userNameLabel.bottomAnchor.constraint(equalTo: emailLabel.topAnchor).isActive = true
-        userNameLabel.leftAnchor.constraint(equalTo: continerView.leftAnchor).isActive = true
-        
-        
-        passwordLabel.widthAnchor.constraint(equalTo: continerView.widthAnchor).isActive = true
-        passwordViewHeightAnchor = passwordLabel.heightAnchor.constraint(equalToConstant: 40)
-        passwordViewHeightAnchor?.isActive = true
-        passwordLabel.bottomAnchor.constraint(equalTo: continerView.bottomAnchor).isActive = true
-        passwordLabel.leftAnchor.constraint(equalTo: continerView.leftAnchor).isActive = true
-        
-        
-        seperatorLine.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        seperatorLine.topAnchor.constraint(equalTo: emailLabel.bottomAnchor).isActive = true
-        seperatorLine.leftAnchor.constraint(equalTo: continerView.leftAnchor, constant: 8).isActive = true
-        seperatorLine.rightAnchor.constraint(equalTo: continerView.rightAnchor, constant: -8).isActive = true
-        
-        
-        emailLabel.widthAnchor.constraint(equalTo: continerView.widthAnchor).isActive = true
-        emailViewHeightAnchor = emailLabel.heightAnchor.constraint(equalToConstant: 40)
-        emailViewHeightAnchor?.isActive = true
-        emailLabel.bottomAnchor.constraint(equalTo: passwordLabel.topAnchor).isActive = true
-        emailLabel.leftAnchor.constraint(equalTo: continerView.leftAnchor).isActive = true
-
-        
-        sepLine2ViewHeightAnchor = seperatorLine2.heightAnchor.constraint(equalToConstant: 1)
-        sepLine2ViewHeightAnchor?.isActive = false
-        seperatorLine2.topAnchor.constraint(equalTo: emailLabel.topAnchor).isActive = true
-        seperatorLine2.leftAnchor.constraint(equalTo: continerView.leftAnchor, constant: 8).isActive = true
-        seperatorLine2.rightAnchor.constraint(equalTo: continerView.rightAnchor, constant: -8).isActive = true
-        
-        genderLabelHeightAnchor = genderLabel.heightAnchor.constraint(equalToConstant: 40)
-        genderLabelHeightAnchor?.isActive = false
-        genderLabel.bottomAnchor.constraint(equalTo: emailLabel.topAnchor).isActive = true
-        genderLabel.rightAnchor.constraint(equalTo: continerView.rightAnchor).isActive = true
-        genderLabel.widthAnchor.constraint(equalTo: continerView.widthAnchor, multiplier: 1/4).isActive = true
-        
-        
-       
-        
-    }
-    
-    
-    func loginRegisButtonConstraints() {
-        
-        view.addSubview(loginRegisterButton)
-        
-        loginRegisterButton.widthAnchor.constraint(equalTo: continerView.widthAnchor).isActive = true
-        loginRegisterButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        loginRegisterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        loginRegisterButton.topAnchor.constraint(equalTo: continerView.bottomAnchor, constant: 10).isActive = true
-        
-    
-    }
-    
-    
-    func segmentedToggleContraints() {
-        
-        view.addSubview(segmentedLoginRegToggle)
-        
-        segmentedLoginRegToggle.bottomAnchor.constraint(equalTo: continerView.topAnchor, constant: -10).isActive = true
-        segmentedLoginRegToggle.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        segmentedLoginRegToggle.widthAnchor.constraint(equalTo: continerView.widthAnchor).isActive = true
-        segmentedLoginRegToggle.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        
-    }
-    
-    
-
     
     
     
@@ -427,29 +400,29 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         
         let title = segmentedLoginRegToggle.titleForSegment(at: segmentedLoginRegToggle.selectedSegmentIndex)
         
-        loginRegisterButton.setTitle(title, for: .normal)
+        signUpSignInButton.setTitle(title, for: .normal)
         
         
         if segmentedLoginRegToggle.selectedSegmentIndex == 0 {
             
             
-            containerViewHeightAnchor?.constant = 80
+            containerViewHeightAnchor?.constant = 120
             userNameViewHeightAnchor?.isActive = false
             genderLabelHeightAnchor?.isActive = false
-            emailViewHeightAnchor?.constant = 40
-            passwordViewHeightAnchor?.constant = 40
+            emailViewHeightAnchor?.constant = 60
+            passwordViewHeightAnchor?.constant = 60
             sepLine2ViewHeightAnchor?.isActive = false
             
             
         }else if segmentedLoginRegToggle.selectedSegmentIndex == 1 {
             
-            containerViewHeightAnchor?.constant = 120
+            containerViewHeightAnchor?.constant = 180
             userNameViewHeightAnchor?.isActive = true
             genderLabelHeightAnchor?.isActive = true
             sepLine2ViewHeightAnchor?.isActive = true
-            userNameViewHeightAnchor?.constant = 40
-            passwordViewHeightAnchor?.constant = 40
-            emailViewHeightAnchor?.constant = 40
+            userNameViewHeightAnchor?.constant = 60
+            passwordViewHeightAnchor?.constant = 60
+            emailViewHeightAnchor?.constant = 60
             
         }
         
@@ -764,6 +737,9 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     func keyboardWillShow(notification: Notification) {
         
         UIView.animate(withDuration: 0.8) {
+            
+            self.segmentedLoginRegToggle.isHidden = true
+            self.appLogo.isHidden = true
             self.containerViewTop?.isActive = true
             self.containerViewTop?.constant = 130
             self.containerViewYPriority?.isActive = false
@@ -779,6 +755,9 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     func keyboardWillHide(notification: Notification) {
         UIView.animate(withDuration: 0.8) {
             
+//            self.containerViewTop?.constant = -170
+            self.segmentedLoginRegToggle.isHidden = false
+            self.appLogo.isHidden = false
             self.containerViewTop?.isActive = false
             self.containerViewYPriority?.isActive = true
             self.view.layoutIfNeeded()

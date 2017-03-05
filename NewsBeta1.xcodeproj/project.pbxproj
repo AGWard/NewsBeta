@@ -17,7 +17,7 @@
 		0C6A5F961E3E69E20008C3C3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0C6A5F951E3E69E20008C3C3 /* GoogleService-Info.plist */; };
 		0C6A5F991E3E6D5E0008C3C3 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6A5F981E3E6D5E0008C3C3 /* HomeController.swift */; };
 		0C6A5F9D1E3E709C0008C3C3 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6A5F9C1E3E709C0008C3C3 /* LoginController.swift */; };
-		0C6A5FA01E3E734B0008C3C3 /* Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6A5F9F1E3E734B0008C3C3 /* Constraints.swift */; };
+		0C6A5FA01E3E734B0008C3C3 /* LoginScreenConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6A5F9F1E3E734B0008C3C3 /* LoginScreenConstraints.swift */; };
 		0C6A5FA31E3EA6A10008C3C3 /* UserHomePageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6A5FA21E3EA6A10008C3C3 /* UserHomePageController.swift */; };
 		0C94E3821E5A2D360015A90E /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C94E3811E5A2D360015A90E /* FeedCell.swift */; };
 		0CBB54311E47E93E0020EE2F /* ProfileImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBB54301E47E93E0020EE2F /* ProfileImageCache.swift */; };
@@ -39,7 +39,7 @@
 		0C6A5F981E3E6D5E0008C3C3 /* HomeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		0C6A5F9A1E3E6F5C0008C3C3 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		0C6A5F9C1E3E709C0008C3C3 /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
-		0C6A5F9F1E3E734B0008C3C3 /* Constraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constraints.swift; sourceTree = "<group>"; };
+		0C6A5F9F1E3E734B0008C3C3 /* LoginScreenConstraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginScreenConstraints.swift; sourceTree = "<group>"; };
 		0C6A5FA21E3EA6A10008C3C3 /* UserHomePageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserHomePageController.swift; sourceTree = "<group>"; };
 		0C94E3811E5A2D360015A90E /* FeedCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedCell.swift; sourceTree = "<group>"; };
 		0CBB54301E47E93E0020EE2F /* ProfileImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileImageCache.swift; sourceTree = "<group>"; };
@@ -109,7 +109,7 @@
 		0C6A5F9E1E3E73340008C3C3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				0C6A5F9F1E3E734B0008C3C3 /* Constraints.swift */,
+				0C6A5F9F1E3E734B0008C3C3 /* LoginScreenConstraints.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -117,6 +117,7 @@
 		0C6A5FA11E3E88090008C3C3 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				0CBB54321E495A1F0020EE2F /* NavBarExt.swift */,
 				0C5355BC1E528EB2004FFCE4 /* TriniNewsCell.swift */,
 				0C94E3811E5A2D360015A90E /* FeedCell.swift */,
 				0C5355BE1E56683D004FFCE4 /* MenuBar.swift */,
@@ -129,7 +130,6 @@
 			isa = PBXGroup;
 			children = (
 				0CBB54301E47E93E0020EE2F /* ProfileImageCache.swift */,
-				0CBB54321E495A1F0020EE2F /* NavBarExt.swift */,
 			);
 			name = ExtentionCache;
 			sourceTree = "<group>";
@@ -277,7 +277,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C6A5FA01E3E734B0008C3C3 /* Constraints.swift in Sources */,
+				0C6A5FA01E3E734B0008C3C3 /* LoginScreenConstraints.swift in Sources */,
 				0CBB54331E495A1F0020EE2F /* NavBarExt.swift in Sources */,
 				0C6A5F841E3E69710008C3C3 /* AppDelegate.swift in Sources */,
 				0C6A5F9D1E3E709C0008C3C3 /* LoginController.swift in Sources */,

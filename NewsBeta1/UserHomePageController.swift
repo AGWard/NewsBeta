@@ -11,7 +11,7 @@ import Firebase
 
 class UserHomePageController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
-    //getting userID from firebase for userNameHolder text field
+
     
     
         
