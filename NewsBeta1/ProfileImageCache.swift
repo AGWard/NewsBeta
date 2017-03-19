@@ -72,6 +72,21 @@ extension UIImageView {
     
     
     
+    func loadImagesUsingCachewithPhotoLIb(photoImages: UIImage) {
+        
+        if let cachedImages = imageCache.object(forKey: photoImages as AnyObject) {
+            
+            self.image = cachedImages as? UIImage
+            return
+            
+        }
+        
+        
+        
+        
+    }
+    
+    
     
     
     

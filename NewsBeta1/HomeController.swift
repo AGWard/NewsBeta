@@ -39,7 +39,7 @@ class BaseCell: UICollectionViewCell {
 
 
 
-class HomeController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class HomeController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     ///*************************************************************************PROPERTY/VIEWS SETUP*****************************************************************************************************//
 
@@ -161,8 +161,9 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         //        pic.layer.borderColor = UIColor.red.cgColor
         pic.clipsToBounds = true
         pic.image = UIImage(named: "logoNews")
-        pic.isUserInteractionEnabled = false
-//        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
+        pic.isUserInteractionEnabled = true
+        
+        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postNewsAction)))
         
         
         return pic
@@ -191,12 +192,10 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     
+    
     override func viewWillAppear(_ animated: Bool) {
                 
         checkIfUserIsLoggedIn()
-        
-        
-        super.viewWillAppear(true)
         
         
         collectionViewConstraints()
@@ -215,8 +214,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         menuBarConstraints()
         
         
-        
-        
+        super.viewWillAppear(true)
         
     }
     
@@ -442,7 +440,18 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
 
+    func postNewsAction() {
+        
+        let mediaController = UserPhotoController()
+        mediaController.modalPresentationStyle = .popover
+        
+        let navController = UINavigationController(rootViewController: mediaController)
     
+        present(navController, animated: true, completion: nil)
+        
+    }
+    
+
     
     
 }
