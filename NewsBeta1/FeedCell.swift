@@ -7,8 +7,14 @@
 //
 
 import UIKit
+import Firebase
 
 class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    var postedPhotos: [UIImage] = []
+    var imageURLS: [String] = []
+    var idlist = [String]()
+    
     
 
     
@@ -33,12 +39,12 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     override func setupViews() {
         super.setupViews()
         
-        
+        getPostedData()
+
         backgroundColor = .brown
         collectionViewContraints()
         
-
-        
+       
     }
     
     
@@ -60,12 +66,13 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return 6
+        return imageURLS.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! TriniNewsCell
         cell.backgroundColor = .red
+        cell.postedImageView.sd_setImage(with: URL(string: imageURLS[indexPath.item]))
         
         return cell
     }
@@ -80,8 +87,84 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     }
     
     
+    func getPostedData() {
+        
+        
+        
+        
+        let uid = FIRAuth.auth()?.currentUser?.uid
+        
+        
+        
+        FIRDatabase.database().reference().child("Users").child(uid!).child("Posted Data").observeSingleEvent(of: .value, with: {(snapshot) in
+        
+            if let dictionary = snapshot.value as? [String: [String : String]] {
+                
+                for info in dictionary {
+                    
+                    self.idlist.append(info.key)
+                    
+                }
+                print("WHAT IS THIS\(self.idlist)")
+                
+                
+                for count in 0..<self.idlist.count {
+                
+                if let postedData = dictionary[self.idlist[count]]?["postedPicURL"] {
+                    
+                    
+                    self.imageURLS.append(postedData)
+                    print("*******POSTED DATA HERE \(postedData)")
+                    
+                    print("imageURL count is \(self.imageURLS.count) and data is \(self.imageURLS)")
+                    
+                  self.collectionViews.reloadData()
+                    
+                    
+                }
+                }
+            }
+            
+           
+        
+        
+        
+        
+        
+        }, withCancel: nil)
+        
 
-    
-    
-    
+        
+        
+      /*  let uid = FIRAuth.auth()?.currentUser?.uid
+        FIRDatabase.database().reference().child("Users").child(uid!).child("Posted Data").observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                
+                
+                
+                if let postedPicURL = dictionary["postedPicURL"] as? String {
+                    
+                    self.imageURLS.append(postedPicURL)
+                    
+                    print(self.imageURLS.count)
+                    
+                    
+                    
+                    
+                    
+                }
+                
+            }
+            
+        }, withCancel: nil)
+ 
+ */
+ 
+    }
+ 
+ 
 }
+
+
+

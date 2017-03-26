@@ -11,14 +11,36 @@ import Photos
 
 class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
+ 
+    
+    lazy var rightBarButton: UIButton = {
+        
+        let button = UIButton(type: .custom)
+        button.frame = CGRect(x: 0, y: 0, width: 50, height: 40)
+        button.addTarget(self, action: #selector(nextButtonPressed), for: .touchUpInside)
+        button.backgroundColor = .clear
+        button.setTitle("Next", for: .normal)
+        button.setTitleColor(.blue, for: .normal)
+   
+        
+        
+        return button
+        
+    }()
+
+    
+    
+    
     
     let selectedImageView: UIImageView = {
        
         let imgView = UIImageView()
         imgView.translatesAutoresizingMaskIntoConstraints = false
-        imgView.backgroundColor = .clear
+        imgView.backgroundColor = .white
         imgView.contentMode = .scaleAspectFit
         imgView.clipsToBounds = true
+        
+        
         
         
         return imgView
@@ -62,10 +84,19 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
         super.viewDidLoad()
         
         
+        let rightButton = UIBarButtonItem(customView: rightBarButton)
+        
+        
+        navigationItem.rightBarButtonItem = rightButton
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(goBackToHomeScreen))
+        
+        
+        
+        
 //        getPhotos()
         
 
-        // Do any additional setup after loading the view.
+        
     }
     
     override func viewWillLayoutSubviews() {
@@ -79,6 +110,8 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
 //        refreshPhotoView()
         grabPhotos()
     }
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -103,6 +136,8 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
         
         view.addSubview(selectedImageView)
         
+        
+        
         selectedImageView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
         selectedImageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1/2).isActive = true
         selectedImageView.bottomAnchor.constraint(equalTo: collectionV.topAnchor).isActive = true
@@ -122,7 +157,14 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as? PhotoSelectionCell
         
+        
         cell?.photoView.image = picsArray[indexPath.item]
+        
+        if indexPath.item == 0 && indexPath.section == 0 {
+           selectedImageView.image = picsArray[0]
+            
+            
+        }
         
         
         
@@ -148,6 +190,8 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
     
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        
         
         let image: UIImage = picsArray[indexPath.row]
         selectedImageView.image = image
@@ -207,12 +251,43 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
             
             
             
-            
-            
-            
         }
         
     }
+    
+    
+    func nextButtonPressed() {
+        
+        print(selectedImageView.image!)
+        
+        
+        
+        let modalViewController = PostingPageController()
+        
+        modalViewController.modalTransitionStyle = .flipHorizontal
+        modalViewController.modalPresentationStyle = .overCurrentContext
+        modalViewController.selectedPic.image = selectedImageView.image
+        
+        let navController = UINavigationController(rootViewController: modalViewController)
+        
+        present(navController, animated: true, completion: nil)
+        
+    }
+    
+    func goBackToHomeScreen() {
+        
+        let homeController = HomeController()
+        
+        homeController.modalPresentationStyle = .overFullScreen
+        
+        let navController = UINavigationController(rootViewController: homeController)
+        
+        present(navController, animated: true, completion: nil)
+        
+        
+    }
+    
+  
     
     
     

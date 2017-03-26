@@ -16,6 +16,8 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
 ///*************************************************************************PROPERTY/VIEWS SETUP*****************************************************************************************************//
     
+    
+        
 
     
     

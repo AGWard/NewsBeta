@@ -19,6 +19,7 @@
 		0C6A5F9D1E3E709C0008C3C3 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6A5F9C1E3E709C0008C3C3 /* LoginController.swift */; };
 		0C6A5FA01E3E734B0008C3C3 /* LoginScreenConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6A5F9F1E3E734B0008C3C3 /* LoginScreenConstraints.swift */; };
 		0C6A5FA31E3EA6A10008C3C3 /* UserHomePageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6A5FA21E3EA6A10008C3C3 /* UserHomePageController.swift */; };
+		0C9381CA1E81D90E00314E41 /* PostingPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C9381C91E81D90E00314E41 /* PostingPageController.swift */; };
 		0C94E3821E5A2D360015A90E /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C94E3811E5A2D360015A90E /* FeedCell.swift */; };
 		0C94E3861E6C64CF0015A90E /* UserProfileConstr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C94E3851E6C64CF0015A90E /* UserProfileConstr.swift */; };
 		0C94E3881E6C83830015A90E /* MediaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C94E3871E6C83830015A90E /* MediaController.swift */; };
@@ -30,6 +31,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0C1B6D0F1E884E300063389F /* NewsBeta1-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NewsBeta1-Bridging-Header.h"; sourceTree = "<group>"; };
 		0C5355BC1E528EB2004FFCE4 /* TriniNewsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TriniNewsCell.swift; sourceTree = "<group>"; };
 		0C5355BE1E56683D004FFCE4 /* MenuBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
 		0C5355C01E568260004FFCE4 /* MenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
@@ -45,6 +47,7 @@
 		0C6A5F9C1E3E709C0008C3C3 /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 		0C6A5F9F1E3E734B0008C3C3 /* LoginScreenConstraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginScreenConstraints.swift; sourceTree = "<group>"; };
 		0C6A5FA21E3EA6A10008C3C3 /* UserHomePageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserHomePageController.swift; sourceTree = "<group>"; };
+		0C9381C91E81D90E00314E41 /* PostingPageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostingPageController.swift; sourceTree = "<group>"; };
 		0C94E3811E5A2D360015A90E /* FeedCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedCell.swift; sourceTree = "<group>"; };
 		0C94E3851E6C64CF0015A90E /* UserProfileConstr.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileConstr.swift; sourceTree = "<group>"; };
 		0C94E3871E6C83830015A90E /* MediaController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaController.swift; sourceTree = "<group>"; };
@@ -112,6 +115,7 @@
 				0C6A5FA21E3EA6A10008C3C3 /* UserHomePageController.swift */,
 				0C94E3871E6C83830015A90E /* MediaController.swift */,
 				0C94E3901E6F788A0015A90E /* UserPhotoController.swift */,
+				0C9381C91E81D90E00314E41 /* PostingPageController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -142,6 +146,7 @@
 				0C5355BC1E528EB2004FFCE4 /* TriniNewsCell.swift */,
 				0C5355C01E568260004FFCE4 /* MenuCell.swift */,
 				0C5355BE1E56683D004FFCE4 /* MenuBar.swift */,
+				0C1B6D0F1E884E300063389F /* NewsBeta1-Bridging-Header.h */,
 			);
 			name = HomeViews;
 			sourceTree = "<group>";
@@ -208,6 +213,7 @@
 					0C6A5F7F1E3E69700008C3C3 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 3B3NU2T7AN;
+						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -308,6 +314,7 @@
 				0C5355BF1E56683D004FFCE4 /* MenuBar.swift in Sources */,
 				0C94E3911E6F788A0015A90E /* UserPhotoController.swift in Sources */,
 				0C5355C11E568260004FFCE4 /* MenuCell.swift in Sources */,
+				0C9381CA1E81D90E00314E41 /* PostingPageController.swift in Sources */,
 				0CBB54311E47E93E0020EE2F /* ProfileImageCache.swift in Sources */,
 				0C94E3881E6C83830015A90E /* MediaController.swift in Sources */,
 				0C5355BD1E528EB2004FFCE4 /* TriniNewsCell.swift in Sources */,
@@ -433,11 +440,14 @@
 			baseConfigurationReference = 68EF171CB33FEBE2104959A5 /* Pods-NewsBeta1.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 3B3NU2T7AN;
 				INFOPLIST_FILE = NewsBeta1/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.AppCo.NewsBeta1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "NewsBeta1/NewsBeta1-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -447,11 +457,13 @@
 			baseConfigurationReference = F176E6E4A163C50CFBC27AE9 /* Pods-NewsBeta1.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 3B3NU2T7AN;
 				INFOPLIST_FILE = NewsBeta1/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.AppCo.NewsBeta1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "NewsBeta1/NewsBeta1-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

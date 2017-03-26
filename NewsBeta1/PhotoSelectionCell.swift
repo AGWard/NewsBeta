@@ -24,6 +24,17 @@ class PhotoSelectionCell: BaseCell {
         return lable
     }()
     
+    override var isSelected: Bool {
+        
+        didSet {
+            
+            self.photoView.alpha = isSelected ? 0.80 : 1.0
+            
+        }
+        
+        
+    }
+    
     
 
     

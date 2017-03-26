@@ -7,6 +7,7 @@ target 'NewsBeta1' do
 
   # Pods for NewsBeta1
 
+pod 'SDWebImage'
 pod ‘Firebase/Database’
 pod ‘Firebase/Auth’
 pod ‘Firebase/Storage’
