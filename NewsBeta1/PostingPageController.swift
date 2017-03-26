@@ -154,6 +154,14 @@ class PostingPageController: UIViewController {
                         
                         
                         
+                        let homeC = HomeController()
+                        homeC.modalPresentationStyle = .overFullScreen
+                        
+                        let navController = UINavigationController(rootViewController: homeC)
+                        
+                        self.present(navController, animated: true, completion: nil)
+                        
+                        
                     })
                 }
                 
