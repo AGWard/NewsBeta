@@ -194,6 +194,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
                 
         checkIfUserIsLoggedIn()
         
@@ -214,7 +215,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         menuBarConstraints()
         
         
-        super.viewWillAppear(true)
+        
         
     }
     

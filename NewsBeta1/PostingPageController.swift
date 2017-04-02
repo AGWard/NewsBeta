@@ -9,7 +9,26 @@
 import UIKit
 import Firebase
 
+
+
 class PostingPageController: UIViewController {
+    
+
+    
+    let date = Date()
+    let formatter: DateFormatter = {
+        
+        let matter = DateFormatter()
+        matter.locale = Locale(identifier: "en_US_POSIX")
+        matter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
+        matter.timeZone = TimeZone(abbreviation: "UTC")
+        
+        
+        return matter
+    }()
+    
+    
+
     
     lazy var postButton: UIButton = {
         
@@ -61,6 +80,9 @@ class PostingPageController: UIViewController {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelPosting))
         view.backgroundColor = .yellow
+        
+        
+        
         
        
 
@@ -119,6 +141,37 @@ class PostingPageController: UIViewController {
     
     func postNews() {
         
+        let uid = FIRAuth.auth()?.currentUser?.uid
+        FIRDatabase.database().reference().child("Users").child(uid!).observeSingleEvent(of: .value, with: {(snapshot) in
+            
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                
+                
+                name = dictionary["name"] as? String
+                
+            }
+            
+            
+            
+            
+            
+            
+        }, withCancel: nil)
+
+        
+        
+        let utcTimeZoneStr = formatter.string(from: date)
+        let timestamp = (Date().timeIntervalSince1970)
+        let stringTImestamp = String(timestamp)
+        
+        
+        guard let textEntered = postTextField.text else {
+            
+            print("no data entered")
+            return
+            
+        }
+        
         
         
         let imageName = NSUUID().uuidString
@@ -139,9 +192,28 @@ class PostingPageController: UIViewController {
                 if let selectedPicURL = metadata?.downloadURL()?.absoluteString {
                     
                     let ref = FIRDatabase.database().reference(fromURL: "https://news-cc704.firebaseio.com/")
-                    let cuid = FIRAuth.auth()?.currentUser?.uid
-                    let userReference = ref.child("Users").child(cuid!).child("Posted Data")
-                    let values = ["postedPicURL": selectedPicURL]
+                    
+                    
+                    let userReference = ref.child("Users").child(uidd!).child("PostedDataByUser")
+                    let postedReference = ref.child("PostedData")
+                    let values = ["postedPicURL": selectedPicURL, "postedText": textEntered, "timestamp": stringTImestamp, "timeUTC": utcTimeZoneStr, "reporterName": name!]
+                    postedReference.childByAutoId().updateChildValues(values, withCompletionBlock: { (err, ref) in
+                        
+                        if err != nil {
+                            
+                            print(err!)
+                            return
+                        }
+                        
+                        print("News picture & text saved")
+                        
+                        
+                        
+                        
+                        
+                        
+                    })
+                    
                     userReference.childByAutoId().updateChildValues(values, withCompletionBlock: { (err, ref) in
                         
                         if err != nil {
@@ -150,7 +222,7 @@ class PostingPageController: UIViewController {
                             return
                         }
                         
-                        print("News picture saved")
+                        print("News picture & text saved")
                         
                         
                         
@@ -163,6 +235,8 @@ class PostingPageController: UIViewController {
                         
                         
                     })
+
+                    
                 }
                 
                 
@@ -173,5 +247,7 @@ class PostingPageController: UIViewController {
 
         
     }
+    
+
 
 }

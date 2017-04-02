@@ -9,11 +9,17 @@
 import UIKit
 import Firebase
 
+var name: String!
+
 class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var postedPhotos: [UIImage] = []
+    var postedText: [String] = []
     var imageURLS: [String] = []
     var idlist = [String]()
+    var reporterList = [String]()
+    
+      
     
     
 
@@ -73,6 +79,10 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! TriniNewsCell
         cell.backgroundColor = .red
         cell.postedImageView.sd_setImage(with: URL(string: imageURLS[indexPath.item]))
+        cell.postedTextView.text = postedText[indexPath.item]
+        cell.reportNameLabel.text = reporterList[indexPath.item]
+        
+        
         
         return cell
     }
@@ -92,28 +102,33 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         
         
         
-        let uid = FIRAuth.auth()?.currentUser?.uid
-        
-        
-        
-        FIRDatabase.database().reference().child("Users").child(uid!).child("Posted Data").observeSingleEvent(of: .value, with: {(snapshot) in
+        FIRDatabase.database().reference().child("PostedData").observeSingleEvent(of: .value, with: {(snapshot) in
         
             if let dictionary = snapshot.value as? [String: [String : String]] {
+               
+                
+                print("*****THis is the dictionary \(dictionary).")
                 
                 for info in dictionary {
                     
                     self.idlist.append(info.key)
                     
+                    
+                    
+                    
                 }
-                print("WHAT IS THIS\(self.idlist)")
                 
-                
+              
+
                 for count in 0..<self.idlist.count {
                 
-                if let postedData = dictionary[self.idlist[count]]?["postedPicURL"] {
+                if let postedData = dictionary[self.idlist[count]]?["postedPicURL"], let postedInfo = dictionary[self.idlist[count]]?["postedText"], let name = dictionary[self.idlist[count]]?["reporterName"]{
                     
+                    self.reporterList.append(name)
+                    self.postedText.append(postedInfo)
                     
                     self.imageURLS.append(postedData)
+                    
                     print("*******POSTED DATA HERE \(postedData)")
                     
                     print("imageURL count is \(self.imageURLS.count) and data is \(self.imageURLS)")
@@ -124,14 +139,13 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
                 }
                 }
             }
-            
-           
-        
-        
         
         
         
         }, withCancel: nil)
+        
+        
+        return
         
 
         

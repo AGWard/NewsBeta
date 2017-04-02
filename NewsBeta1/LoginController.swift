@@ -283,6 +283,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         sc.tintColor = .white
         sc.selectedSegmentIndex = 0
         
+        
         sc.translatesAutoresizingMaskIntoConstraints = false
         sc.addTarget(self, action: #selector(toggleTapped), for: .valueChanged)
         
@@ -482,7 +483,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
                         if error != nil {
                             //add alert for Email invalid/Duplicate/PasswordIncorrect
                             
-                            let alert = UIAlertController(title: "Password/Email Invalid", message: "Error - \(error)", preferredStyle: .alert)
+                            let alert = UIAlertController(title: "Password/Email Invalid", message: "Error - \(error!)", preferredStyle: .alert)
                             let ok = UIAlertAction(title: "Got It", style: .default, handler: nil)
                             alert.addAction(ok)
                             
@@ -631,7 +632,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
             
             if error != nil {
             
-            let alert = UIAlertController(title: "Invalid Email/Password", message: "Error - \(error)", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Invalid Email/Password", message: "Error - \(error!)", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(ok)
                 

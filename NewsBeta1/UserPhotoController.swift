@@ -219,6 +219,7 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
             
             
             let fetchResult: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        
             
             if fetchResult.count > 0 {
                 
@@ -242,6 +243,7 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
             } else {
                 
                 print("NO PHOTOS")
+                
                 self.collectionV.reloadData()
                 
                 
@@ -284,6 +286,18 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
         
         present(navController, animated: true, completion: nil)
         
+        
+    }
+    
+    func checkIfThereArePhotos() {
+        
+        if picsArray.count == 0 {
+            
+            
+            collectionV.reloadData()
+            
+            
+        }
         
     }
     

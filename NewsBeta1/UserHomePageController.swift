@@ -9,14 +9,87 @@
 import UIKit
 import Firebase
 
-class UserHomePageController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-    
 
+let cellID = "cellID"
+
+
+class UserHomePageController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
+    var postedPhotos: [UIImage] = []
+    var postedText: [String] = []
+    var imageURLS: [String] = []
+    var idlist = [String]()
+    var reporterList = [String]()
 
     
 ///*************************************************************************PROPERTY/VIEWS SETUP*****************************************************************************************************//
     
+    var myNewsCollectionViewWidthAnchor: NSLayoutConstraint?
     
+    
+    
+    lazy var myNewsCollectionView: UICollectionView = {
+        
+        let layout = UICollectionViewFlowLayout()
+        
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .yellow
+        cv.translatesAutoresizingMaskIntoConstraints = false
+        cv.delegate = self
+        cv.dataSource = self
+        cv.register(myNewsViewCell.self, forCellWithReuseIdentifier: cellID)
+        
+        
+        return cv
+        
+    }()
+    
+    
+    
+    
+    lazy var reportedNewsButton: UIButton = {
+        
+        let button = UIButton()
+        button.setTitle("Your News", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = UIFont(name: "Avenir Next", size: 12)
+        button.addTarget(self, action: #selector(yourNewsTapped), for: .touchUpInside)
+        
+        return button
+        
+    }()
+    
+    
+    
+    let rightView: UIView = {
+        
+        let rView = UIView()
+        rView.translatesAutoresizingMaskIntoConstraints = false
+        rView.backgroundColor = .gray
+        rView.layer.masksToBounds = true
+        
+    
+        return rView
+        
+       
+    }()
+    
+    
+    
+    lazy var leftView: UIView = {
+        
+      let lView = UIView()
+        lView.translatesAutoresizingMaskIntoConstraints = false
+        lView.backgroundColor = .clear
+        lView.layer.masksToBounds = true
+        
+        
+        
+        
+        return lView
+        
+    }()
         
 
     
@@ -102,9 +175,10 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
        let label = UILabel()
         label.textColor = .white
-        label.font = UIFont(name: "Zapfino", size: 20)
+        label.font = UIFont(name: "Avenir Next", size: 14)
         label.numberOfLines = 1
         label.textAlignment = .center
+        
         
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -124,19 +198,36 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         
         let leftNavButton = UIBarButtonItem(customView: leftBarButton)
-        backgroundImageConstraints()
+        
         
         navigationItem.leftBarButtonItem = leftNavButton
         
+        getPostedData()        
         
-        profileRealImageConstraints()
+        
 
+        
+    }
+    
+    override func viewWillLayoutSubviews() {
+        
+        super.viewWillLayoutSubviews()        
+        
+        backgroundImageConstraints()
+        leftRightViewConstraints()
+        
         usernameHolderContraints()
+        profileRealImageConstraints()
+        reportedNewsButtonCOnstraints()
+        
+        
         getUserName()
         
+        checkIfUserIsLoggedIn()
+        setBackground()
+        logoutButtonConstraints()
         
         
-
         
     }
     
@@ -147,18 +238,35 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        
-        checkIfUserIsLoggedIn()
-        setBackground()
-        logoutButtonConstraints()
-        
-        
-        super.viewWillAppear(true)
-        
-        
-        
+
+    
+    ////////// COLLECTION VIEW SETUP ///////////////
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return imageURLS.count
     }
+    
+    
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! myNewsViewCell
+        cell.backgroundColor = .green
+        cell.photoView.sd_setImage(with: URL(string: imageURLS[indexPath.item]))
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: rightView.frame.width, height: 100)
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -413,7 +521,76 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     }
     
+    func yourNewsTapped() {
+       
+        
+       
+        
+        print("tapped")
+        myNewsCollectionViewConstraints()
+        
+        
+        UIView.animate(withDuration: 1.0) {
+            self.myNewsCollectionView.frame = CGRect(x: 0, y: 0, width: self.rightView.frame.width, height: self.rightView.frame.height)
+            self.view.layoutIfNeeded()
+            
+        }
+        
+       
+    }
     
+    func getPostedData() {
+        
+        
+        let uid = FIRAuth.auth()?.currentUser?.uid
+        
+        FIRDatabase.database().reference().child("Users").child(uid!).child("PostedDataByUser").observeSingleEvent(of: .value, with: {(snapshot) in
+            
+            if let dictionary = snapshot.value as? [String: [String : String]] {
+                
+                
+                print("*****THis is user dictionary \(dictionary).")
+                
+                for info in dictionary {
+                    
+                    self.idlist.append(info.key)
+                    
+                    
+                    
+                    
+                }
+                
+                
+                
+                for count in 0..<self.idlist.count {
+                    
+                    if let postedData = dictionary[self.idlist[count]]?["postedPicURL"], let postedInfo = dictionary[self.idlist[count]]?["postedText"], let name = dictionary[self.idlist[count]]?["reporterName"]{
+                        
+                        self.reporterList.append(name)
+                        self.postedText.append(postedInfo)
+                        
+                        self.imageURLS.append(postedData)
+                        
+                        print("*******POSTED DATA HERE \(postedData)")
+                        
+                        print("imageURL count is \(self.imageURLS.count) and data is \(self.imageURLS)")
+                        
+                        self.myNewsCollectionView.reloadData()
+                        
+                        
+                    }
+                }
+            }
+            
+            
+            
+        }, withCancel: nil)
+        
+        
+        return
+        
+        
+    }
     
     
 }

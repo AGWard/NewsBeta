@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C3F305A1E9196E800B86E42 /* myNewsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3F30591E9196E800B86E42 /* myNewsViewCell.swift */; };
 		0C5355BD1E528EB2004FFCE4 /* TriniNewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5355BC1E528EB2004FFCE4 /* TriniNewsCell.swift */; };
 		0C5355BF1E56683D004FFCE4 /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5355BE1E56683D004FFCE4 /* MenuBar.swift */; };
 		0C5355C11E568260004FFCE4 /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5355C01E568260004FFCE4 /* MenuCell.swift */; };
@@ -22,7 +23,6 @@
 		0C9381CA1E81D90E00314E41 /* PostingPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C9381C91E81D90E00314E41 /* PostingPageController.swift */; };
 		0C94E3821E5A2D360015A90E /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C94E3811E5A2D360015A90E /* FeedCell.swift */; };
 		0C94E3861E6C64CF0015A90E /* UserProfileConstr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C94E3851E6C64CF0015A90E /* UserProfileConstr.swift */; };
-		0C94E3881E6C83830015A90E /* MediaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C94E3871E6C83830015A90E /* MediaController.swift */; };
 		0C94E38B1E6CDFBA0015A90E /* PhotoSelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C94E38A1E6CDFBA0015A90E /* PhotoSelectionCell.swift */; };
 		0C94E3911E6F788A0015A90E /* UserPhotoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C94E3901E6F788A0015A90E /* UserPhotoController.swift */; };
 		0CBB54311E47E93E0020EE2F /* ProfileImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBB54301E47E93E0020EE2F /* ProfileImageCache.swift */; };
@@ -32,6 +32,7 @@
 
 /* Begin PBXFileReference section */
 		0C1B6D0F1E884E300063389F /* NewsBeta1-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NewsBeta1-Bridging-Header.h"; sourceTree = "<group>"; };
+		0C3F30591E9196E800B86E42 /* myNewsViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = myNewsViewCell.swift; sourceTree = "<group>"; };
 		0C5355BC1E528EB2004FFCE4 /* TriniNewsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TriniNewsCell.swift; sourceTree = "<group>"; };
 		0C5355BE1E56683D004FFCE4 /* MenuBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
 		0C5355C01E568260004FFCE4 /* MenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
@@ -50,7 +51,6 @@
 		0C9381C91E81D90E00314E41 /* PostingPageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostingPageController.swift; sourceTree = "<group>"; };
 		0C94E3811E5A2D360015A90E /* FeedCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedCell.swift; sourceTree = "<group>"; };
 		0C94E3851E6C64CF0015A90E /* UserProfileConstr.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileConstr.swift; sourceTree = "<group>"; };
-		0C94E3871E6C83830015A90E /* MediaController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaController.swift; sourceTree = "<group>"; };
 		0C94E38A1E6CDFBA0015A90E /* PhotoSelectionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoSelectionCell.swift; sourceTree = "<group>"; };
 		0C94E3901E6F788A0015A90E /* UserPhotoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPhotoController.swift; sourceTree = "<group>"; };
 		0CBB54301E47E93E0020EE2F /* ProfileImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileImageCache.swift; sourceTree = "<group>"; };
@@ -72,6 +72,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C1B6D121E8D7DC90063389F /* Feed Cells */ = {
+			isa = PBXGroup;
+			children = (
+				0C5355BC1E528EB2004FFCE4 /* TriniNewsCell.swift */,
+			);
+			name = "Feed Cells";
+			sourceTree = "<group>";
+		};
+		0C3F30581E9196A600B86E42 /* UserHomePageCells */ = {
+			isa = PBXGroup;
+			children = (
+				0C3F30591E9196E800B86E42 /* myNewsViewCell.swift */,
+			);
+			name = UserHomePageCells;
+			sourceTree = "<group>";
+		};
 		0C6A5F771E3E69700008C3C3 = {
 			isa = PBXGroup;
 			children = (
@@ -95,6 +111,7 @@
 			children = (
 				0CBB542F1E47E91C0020EE2F /* ExtentionCache */,
 				0C6A5FA11E3E88090008C3C3 /* Views */,
+				0C3F30581E9196A600B86E42 /* UserHomePageCells */,
 				0C6A5F9E1E3E73340008C3C3 /* Models */,
 				0C6A5F971E3E6D490008C3C3 /* Controllers */,
 				0C6A5F831E3E69710008C3C3 /* AppDelegate.swift */,
@@ -113,7 +130,6 @@
 				0C6A5F981E3E6D5E0008C3C3 /* HomeController.swift */,
 				0C6A5F9C1E3E709C0008C3C3 /* LoginController.swift */,
 				0C6A5FA21E3EA6A10008C3C3 /* UserHomePageController.swift */,
-				0C94E3871E6C83830015A90E /* MediaController.swift */,
 				0C94E3901E6F788A0015A90E /* UserPhotoController.swift */,
 				0C9381C91E81D90E00314E41 /* PostingPageController.swift */,
 			);
@@ -143,7 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				0C94E3811E5A2D360015A90E /* FeedCell.swift */,
-				0C5355BC1E528EB2004FFCE4 /* TriniNewsCell.swift */,
+				0C1B6D121E8D7DC90063389F /* Feed Cells */,
 				0C5355C01E568260004FFCE4 /* MenuCell.swift */,
 				0C5355BE1E56683D004FFCE4 /* MenuBar.swift */,
 				0C1B6D0F1E884E300063389F /* NewsBeta1-Bridging-Header.h */,
@@ -316,7 +332,7 @@
 				0C5355C11E568260004FFCE4 /* MenuCell.swift in Sources */,
 				0C9381CA1E81D90E00314E41 /* PostingPageController.swift in Sources */,
 				0CBB54311E47E93E0020EE2F /* ProfileImageCache.swift in Sources */,
-				0C94E3881E6C83830015A90E /* MediaController.swift in Sources */,
+				0C3F305A1E9196E800B86E42 /* myNewsViewCell.swift in Sources */,
 				0C5355BD1E528EB2004FFCE4 /* TriniNewsCell.swift in Sources */,
 				0C6A5FA31E3EA6A10008C3C3 /* UserHomePageController.swift in Sources */,
 			);

@@ -46,29 +46,62 @@ extension UserHomePageController {
     
     func profileRealImageConstraints() {
         
-        view.addSubview(profileRealImage)
         
-        profileRealImage.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1/3).isActive = true
-        profileRealImage.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1/3).isActive = true
-        profileRealImage.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: 100).isActive = true
-        profileRealImage.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        leftView.addSubview(profileRealImage)
+        
+        profileRealImage.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1/6).isActive = true
+        profileRealImage.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1/6).isActive = true
+        profileRealImage.topAnchor.constraint(equalTo: userNamelabelHolder.bottomAnchor, constant: 20).isActive = true
+        profileRealImage.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor, constant: 1).isActive = true
         
         //added the corner radius(aka making the frame edges curve) in the constraints so I can have access to "view"
         
-        profileRealImage.layer.cornerRadius = (view.frame.width * 1/3) * 0.5
+        profileRealImage.layer.cornerRadius = (view.frame.width * 1/6) * 0.5
         
     }
     
     
     func usernameHolderContraints() {
         
-        view.addSubview(userNamelabelHolder)
+        
+        leftView.addSubview(userNamelabelHolder)
         
         
-        userNamelabelHolder.widthAnchor.constraint(equalToConstant: 200).isActive = true
-        userNamelabelHolder.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        userNamelabelHolder.bottomAnchor.constraint(equalTo: profileRealImage.topAnchor, constant: -2).isActive = true
-        userNamelabelHolder.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        userNamelabelHolder.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1/4).isActive = true
+        userNamelabelHolder.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        userNamelabelHolder.topAnchor.constraint(equalTo: view.topAnchor, constant: 70).isActive = true
+        userNamelabelHolder.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 1).isActive = true
+        
+    }
+    
+    
+    func leftRightViewConstraints() {
+        
+        
+        view.addSubview(leftView)
+        view.addSubview(rightView)
+    
+        let newHeight = view.frame.height-topLayoutGuide.length
+       
+        
+        leftView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1/4).isActive = true
+        leftView.heightAnchor.constraint(equalToConstant: CGFloat(view.frame.height) - topLayoutGuide.length).isActive = true
+        leftView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        
+        rightView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 3/4).isActive = true
+        rightView.heightAnchor.constraint(equalToConstant: newHeight).isActive = true
+        rightView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        rightView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+    }
+    
+    
+    func reportedNewsButtonCOnstraints() {
+        
+        leftView.addSubview(reportedNewsButton)
+        
+        reportedNewsButton.widthAnchor.constraint(equalTo: leftView.widthAnchor).isActive = true
+        reportedNewsButton.centerXAnchor.constraint(equalTo: leftView.centerXAnchor).isActive = true
+        reportedNewsButton.topAnchor.constraint(equalTo: profileRealImage.bottomAnchor, constant: 10).isActive = true
         
         
     }
@@ -76,9 +109,14 @@ extension UserHomePageController {
     
     
     
-    
-    
-    
+    func myNewsCollectionViewConstraints() {
+        
+        rightView.addSubview(myNewsCollectionView)
+        
+        myNewsCollectionView.frame = CGRect(x: view.frame.width, y: 0, width: rightView.frame.width, height: rightView.frame.height)
+        
+        
+    }
     
     
 }
