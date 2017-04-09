@@ -107,13 +107,13 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         
         switch intIndex {
         case 0:
-            homeController?.leftNavLabel.text = "Trini News"
+            homeController?.titleLabel.text = "Trini News"
         case 1:
-            homeController?.leftNavLabel.text = "Top Stories"
+            homeController?.titleLabel.text = "Top Stories"
         case 2:
-            homeController?.leftNavLabel.text = "Favourites"
+            homeController?.titleLabel.text = "Favourites"
         case 3:
-            homeController?.leftNavLabel.text = "Trending"
+            homeController?.titleLabel.text = "Trending"
         default:
             print("oither")
         }

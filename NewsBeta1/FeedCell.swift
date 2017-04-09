@@ -18,6 +18,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     var imageURLS: [String] = []
     var idlist = [String]()
     var reporterList = [String]()
+    var userProfilePicFeed = [String]()
     
       
     
@@ -81,7 +82,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         cell.postedImageView.sd_setImage(with: URL(string: imageURLS[indexPath.item]))
         cell.postedTextView.text = postedText[indexPath.item]
         cell.reportNameLabel.text = reporterList[indexPath.item]
-        
+        cell.feedUserPic.sd_setImage(with: URL(string: userProfilePicFeed[indexPath.item]))
         
         
         return cell
@@ -122,12 +123,14 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
 
                 for count in 0..<self.idlist.count {
                 
-                if let postedData = dictionary[self.idlist[count]]?["postedPicURL"], let postedInfo = dictionary[self.idlist[count]]?["postedText"], let name = dictionary[self.idlist[count]]?["reporterName"]{
+                if let postedData = dictionary[self.idlist[count]]?["postedPicURL"], let postedInfo = dictionary[self.idlist[count]]?["postedText"], let name = dictionary[self.idlist[count]]?["reporterName"], let userpic = dictionary[self.idlist[count]]?["userImage"]{
                     
                     self.reporterList.append(name)
                     self.postedText.append(postedInfo)
                     
                     self.imageURLS.append(postedData)
+                    self.userProfilePicFeed.append(userpic)
+                    
                     
                     print("*******POSTED DATA HERE \(postedData)")
                     

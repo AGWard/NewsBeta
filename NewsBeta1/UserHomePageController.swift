@@ -22,7 +22,17 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     var reporterList = [String]()
 
     
-///*************************************************************************PROPERTY/VIEWS SETUP*****************************************************************************************************//
+    
+    
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                // ***************  Property Views Setup  *********** //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    
+    
     
     var myNewsCollectionViewWidthAnchor: NSLayoutConstraint?
     
@@ -50,11 +60,11 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     lazy var reportedNewsButton: UIButton = {
         
         let button = UIButton()
-        button.setTitle("Your News", for: .normal)
+        button.setTitle("Your Posts", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = UIFont(name: "Avenir Next", size: 12)
-        button.addTarget(self, action: #selector(yourNewsTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(yourPosts), for: .touchUpInside)
         
         return button
         
@@ -202,7 +212,8 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         navigationItem.leftBarButtonItem = leftNavButton
         
-        getPostedData()        
+        getPostedData()
+        checkIfUserIsLoggedIn()
         
         
 
@@ -221,12 +232,12 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         reportedNewsButtonCOnstraints()
         
         
-        getUserName()
         
-        checkIfUserIsLoggedIn()
-        setBackground()
+        
+        
+        setBackgroundBaseOnGender()
         logoutButtonConstraints()
-        
+   
         
         
     }
@@ -276,6 +287,8 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     func checkIfUserIsLoggedIn() {
         
+    
+        
         
         if FIRAuth.auth()?.currentUser?.uid == nil {
             
@@ -284,7 +297,17 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         } else {
             
             
-            self.navigationItem.title = "Profile"
+            self.navigationItem.title = gotUserName
+            userNamelabelHolder.text = gotUserName
+            if userProfilePicURLString == nil {
+                print("empty dude!!")
+            } else {
+                
+                profileRealImage.sd_setImage(with: URL(string: userProfilePicURLString))
+            }
+
+
+            
         }
         
     }
@@ -326,53 +349,50 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
     }
     
-    func getUserName() {
-        
-        
-        let uid = FIRAuth.auth()?.currentUser?.uid
-        FIRDatabase.database().reference().child("Users").child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
-            
-            if let dictoionary = snapshot.value as? [String: AnyObject] {
-                
-                self.userNamelabelHolder.text = dictoionary["name"] as? String
-                if let profileImageUURl = dictoionary["profileImageURL"] as? String {
-                    
-                    self.profileRealImage.loadImagesUsingCacheWithURLString(urlString: profileImageUURl)
-                    
-                    
-//                let uurls = URL(string: profileImageUURl)
-//                    URLSession.shared.dataTask(with: uurls!, completionHandler: { (data, response, error) in
-//                        
-//                        if error != nil {
-//                            
-//                            print(error!)
-//                            return
-//                        }
-//                        
-//                        print("picture retrieved")
-//                        
-//                        DispatchQueue.global(qos: .userInitiated).async {
-//                            let image = UIImage(data: data!)
-//                            
-//                            
-//                            DispatchQueue.main.async {
-//                                
-//                                self.profileRealImage.image = image
-//                            }
-//                        }
-//                        
-//                        
-//                        
-//                    }).resume()
-              
-                }
-            }
-            
-            
-        }, withCancel: nil)
-        
-        
-    }
+    
+    
+    
+    
+//    func getUserNameAndProfilePic() {
+//    
+//    
+//        userNamelabelHolder.text = gotUserName
+//        
+//        if userProfilePicURLString == nil {
+//            
+//            
+//            print("empty dude!!")
+//        } else {
+//            
+//            
+//            profileRealImage.sd_setImage(with: URL(string: userProfilePicURLString))
+//        }
+//    
+//            
+//        
+//        
+//        
+////        FIRDatabase.database().reference().child(parentUser).child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
+////            
+////            if let dictoionary = snapshot.value as? [String: AnyObject] {
+////                
+////                self.userNamelabelHolder.text = dictoionary[username] as? String
+////                if let profileImageUURl = dictoionary[profileImageURL] as? String {
+////                    
+////                    
+////                    
+////                    self.profileRealImage.loadImagesUsingCacheWithURLString(urlString: profileImageUURl)
+////                    
+////                    
+////              
+////                }
+////            }
+////            
+////            
+////        }, withCancel: nil)
+//        
+//        
+//    }
     
     
         
@@ -424,67 +444,68 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         if let selectedImage = selectedImageFromPicker {
             
             profileRealImage.image = selectedImage
-
-            
-        }
-        
-        dismiss(animated: true, completion: nil)
-        
-        let imageName = NSUUID().uuidString
-        let storageRef = FIRStorage.storage().reference().child("profilr_Images").child("\(imageName).png")
-        
-        if let uploadData = UIImagePNGRepresentation(self.profileRealImage.image!) {
             
             
-            storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
+            
+            let imageName = NSUUID().uuidString
+            let storageRef = FIRStorage.storage().reference().child("profilr_Images").child("\(imageName).png")
+            
+            if let uploadData = UIImagePNGRepresentation(self.profileRealImage.image!) {
                 
-                if error != nil {
-                    
-                    print (error!)
-                    return
-                }
                 
-                if let profileImageURL = metadata?.downloadURL()?.absoluteString {
+                storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
                     
-                    let ref = FIRDatabase.database().reference(fromURL: "https://news-cc704.firebaseio.com/")
-                    let cuid = FIRAuth.auth()?.currentUser?.uid
-                    let userReference = ref.child("Users").child(cuid!)
-                    let values = ["profileImageURL": profileImageURL]
-                    userReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
+                    if error != nil {
                         
-                        if err != nil {
+                        print (error!)
+                        return
+                    }
+                    
+                    if let profileImageURL = metadata?.downloadURL()?.absoluteString {
+                        
+                        let ref = FIRDatabase.database().reference(fromURL: "https://news-cc704.firebaseio.com/")
+                        let cuid = FIRAuth.auth()?.currentUser?.uid
+                        let userReference = ref.child("Users").child(cuid!)
+                        let values = ["profileImageURL": profileImageURL]
+                        userReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
                             
-                            print(err!)
-                            return
-                        }
-                        
-                        print("picture saved")
-                        
-                        
-                        
-                    })
-                }
+                            if err != nil {
+                                
+                                print(err!)
+                                return
+                            }
+                            
+                            print("picture saved")
+                            
+                            let uid = FIRAuth.auth()?.currentUser?.uid
+                            
+                            let fbAquisition = FireBaseAquistion(userIDNumber: uid!, childRef: parentUser, reference: username, profileImageRef: profileImageURL)
+                            
+                            fbAquisition.getUserDetails()
+                            
+                            self.dismiss(animated: true, completion: nil)
+                            
+                        })
+                    }
+                    
+                    
+                })
                 
-            
-            })
+                
+            }
 
             
         }
         
+
         
         
-        
-//        let ref = FIRDatabase.database().reference(fromURL: "https://news-cc704.firebaseio.com/")
-//        let uid = FIRAuth.auth()?.currentUser?.uid
-//        let usersRef = ref.child("Users").child(uid)
-//        
-    
     
     }
     
     
 
-    func setBackground() {
+    func setBackgroundBaseOnGender() {
         
         let uid = FIRAuth.auth()?.currentUser?.uid
         FIRDatabase.database().reference().child("Users").child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
@@ -521,7 +542,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     }
     
-    func yourNewsTapped() {
+    func yourPosts() {
        
         
        

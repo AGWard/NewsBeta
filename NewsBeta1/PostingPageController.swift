@@ -141,22 +141,6 @@ class PostingPageController: UIViewController {
     
     func postNews() {
         
-        let uid = FIRAuth.auth()?.currentUser?.uid
-        FIRDatabase.database().reference().child("Users").child(uid!).observeSingleEvent(of: .value, with: {(snapshot) in
-            
-            if let dictionary = snapshot.value as? [String: AnyObject] {
-                
-                
-                name = dictionary["name"] as? String
-                
-            }
-            
-            
-            
-            
-            
-            
-        }, withCancel: nil)
 
         
         
@@ -196,7 +180,7 @@ class PostingPageController: UIViewController {
                     
                     let userReference = ref.child("Users").child(uidd!).child("PostedDataByUser")
                     let postedReference = ref.child("PostedData")
-                    let values = ["postedPicURL": selectedPicURL, "postedText": textEntered, "timestamp": stringTImestamp, "timeUTC": utcTimeZoneStr, "reporterName": name!]
+                    let values = ["postedPicURL": selectedPicURL, "postedText": textEntered, "timestamp": stringTImestamp, "timeUTC": utcTimeZoneStr, "reporterName": gotUserName!, "userImage": userProfilePicURLString!]
                     postedReference.childByAutoId().updateChildValues(values, withCompletionBlock: { (err, ref) in
                         
                         if err != nil {

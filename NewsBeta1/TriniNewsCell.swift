@@ -10,6 +10,25 @@ import UIKit
 
 class TriniNewsCell: BaseCell {
     
+    lazy var feedUserPic: UIImageView = {
+        
+        let pic = UIImageView()
+        pic.translatesAutoresizingMaskIntoConstraints = false
+        pic.contentMode = .scaleAspectFill
+        pic.layer.cornerRadius = 0.5 * 30
+        //        pic.layer.borderWidth = 2
+        //        pic.layer.borderColor = UIColor.red.cgColor
+        pic.clipsToBounds = true
+        pic.image = UIImage(named: "default")
+        pic.isUserInteractionEnabled = true
+        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
+        
+        
+        return pic
+    }()
+    
+    
+    
     let reportNameLabel: UILabel = {
         
         let label = UILabel()
@@ -70,6 +89,7 @@ class TriniNewsCell: BaseCell {
         postedImageViewConstraints()
         postedTextViewConstraints()
         reporterLabelConstraints()
+        feedUserPicConstraints()
         
     }
     
@@ -113,6 +133,34 @@ class TriniNewsCell: BaseCell {
         reportNameLabel.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/4).isActive = true
         reportNameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0).isActive = true
  
+    }
+    
+    func feedUserPicConstraints() {
+        
+        addSubview(feedUserPic)
+        
+        feedUserPic.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        feedUserPic.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        feedUserPic.bottomAnchor.constraint(equalTo: postedImageView.topAnchor, constant: -5).isActive = true
+        feedUserPic.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 5).isActive = true
+        
+        
+        
+    }
+    
+    
+    
+    func profilePicTapped() {
+        
+        let userHome = UserHomePageController()
+        userHome.modalPresentationStyle = .pageSheet
+        
+        let navC = UINavigationController(rootViewController: userHome)
+        
+        self.window?.rootViewController?.present(navC, animated: true, completion: nil)
+        
+        
+        
     }
     
     

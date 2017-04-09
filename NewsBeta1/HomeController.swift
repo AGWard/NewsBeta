@@ -12,36 +12,18 @@ import Firebase
 
 
 
-class BaseCell: UICollectionViewCell {
-    
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupViews()
-        
-    }
-    
-    func setupViews() {
-        
-        
-    }
-    
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    
-    
-}
-
-
-
-
-
 class HomeController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    ///*************************************************************************PROPERTY/VIEWS SETUP*****************************************************************************************************//
+let cellId = "cellID"
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+                            // ***************  Property/Views Setup *********** //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    
+    
 
     
     
@@ -68,9 +50,6 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }()
     
  
-    let cellId = "cellID"
-   
-
     
     lazy var menuBar: MenuBar = {
         
@@ -86,14 +65,17 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     
-    lazy var leftNavLabel: UILabel = {
+    lazy var titleLabel: UILabel = {
         
         let button = UILabel()
         button.text = "TriniNews"
+        button.textAlignment = .center
         button.textColor = .red
         button.font = UIFont.boldSystemFont(ofSize: 16)
-        button.frame = CGRect(x: 0, y: 0, width: 90, height: 30) //CGRectMake(0, 0, 30, 30)
-//        button.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
+        button.isUserInteractionEnabled = true
+        button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postNewsAction)))
+        button.frame = CGRect(x: 0, y: 0, width: 90, height: 30)
+
         
         
         return button
@@ -121,8 +103,6 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         pic.translatesAutoresizingMaskIntoConstraints = false
         pic.contentMode = .scaleAspectFill
         pic.layer.cornerRadius = 0.5 * 40
-//        pic.layer.borderWidth = 2
-//        pic.layer.borderColor = UIColor.red.cgColor
         pic.clipsToBounds = true
         pic.image = UIImage(named: "default")
         pic.isUserInteractionEnabled = true
@@ -132,33 +112,13 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         return pic
     }()
     
-    
-    
-    
-//    lazy var rightButtonLabel: UILabel = {
-//        
-//       let button = UILabel()
-//        button.translatesAutoresizingMaskIntoConstraints = false
-////        button.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-//        button.backgroundColor = .clear
-//        button.text = "Welcome"
-//        button.textColor = .white
-//        button.font = UIFont(name: "Avenir Next", size: 13)
-//        button.textAlignment = .center
-//        
-//        
-//        
-//        return button
-//    }()
-//    
+
     
     lazy var titleLogo: UIImageView = {
         
         let pic = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 30))
         pic.contentMode = .scaleAspectFit
         pic.layer.cornerRadius = 0.5 * 40
-        //        pic.layer.borderWidth = 2
-        //        pic.layer.borderColor = UIColor.red.cgColor
         pic.clipsToBounds = true
         pic.image = UIImage(named: "logoNews")
         pic.isUserInteractionEnabled = true
@@ -170,14 +130,27 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }()
 
     
+    
+    
+    
+    
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                // ***************  View Did Load/Will Appear *********** //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///******************************************************************************VIEW DID LOAD*******************************************************************************************************//    
-
+    
+    
+    
+    
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .darkText
-        
+        checkIfUserIsLoggedIn()
         
 
        
@@ -196,20 +169,21 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
                 
-        checkIfUserIsLoggedIn()
+        
         
         
         collectionViewConstraints()
-        let leftLabel = UIBarButtonItem(customView: leftNavLabel)
+//        let leftLabel = UIBarButtonItem(customView: leftNavLabel)
         let rightBarButton = UIBarButtonItem(customView: rightButtonView)
         
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
-        self.navigationItem.leftBarButtonItem = leftLabel
+//        self.navigationItem.leftBarButtonItem = leftLabel
         self.navigationItem.rightBarButtonItem = rightBarButton
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        self.navigationItem.titleView = titleLogo
+//        self.navigationItem.titleView = titleLogo
+        self.navigationItem.titleView = titleLabel
         
         rightBarViewConstraints()
         menuBarConstraints()
@@ -219,64 +193,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
     }
     
-    ///*****************************************************************************CONSTRAINT FUNCTIONS*************************************************************************************************//
-    
-    
-    
-    func collectionViewConstraints() {
         
-        collectionVw.register(FeedCell.self, forCellWithReuseIdentifier: cellId)
-
-        
-        view.addSubview(collectionVw)
-
-        collectionVw.frame = view.frame
-        
-    }
-    
-    
-    
-    
-    private func menuBarConstraints() {
-        
-        view.addSubview(menuBar)
-        
-        navigationController?.hidesBarsOnSwipe = true
-        
-        
-//        menuBar.widthAnchor.constraint(equalToConstant: 380).isActive = true
-        menuBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        menuBar.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-        menuBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        menuBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
-        
-        
-        
-    }
-    
-    
-    
-    
-    
-    func rightBarViewConstraints() {
-        
-        rightButtonView.addSubview(rightbarPic)
-//        rightButtonView.addSubview(rightButtonLabel)
-        
-        
-        rightbarPic.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        rightbarPic.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        rightbarPic.centerXAnchor.constraint(equalTo: rightButtonView.centerXAnchor).isActive = true
-        rightbarPic.centerYAnchor.constraint(equalTo: rightButtonView.centerYAnchor).isActive = true
-        
-//        rightButtonLabel.widthAnchor.constraint(equalToConstant: 70).isActive = true
-//        rightButtonLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-//        rightButtonLabel.topAnchor.constraint(equalTo: rightButtonView.topAnchor, constant: 0).isActive = true
-//        rightButtonLabel.centerXAnchor.constraint(equalTo: rightButtonView.centerXAnchor).isActive = true
-        
-        
-    }
-    
 
   
     
@@ -292,26 +209,13 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
             
         }
         else {
-            
-            let uid = FIRAuth.auth()?.currentUser?.uid
-            FIRDatabase.database().reference().child("Users").child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
+ 
+                let uid = FIRAuth.auth()?.currentUser?.uid
                 
-                if let dictionary = snapshot.value as? [String: AnyObject] {
-                    
-                    if let profileImageURLs = dictionary["profileImageURL"] as? String {
-                    
-//                    self.rightButtonLabel.text = dictionary["name"] as? String
-                    self.rightbarPic.loadImagesUsingCacheWithURLString(urlString: profileImageURLs)
-                   
-                    
-                    
-                    
-                    print(dictionary)
-                    }
-                    
-                }
+                let fbAquisition = FireBaseAquistion(userIDNumber: uid!, childRef: parentUser, reference: username, profileImageRef: profileImageURL)
                 
-            }, withCancel: nil)
+                fbAquisition.getUserDetails()
+   
             
         }
     }
@@ -347,6 +251,8 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
         present(navC, animated: true, completion: nil)
         
+
+        
     }
     
     
@@ -355,26 +261,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     
-//    func addCollectionView() {
-//        
-//        
-//        
-//        let layout = UICollectionViewFlowLayout()
-//        layout.sectionHeadersPinToVisibleBounds = true
-//        layout.scrollDirection = .horizontal
-//        layout.minimumLineSpacing = 0
-//        
-//        let collectionV = UICollectionView(frame: view.frame, collectionViewLayout: layout)
-//        collectionV.register(NewsCell.self, forCellWithReuseIdentifier: cellId)
-//        collectionV.backgroundColor = .white
-//        collectionV.delegate = self
-//        collectionV.dataSource = self
-//        collectionV.isPagingEnabled = true
-//        collectionV.contentInset = UIEdgeInsetsMake(140, 0, 0, 0)
-//        
-//        view.addSubview(collectionV)
-//        
-//    }
+
     
     
     
@@ -406,13 +293,13 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         switch intIndex {
         case 0:
-            leftNavLabel.text = "Trini News"
+            titleLabel.text = "Trini News"
         case 1:
-            leftNavLabel.text = "Top Stories"
+            titleLabel.text = "Top Stories"
         case 2:
-            leftNavLabel.text = "Favourites"
+            titleLabel.text = "Favourites"
         case 3:
-            leftNavLabel.text = "Trending"
+            titleLabel.text = "Trending"
         default:
             print("oither")
         }
