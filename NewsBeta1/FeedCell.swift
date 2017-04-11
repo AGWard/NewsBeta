@@ -19,6 +19,9 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     var idlist = [String]()
     var reporterList = [String]()
     var userProfilePicFeed = [String]()
+    var timestampArray: [String] = []
+    var postArray = [String]()
+    
     
       
     
@@ -73,16 +76,20 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return imageURLS.count
+        
+        print(arrays.count)
+        return reveredArrays.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! TriniNewsCell
         cell.backgroundColor = .red
-        cell.postedImageView.sd_setImage(with: URL(string: imageURLS[indexPath.item]))
-        cell.postedTextView.text = postedText[indexPath.item]
-        cell.reportNameLabel.text = reporterList[indexPath.item]
-        cell.feedUserPic.sd_setImage(with: URL(string: userProfilePicFeed[indexPath.item]))
+        
+        let newArrays = reveredArrays[indexPath.row]
+        cell.postedImageView.sd_setImage(with: URL(string: newArrays.postedPicURL!))
+        cell.postedTextView.text = newArrays.postedText
+        cell.reportNameLabel.text = newArrays.reporterName
+        cell.feedUserPic.sd_setImage(with: URL(string: newArrays.userImage!))
         
         
         return cell
@@ -97,56 +104,122 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         
     }
     
+    var arrays = [TimeSort]()
+    var reveredArrays = [TimeSort]()
+    var userID: String?
     
     func getPostedData() {
         
-        
-        
-        
-        FIRDatabase.database().reference().child("PostedData").observeSingleEvent(of: .value, with: {(snapshot) in
-        
-            if let dictionary = snapshot.value as? [String: [String : String]] {
-               
+        let ref = FIRDatabase.database().reference().child("PostedData")
+        ref.observe(.childAdded, with: { (snapshot) in
+            
+            
+            
+            print(snapshot)
+            
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+            
+            
+            
+                let message = TimeSort()
+                    message.setValuesForKeys(dictionary)
+                    print(message.reporterName!)
+            
+                    self.arrays.append(message)
+                    self.reveredArrays = self.arrays.reversed()
+                    print(self.arrays)
                 
-                print("*****THis is the dictionary \(dictionary).")
                 
-                for info in dictionary {
-                    
-                    self.idlist.append(info.key)
-                    
-                    
-                    
-                    
-                }
+                self.collectionViews.reloadData()
                 
-              
+            
 
-                for count in 0..<self.idlist.count {
                 
-                if let postedData = dictionary[self.idlist[count]]?["postedPicURL"], let postedInfo = dictionary[self.idlist[count]]?["postedText"], let name = dictionary[self.idlist[count]]?["reporterName"], let userpic = dictionary[self.idlist[count]]?["userImage"]{
-                    
-                    self.reporterList.append(name)
-                    self.postedText.append(postedInfo)
-                    
-                    self.imageURLS.append(postedData)
-                    self.userProfilePicFeed.append(userpic)
-                    
-                    
-                    print("*******POSTED DATA HERE \(postedData)")
-                    
-                    print("imageURL count is \(self.imageURLS.count) and data is \(self.imageURLS)")
-                    
-                  self.collectionViews.reloadData()
-                    
-                    
-                }
-                }
-            }
+                            
+        }
+
+            
         
-        
-        
+            
         }, withCancel: nil)
         
+//        FIRDatabase.database().reference().child("PostedData").observe(.value, with: {(snapshot) in
+//            
+//            
+//        print(snapshot)
+//            
+//            if let dictionary = snapshot.value as? [String: [String: AnyObject]] {
+//                
+//                let userID = snapshot.key
+//                
+//                let message = TimeSort()
+//                message.setValuesForKeys(dictionary)
+//                print(message.reporterName!)
+//                
+//                self.arrays.append(message)
+//                print(self.arrays)
+//                
+//            }
+//            
+//    
+//            
+//        }, withCancel: nil)
+        
+   
+        
+        
+        
+//        FIRDatabase.database().reference().child("PostedData").observeSingleEvent(of: .value, with: {(snapshot) in
+//            
+//
+//            
+//        
+//            if let dictionary = snapshot.value as? [String: [String : String]] {
+//               
+//                
+//               
+//                
+//                print("*****THis is the dictionary \(dictionary).")
+//                
+//                for info in dictionary {
+//                    
+//                    self.idlist.append(info.key)
+//                    
+//                    
+//                    
+//                    
+//                }
+//                
+//              
+//
+//                for count in 0..<self.idlist.count {
+//                
+//                if let postedData = dictionary[self.idlist[count]]?["postedPicURL"], let postedInfo = dictionary[self.idlist[count]]?["postedText"], let name = dictionary[self.idlist[count]]?["reporterName"], let userpic = dictionary[self.idlist[count]]?["userImage"], let time = dictionary[self.idlist[count]]?[timestamp]{
+//                    
+//                    self.reporterList.append(name)
+//                    self.postedText.append(postedInfo)
+//                    
+//                    self.imageURLS.append(postedData)
+//                    self.userProfilePicFeed.append(userpic)
+//                    self.timestampArray.append(time)
+//                    
+//                    
+//                    print("*******POSTED DATA HERE \(postedData)")
+//                    
+//                    print("imageURL count is \(self.imageURLS.count) and data is \(self.imageURLS)")
+//                    
+//                  self.collectionViews.reloadData()
+//                    
+//                    
+//                }
+//                }
+//            }
+//        
+//            
+//        
+//        
+//        }, withCancel: nil)
+//        
         
         return
         

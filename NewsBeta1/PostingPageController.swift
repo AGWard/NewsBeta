@@ -145,8 +145,8 @@ class PostingPageController: UIViewController {
         
         
         let utcTimeZoneStr = formatter.string(from: date)
-        let timestamp = (Date().timeIntervalSince1970)
-        let stringTImestamp = String(timestamp)
+        let timestamp = Int(Date().timeIntervalSince1970)
+        let timestampstring = String(timestamp)
         
         
         guard let textEntered = postTextField.text else {
@@ -180,8 +180,9 @@ class PostingPageController: UIViewController {
                     
                     let userReference = ref.child("Users").child(uidd!).child("PostedDataByUser")
                     let postedReference = ref.child("PostedData")
-                    let values = ["postedPicURL": selectedPicURL, "postedText": textEntered, "timestamp": stringTImestamp, "timeUTC": utcTimeZoneStr, "reporterName": gotUserName!, "userImage": userProfilePicURLString!]
-                    postedReference.childByAutoId().updateChildValues(values, withCompletionBlock: { (err, ref) in
+                    let autoID = postedReference.child(timestampstring)
+                    let values = ["postedPicURL": selectedPicURL, "postedText": textEntered, "timestamp": timestampstring, "timeUTC": utcTimeZoneStr, "reporterName": gotUserName!, "userImage": userProfilePicURLString!] as [String : Any]
+                    autoID.updateChildValues(values, withCompletionBlock: { (err, ref) in
                         
                         if err != nil {
                             
@@ -198,7 +199,7 @@ class PostingPageController: UIViewController {
                         
                     })
                     
-                    userReference.childByAutoId().updateChildValues(values, withCompletionBlock: { (err, ref) in
+                    userReference.child(timestampstring).updateChildValues(values, withCompletionBlock: { (err, ref) in
                         
                         if err != nil {
                             

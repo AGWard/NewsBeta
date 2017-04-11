@@ -115,7 +115,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         case 3:
             homeController?.titleLabel.text = "Trending"
         default:
-            print("oither")
+            print("other")
         }
 
         

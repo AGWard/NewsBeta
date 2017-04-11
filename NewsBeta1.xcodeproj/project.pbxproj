@@ -10,6 +10,7 @@
 		0C384F761E9AADC6009819D7 /* LoginButtonFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C384F751E9AADC6009819D7 /* LoginButtonFunctions.swift */; };
 		0C384F791E9AAF21009819D7 /* BaseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C384F781E9AAF21009819D7 /* BaseCell.swift */; };
 		0C384F7C1E9AB1AF009819D7 /* HomeController View Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C384F7B1E9AB1AF009819D7 /* HomeController View Constraints.swift */; };
+		0C384F7E1E9C59AF009819D7 /* TimeSort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C384F7D1E9C59AF009819D7 /* TimeSort.swift */; };
 		0C3F305A1E9196E800B86E42 /* myNewsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3F30591E9196E800B86E42 /* myNewsViewCell.swift */; };
 		0C3F305D1E93042F00B86E42 /* FireBaseGetInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3F305C1E93042F00B86E42 /* FireBaseGetInfo.swift */; };
 		0C5355BD1E528EB2004FFCE4 /* TriniNewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5355BC1E528EB2004FFCE4 /* TriniNewsCell.swift */; };
@@ -39,6 +40,7 @@
 		0C384F751E9AADC6009819D7 /* LoginButtonFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginButtonFunctions.swift; sourceTree = "<group>"; };
 		0C384F781E9AAF21009819D7 /* BaseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseCell.swift; sourceTree = "<group>"; };
 		0C384F7B1E9AB1AF009819D7 /* HomeController View Constraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "HomeController View Constraints.swift"; sourceTree = "<group>"; };
+		0C384F7D1E9C59AF009819D7 /* TimeSort.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSort.swift; sourceTree = "<group>"; };
 		0C3F30591E9196E800B86E42 /* myNewsViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = myNewsViewCell.swift; sourceTree = "<group>"; };
 		0C3F305C1E93042F00B86E42 /* FireBaseGetInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireBaseGetInfo.swift; sourceTree = "<group>"; };
 		0C5355BC1E528EB2004FFCE4 /* TriniNewsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TriniNewsCell.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 				0C5355BE1E56683D004FFCE4 /* MenuBar.swift */,
 				0C1B6D0F1E884E300063389F /* NewsBeta1-Bridging-Header.h */,
 				0C384F781E9AAF21009819D7 /* BaseCell.swift */,
+				0C384F7D1E9C59AF009819D7 /* TimeSort.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 				0C94E38B1E6CDFBA0015A90E /* PhotoSelectionCell.swift in Sources */,
 				0CBB54331E495A1F0020EE2F /* NavBarExt.swift in Sources */,
 				0C384F7C1E9AB1AF009819D7 /* HomeController View Constraints.swift in Sources */,
+				0C384F7E1E9C59AF009819D7 /* TimeSort.swift in Sources */,
 				0C6A5F841E3E69710008C3C3 /* AppDelegate.swift in Sources */,
 				0C94E3861E6C64CF0015A90E /* UserProfileConstr.swift in Sources */,
 				0C6A5F9D1E3E709C0008C3C3 /* LoginController.swift in Sources */,

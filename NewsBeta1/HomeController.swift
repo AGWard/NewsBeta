@@ -195,9 +195,14 @@ let cellId = "cellID"
     
         
 
-  
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // ***************  View functions *********** //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     
    
+    
+    
     
     func checkIfUserIsLoggedIn() {
         
@@ -255,13 +260,30 @@ let cellId = "cellID"
         
     }
     
+    func postNewsAction() {
+        
+        let mediaController = UserPhotoController()
+        mediaController.modalPresentationStyle = .popover
+        
+        let navController = UINavigationController(rootViewController: mediaController)
+        
+        present(navController, animated: true, completion: nil)
+        
+    }
+    
+
     
     
-  ///*****************************************************************************COLLECTIONVIEW CELLS*************************************************************************************************//
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // ***************  CollectionView Setup *********** //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     
     
 
+    
+    //******Scroll bar functionality on menu bar*********//
     
     
     
@@ -301,11 +323,12 @@ let cellId = "cellID"
         case 3:
             titleLabel.text = "Trending"
         default:
-            print("oither")
+            print("other")
         }
         
     }
-  
+    
+
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 4
@@ -315,9 +338,6 @@ let cellId = "cellID"
         
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! FeedCell
-//        let colors: [UIColor] = [.blue, .green, .yellow, .red]
-//        
-//       cell.backgroundColor = colors[indexPath.item]
         cell.backgroundColor = .green
                
         return cell
@@ -328,18 +348,7 @@ let cellId = "cellID"
     }
     
 
-    func postNewsAction() {
-        
-        let mediaController = UserPhotoController()
-        mediaController.modalPresentationStyle = .popover
-        
-        let navController = UINavigationController(rootViewController: mediaController)
-    
-        present(navController, animated: true, completion: nil)
-        
-    }
-    
-
+   
     
     
 }

@@ -18,10 +18,9 @@ import Firebase
 
 
 
-
 var gotUserName: String!
 var userProfilePicURLString: String!
-
+var genderSelected: String!
 
 
 
@@ -60,19 +59,28 @@ class FireBaseAquistion {
     let usernameReference: String
     let profileImageRef: String
     var property: String?
+    var gender: String?
     
-    init (userIDNumber: String, childRef: String, reference: String, profileImageRef: String, property: String) {
+    init (userIDNumber: String, childRef: String, reference: String, profileImageRef: String, property: String, gender: String) {
         self.userIDNumber = userIDNumber
         self.childRef = childRef
         self.usernameReference = reference
         self.profileImageRef = profileImageRef
+        self.gender = gender
     }
-
     
+ 
     
     convenience init(userIDNumber: String, childRef: String, reference: String, profileImageRef: String) {
-        self.init(userIDNumber: userIDNumber, childRef: childRef, reference: reference, profileImageRef: profileImageRef, property: "")
+        self.init(userIDNumber: userIDNumber, childRef: childRef, reference: reference, profileImageRef: profileImageRef, property: "", gender: "")
     }
+    
+    
+    
+    convenience init(userIDNumber: String, childRef: String, usernameReference: String) {
+        self.init(userIDNumber: userIDNumber, childRef: childRef, usernameReference: usernameReference)
+    }
+
     
     
     func getUserDetails() {
@@ -133,6 +141,27 @@ class FireBaseAquistion {
         }, withCancel: nil)
         
         
+        
+        
+    }
+    
+    
+    func getGenderFBData() {
+        
+        FIRDatabase.database().reference().child(childRef).child(userIDNumber).observeSingleEvent(of: .value, with: {(snapshot) in
+            
+            
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                
+                genderSelected = dictionary[self.usernameReference] as! String
+                
+                
+            }
+            
+            
+            
+            
+        }, withCancel: nil)
         
         
     }

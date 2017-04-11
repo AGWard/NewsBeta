@@ -64,7 +64,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         button.setTitleColor(.white, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = UIFont(name: "Avenir Next", size: 12)
-        button.addTarget(self, action: #selector(yourPosts), for: .touchUpInside)
+        button.addTarget(self, action: #selector(yourPostsButtonTapped), for: .touchUpInside)
         
         return button
         
@@ -199,9 +199,13 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    // ***************  View Did Load/ Will Layout  *********** //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     
- ///******************************************************************************VIEW DID LOAD*******************************************************************************************************//
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -251,7 +255,10 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
 
     
-    ////////// COLLECTION VIEW SETUP ///////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // ***************  Collection View Setup (for user posts) *********** //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return imageURLS.count
@@ -282,7 +289,13 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-///*****************************************************************************VIEW FUNCTIONS*************************************************************************************************//
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // ***************  View Functions  *********** //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    
+    
     
     
     func checkIfUserIsLoggedIn() {
@@ -351,50 +364,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-    
-    
-//    func getUserNameAndProfilePic() {
-//    
-//    
-//        userNamelabelHolder.text = gotUserName
-//        
-//        if userProfilePicURLString == nil {
-//            
-//            
-//            print("empty dude!!")
-//        } else {
-//            
-//            
-//            profileRealImage.sd_setImage(with: URL(string: userProfilePicURLString))
-//        }
-//    
-//            
-//        
-//        
-//        
-////        FIRDatabase.database().reference().child(parentUser).child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
-////            
-////            if let dictoionary = snapshot.value as? [String: AnyObject] {
-////                
-////                self.userNamelabelHolder.text = dictoionary[username] as? String
-////                if let profileImageUURl = dictoionary[profileImageURL] as? String {
-////                    
-////                    
-////                    
-////                    self.profileRealImage.loadImagesUsingCacheWithURLString(urlString: profileImageUURl)
-////                    
-////                    
-////              
-////                }
-////            }
-////            
-////            
-////        }, withCancel: nil)
-//        
-//        
-//    }
-    
-    
+
         
 
     
@@ -508,11 +478,11 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     func setBackgroundBaseOnGender() {
         
         let uid = FIRAuth.auth()?.currentUser?.uid
-        FIRDatabase.database().reference().child("Users").child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
+        FIRDatabase.database().reference().child(parentUser).child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
             
             if let dictoionary = snapshot.value as? [String: AnyObject] {
                 
-                self.genderLabel.text = dictoionary["gender"] as? String
+                self.genderLabel.text = dictoionary[gender] as? String
                 
                 if self.genderLabel.text == "Male" {
                     
@@ -542,12 +512,9 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     }
     
-    func yourPosts() {
+    func yourPostsButtonTapped() {
        
-        
-       
-        
-        print("tapped")
+
         myNewsCollectionViewConstraints()
         
         
