@@ -8,13 +8,18 @@
 
 import UIKit
 
+public let firstIconHeading = "Bacchanal"
+public let secondIconHeading = "Mainstream"
+public let thirdIconHeading = "5.0 Alerts"
+public let fourthIconHeading = "K.I.Ps"
+
 
 class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var homeController: HomeController?
 
     
-    let menuIcons = [UIImage(named: "T&T Flag"), UIImage(named: "globe35"), UIImage(named: "favs"), UIImage(named: "trending")]
+    let menuIcons = [UIImage(named: "D News"), UIImage(named: "Public News"), UIImage(named: "Police"), UIImage(named: "lawyer")]
     
     
     
@@ -107,13 +112,13 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         
         switch intIndex {
         case 0:
-            homeController?.titleLabel.text = "Trini News"
+            homeController?.titleLabel.text = firstIconHeading
         case 1:
-            homeController?.titleLabel.text = "Top Stories"
+            homeController?.titleLabel.text = secondIconHeading
         case 2:
-            homeController?.titleLabel.text = "Favourites"
+            homeController?.titleLabel.text = thirdIconHeading
         case 3:
-            homeController?.titleLabel.text = "Trending"
+            homeController?.titleLabel.text = fourthIconHeading
         default:
             print("other")
         }

@@ -21,9 +21,7 @@ let cellId = "cellID"
                             // ***************  Property/Views Setup *********** //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    
-    
-    
+
 
     
     
@@ -68,7 +66,7 @@ let cellId = "cellID"
     lazy var titleLabel: UILabel = {
         
         let button = UILabel()
-        button.text = "TriniNews"
+        button.text = firstIconHeading
         button.textAlignment = .center
         button.textColor = .red
         button.font = UIFont.boldSystemFont(ofSize: 16)
@@ -87,13 +85,29 @@ let cellId = "cellID"
     
     lazy var rightButtonView: UIView = {
         
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 40))
         view.backgroundColor = .clear
         view.layer.masksToBounds = true
         
         
         
         return view
+    }()
+    
+    
+    lazy var userMenuButton: UIImageView = {
+        
+       let button = UIImageView()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.contentMode = .scaleAspectFill
+        button.layer.cornerRadius = 0.5 * 30
+        button.alpha = 0.0
+        button.clipsToBounds = true
+        button.image = UIImage(named: "default")
+        button.isUserInteractionEnabled = true
+        button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
+        
+        return button
     }()
     
     
@@ -104,9 +118,9 @@ let cellId = "cellID"
         pic.contentMode = .scaleAspectFill
         pic.layer.cornerRadius = 0.5 * 40
         pic.clipsToBounds = true
-        pic.image = UIImage(named: "default")
+        pic.image = UIImage(named: "menu")
         pic.isUserInteractionEnabled = true
-        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
+        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(expandMenu)))
         
         
         return pic
@@ -118,7 +132,6 @@ let cellId = "cellID"
         
         let pic = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 30))
         pic.contentMode = .scaleAspectFit
-        pic.layer.cornerRadius = 0.5 * 40
         pic.clipsToBounds = true
         pic.image = UIImage(named: "logoNews")
         pic.isUserInteractionEnabled = true
@@ -169,10 +182,10 @@ let cellId = "cellID"
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
                 
+         collectionViewConstraints()
         
         
         
-        collectionViewConstraints()
 //        let leftLabel = UIBarButtonItem(customView: leftNavLabel)
         let rightBarButton = UIBarButtonItem(customView: rightButtonView)
         
@@ -185,13 +198,15 @@ let cellId = "cellID"
 //        self.navigationItem.titleView = titleLogo
         self.navigationItem.titleView = titleLabel
         
+       
         rightBarViewConstraints()
         menuBarConstraints()
-        
-        
+        userMenuButton.center = rightbarPic.center
         
         
     }
+    
+
     
         
 
@@ -269,6 +284,7 @@ let cellId = "cellID"
         
         present(navController, animated: true, completion: nil)
         
+        
     }
     
 
@@ -315,15 +331,15 @@ let cellId = "cellID"
         
         switch intIndex {
         case 0:
-            titleLabel.text = "Trini News"
+            titleLabel.text = firstIconHeading
         case 1:
-            titleLabel.text = "Top Stories"
+            titleLabel.text = secondIconHeading
         case 2:
-            titleLabel.text = "Favourites"
+            titleLabel.text = thirdIconHeading
         case 3:
-            titleLabel.text = "Trending"
+            titleLabel.text = fourthIconHeading
         default:
-            print("other")
+            print("Run out of Menu Names!!!!")
         }
         
     }
@@ -345,6 +361,21 @@ let cellId = "cellID"
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: view.frame.width, height: view.frame.height - 40)
+    }
+    
+    func expandMenu() {
+        
+        UIView.animate(withDuration: 0.3) {
+            
+            self.userMenuButton.alpha = 1.0
+            self.userMenuButton.center.x = 30
+            
+        }
+        
+   
+
+        
+        
     }
     
 

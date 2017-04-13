@@ -38,6 +38,22 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
+    lazy var selectedPictureActivityIndicator: UIActivityIndicatorView = {
+        
+        let indicator = UIActivityIndicatorView()
+        indicator.activityIndicatorViewStyle = .whiteLarge
+        indicator.hidesWhenStopped = true
+        indicator.stopAnimating()
+        indicator.clipsToBounds = true
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        return indicator
+    }()
+    
+    
+    
+    
     lazy var myNewsCollectionView: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
@@ -220,6 +236,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         checkIfUserIsLoggedIn()
         
         
+        
 
         
     }
@@ -241,8 +258,8 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         setBackgroundBaseOnGender()
         logoutButtonConstraints()
-   
-        
+        selectedPicActivityIndicatorConstraints()
+        selectedPictureActivityIndicator.startAnimating()
         
     }
     
@@ -536,8 +553,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
             
             if let dictionary = snapshot.value as? [String: [String : String]] {
                 
-                
-                print("*****THis is user dictionary \(dictionary).")
+ 
                 
                 for info in dictionary {
                     
@@ -559,9 +575,6 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
                         
                         self.imageURLS.append(postedData)
                         
-                        print("*******POSTED DATA HERE \(postedData)")
-                        
-                        print("imageURL count is \(self.imageURLS.count) and data is \(self.imageURLS)")
                         
                         self.myNewsCollectionView.reloadData()
                         

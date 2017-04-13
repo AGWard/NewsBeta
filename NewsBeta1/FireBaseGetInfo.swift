@@ -100,7 +100,7 @@ class FireBaseAquistion {
                     
                    userProfilePicURLString = profileImageURLString
                     
-                    print("*****$$$$$$$$$$ \(userProfilePicURLString)")
+                    
                 }
                 
                 
@@ -129,7 +129,7 @@ class FireBaseAquistion {
                     
                     self.property = profileImageURLString
                     
-                    print("*****$$$$$$$$$$ \(userProfilePicURLString)")
+                    
                 }
                 
                 

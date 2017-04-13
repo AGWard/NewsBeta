@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TimeSort: NSObject {
+class DatabaseProperties: NSObject {
     
     
     

@@ -202,7 +202,6 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
     func grabPhotos() {
         
         
-        DispatchQueue.global(qos: .userInitiated).async {
             
             
             
@@ -229,7 +228,9 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
                         
                         image, error in
                         
-                        DispatchQueue.main.async {
+                        DispatchQueue.global(qos: .userInteractive).async {
+                            
+                         
                             self.picsArray.append(image!)
                             self.collectionV.reloadData()
                         }
@@ -253,7 +254,7 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
             
             
             
-        }
+        
         
     }
     

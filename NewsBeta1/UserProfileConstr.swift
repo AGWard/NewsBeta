@@ -14,6 +14,18 @@ extension UserHomePageController {
     
     ///*****************************************************************************CONSTRAINT FUNCTIONS*************************************************************************************************//
     
+    func selectedPicActivityIndicatorConstraints() {
+        
+        view.addSubview(selectedPictureActivityIndicator)
+        
+        selectedPictureActivityIndicator.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        selectedPictureActivityIndicator.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        
+        selectedPictureActivityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        
+    }
+    
 
     
     

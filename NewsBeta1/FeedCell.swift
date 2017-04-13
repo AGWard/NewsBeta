@@ -13,6 +13,14 @@ var name: String!
 
 class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
+    let cellID = "cellID"
+    
+    var arrays = [DatabaseProperties]()
+    var reveredArrays = [DatabaseProperties]()
+    var userID: String?
+    
+    
+    
     var postedPhotos: [UIImage] = []
     var postedText: [String] = []
     var imageURLS: [String] = []
@@ -28,7 +36,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
 
     
-    let cellID = "cellID"
+   
     
     
     lazy var collectionViews: UICollectionView = {
@@ -77,7 +85,6 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         
-        print(arrays.count)
         return reveredArrays.count
     }
     
@@ -104,9 +111,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         
     }
     
-    var arrays = [TimeSort]()
-    var reveredArrays = [TimeSort]()
-    var userID: String?
+
     
     func getPostedData() {
         
@@ -114,20 +119,19 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         ref.observe(.childAdded, with: { (snapshot) in
             
             
-            
-            print(snapshot)
+           
             
             if let dictionary = snapshot.value as? [String: AnyObject] {
             
             
             
-                let message = TimeSort()
-                    message.setValuesForKeys(dictionary)
-                    print(message.reporterName!)
+                let dbProperties = DatabaseProperties()
+                    dbProperties.setValuesForKeys(dictionary)
+                
             
-                    self.arrays.append(message)
+                    self.arrays.append(dbProperties)
                     self.reveredArrays = self.arrays.reversed()
-                    print(self.arrays)
+                
                 
                 
                 self.collectionViews.reloadData()

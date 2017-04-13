@@ -56,15 +56,21 @@ extension HomeController {
     func rightBarViewConstraints() {
         
         rightButtonView.addSubview(rightbarPic)
+        rightButtonView.addSubview(userMenuButton)
         
         
         
-        rightbarPic.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        rightbarPic.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        rightbarPic.centerXAnchor.constraint(equalTo: rightButtonView.centerXAnchor).isActive = true
+        rightbarPic.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        rightbarPic.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        rightbarPic.rightAnchor.constraint(equalTo: rightButtonView.rightAnchor, constant: -2).isActive = true
         rightbarPic.centerYAnchor.constraint(equalTo: rightButtonView.centerYAnchor).isActive = true
         
         
+        
+        userMenuButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        userMenuButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        userMenuButton.centerYAnchor.constraint(equalTo: rightButtonView.centerYAnchor).isActive = true
+        userMenuButton.rightAnchor.constraint(equalTo: rightButtonView.rightAnchor, constant: -2).isActive = true
         
     }
  
