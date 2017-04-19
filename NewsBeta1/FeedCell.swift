@@ -45,7 +45,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         
         let collection  = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.backgroundColor = .darkText
+        collection.backgroundColor = .lightGray
         collection.dataSource = self
         collection.delegate = self
         
@@ -59,7 +59,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         
         getPostedData()
 
-        backgroundColor = .brown
+        
         collectionViewContraints()
         
        
@@ -90,7 +90,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! TriniNewsCell
-        cell.backgroundColor = .red
+        cell.backgroundColor = .white
         
         let newArrays = reveredArrays[indexPath.row]
         cell.postedImageView.sd_setImage(with: URL(string: newArrays.postedPicURL!))
@@ -98,6 +98,20 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         cell.reportNameLabel.text = newArrays.reporterName
         cell.feedUserPic.sd_setImage(with: URL(string: newArrays.userImage!))
         
+        if let headline = newArrays.newsHeadlines {
+            
+            cell.newsHeadingLabel.text = headline
+
+        } else {
+            
+            cell.newsHeadingLabel.text = "Breaking News"
+        }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+        
+        let dates = dateFormatter.date(from: newArrays.timeUTC!)
+        cell.timeLabel.text = dates?.timeAgoDisplay()
         
         return cell
     }
@@ -107,7 +121,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
 //        let height = (frame.width - 16 - 16) * 9 / 16
 //        return CGSize(width: frame.width, height: height + 16 + 88)
         
-        return CGSize(width: frame.width, height: 210)
+        return CGSize(width: frame.width, height: frame.height/2)
         
     }
     

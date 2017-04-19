@@ -11,7 +11,7 @@ import Firebase
 
 
 
-class PostingPageController: UIViewController {
+class PostingPageController: UIViewController, UITextFieldDelegate {
     
 
     
@@ -25,6 +25,18 @@ class PostingPageController: UIViewController {
         
         
         return matter
+    }()
+    
+    
+    lazy var newsHeadline: UITextField = {
+        
+       let field = UITextField()
+        field.translatesAutoresizingMaskIntoConstraints = false
+        field.textColor = .black
+        field.backgroundColor = .gray
+        field.delegate = self
+        
+        return field
     }()
     
     
@@ -52,7 +64,7 @@ class PostingPageController: UIViewController {
         field.backgroundColor = .white
         field.autocorrectionType = .yes
         field.autocapitalizationType = .sentences
-        
+        field.textContainer.maximumNumberOfLines = 15
         
         return field
     }()
@@ -77,6 +89,7 @@ class PostingPageController: UIViewController {
         postedPicConstraints()
         postedTextFieldConstraints()
         postButtonConstraints()
+        newsHeadlineConstraints()
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelPosting))
         view.backgroundColor = .yellow
@@ -128,6 +141,20 @@ class PostingPageController: UIViewController {
         
     }
     
+    func newsHeadlineConstraints() {
+        
+        view.addSubview(newsHeadline)
+        
+        newsHeadline.bottomAnchor.constraint(equalTo: postTextField.topAnchor, constant: 0).isActive = true
+        newsHeadline.leftAnchor.constraint(equalTo: selectedPic.rightAnchor, constant: 0).isActive = true
+        newsHeadline.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        newsHeadline.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        
+        
+        
+    }
+
+    
     func cancelPosting() {
         
         let userPhotoController = UserPhotoController()
@@ -144,12 +171,12 @@ class PostingPageController: UIViewController {
 
         
         
-        let utcTimeZoneStr = formatter.string(from: date)
+        let utcTimeZoneStr = String(describing: date)
         let timestamp = Int(Date().timeIntervalSince1970)
         let timestampstring = String(timestamp)
         
         
-        guard let textEntered = postTextField.text else {
+        guard let textEntered = postTextField.text, let newsHeadlines = newsHeadline.text else {
             
             print("no data entered")
             return
@@ -181,7 +208,7 @@ class PostingPageController: UIViewController {
                     let userReference = ref.child("Users").child(uidd!).child("PostedDataByUser")
                     let postedReference = ref.child("PostedData")
                     let autoID = postedReference.child(timestampstring)
-                    let values = ["postedPicURL": selectedPicURL, "postedText": textEntered, "timestamp": timestampstring, "timeUTC": utcTimeZoneStr, "reporterName": gotUserName!, "userImage": userProfilePicURLString!] as [String : Any]
+                    let values = ["postedPicURL": selectedPicURL, "postedText": textEntered, "timestamp": timestampstring, "timeUTC": utcTimeZoneStr, "reporterName": gotUserName!, "userImage": userProfilePicURLString!, "newsHeadlines": newsHeadlines] as [String : Any]
                     autoID.updateChildValues(values, withCompletionBlock: { (err, ref) in
                         
                         if err != nil {

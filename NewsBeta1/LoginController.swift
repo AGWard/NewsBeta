@@ -183,12 +183,26 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     var backgroundImage: UIImageView = {
         
         let bkImage = UIImageView()
-        bkImage.image = UIImage(named: "SignIn")
+        bkImage.image = UIImage(named: "captures")
         bkImage.translatesAutoresizingMaskIntoConstraints = false
-        bkImage.contentMode = .scaleAspectFit
+        bkImage.contentMode = .scaleAspectFill
         
         
         return bkImage
+    }()
+    
+    var backgroundBlur: UIVisualEffectView = {
+        
+        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
+        let views = UIVisualEffectView(effect: blurEffect)
+        views.translatesAutoresizingMaskIntoConstraints = false
+        views.isHidden = false
+        views.alpha = 0.6
+        
+        return views
+        
+        
+        
     }()
     
     
@@ -258,6 +272,10 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         password.delegate = self
         password.textColor = .white
         password.translatesAutoresizingMaskIntoConstraints = false
+        password.returnKeyType = .go
+        password.clearsOnBeginEditing = true
+        
+        
         
         return password
     }()
@@ -313,6 +331,9 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         email.backgroundColor = .clear
         email.delegate = self
         email.textColor = .white
+        email.returnKeyType = .continue
+        email.clearsOnInsertion = true
+        email.keyboardType = UIKeyboardType.emailAddress
 
         email.translatesAutoresizingMaskIntoConstraints = false
         
@@ -373,10 +394,10 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         
         resetUserData()
         
-        
+        backgroundConstrainst()
         segmentedLoginRegToggle.removeBorders()
         UIApplication.shared.statusBarStyle = .lightContent
-        view.backgroundColor = UIColor(red: 77/255.0, green: 74/255.0, blue: 92/255.0, alpha: 1)
+//        view.backgroundColor = UIColor(red: 77/255.0, green: 74/255.0, blue: 92/255.0, alpha: 1)
         
         view.isUserInteractionEnabled = true
         indicatorContainerView.isHidden = true

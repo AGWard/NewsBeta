@@ -10,6 +10,36 @@ import UIKit
 
 class TriniNewsCell: BaseCell {
     
+    
+    let timeLabel: UILabel = {
+        
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .gray
+        label.font = UIFont(name: "Avenir Next", size: 10)
+        
+        return label
+        
+    }()
+    
+    
+    let newsHeadingLabel: UILabel = {
+        
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "BREAKING NEWS"
+        label.textColor = .red
+        label.font = UIFont.boldSystemFont(ofSize: 15)
+        
+        
+        return label
+        
+
+        
+    }()
+    
+    
+    
     lazy var feedUserPic: UIImageView = {
         
         let pic = UIImageView()
@@ -33,7 +63,6 @@ class TriniNewsCell: BaseCell {
         
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        
         label.textColor = .blue
         label.font = UIFont(name: "Avenir Next", size: 14)
         
@@ -42,11 +71,11 @@ class TriniNewsCell: BaseCell {
     }()
 
     
-    let reportLabel: UILabel = {
+    let storyByLabel: UILabel = {
         
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "By reporter"
+        label.text = "Story By:"
         label.textColor = .black
         label.font = UIFont(name: "Avenir Next", size: 10)
         
@@ -86,10 +115,16 @@ class TriniNewsCell: BaseCell {
     override func setupViews() {
         super.setupViews()
         
+        newsHeadingLabelConstraints()
+        
         postedImageViewConstraints()
+        storyByLabelConstraints()
         postedTextViewConstraints()
         reporterLabelConstraints()
         feedUserPicConstraints()
+        timeLabelConstraints()
+        
+        
         
     }
     
@@ -97,10 +132,12 @@ class TriniNewsCell: BaseCell {
         
         addSubview(postedImageView)
         
-        postedImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 5).isActive = true
-        postedImageView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/3).isActive = true
+        postedImageView.topAnchor.constraint(equalTo: newsHeadingLabel.bottomAnchor, constant: 0).isActive = true
+        
+        postedImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 0).isActive = true
+        postedImageView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/2).isActive = true
         postedImageView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/2).isActive = true
-        postedImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        
         
     }
     
@@ -109,29 +146,27 @@ class TriniNewsCell: BaseCell {
         
         addSubview(postedTextView)
         
-        postedTextView.leftAnchor.constraint(equalTo: postedImageView.rightAnchor, constant: 5).isActive = true
-        postedTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 2/3).isActive = true
-        postedTextView.heightAnchor.constraint(equalTo: postedImageView.heightAnchor).isActive = true
-        postedTextView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        postedTextView.topAnchor.constraint(equalTo: storyByLabel.bottomAnchor, constant: 2).isActive = true
+        postedTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 4/8).isActive = true
+        postedTextView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 3/4).isActive = true
+        postedTextView.leftAnchor.constraint(equalTo: postedImageView.rightAnchor, constant: 2).isActive = true
+        
+   
         
         
     }
     
     func reporterLabelConstraints() {
         
-        addSubview(reportLabel)
+        
         addSubview(reportNameLabel)
         
         
-        reportLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 5).isActive = true
-        reportLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/6).isActive = true
-        reportLabel.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/4).isActive = true
-        reportLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0).isActive = true
         
-        reportNameLabel.leftAnchor.constraint(equalTo: reportLabel.rightAnchor, constant: 2).isActive = true
-        reportNameLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/4).isActive = true
-        reportNameLabel.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/4).isActive = true
-        reportNameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0).isActive = true
+        
+        reportNameLabel.leftAnchor.constraint(equalTo: storyByLabel.rightAnchor, constant: 2).isActive = true
+        reportNameLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/8).isActive = true
+        reportNameLabel.centerYAnchor.constraint(equalTo: storyByLabel.centerYAnchor).isActive = true
  
     }
     
@@ -141,8 +176,43 @@ class TriniNewsCell: BaseCell {
         
         feedUserPic.widthAnchor.constraint(equalToConstant: 30).isActive = true
         feedUserPic.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        feedUserPic.bottomAnchor.constraint(equalTo: postedImageView.topAnchor, constant: -5).isActive = true
-        feedUserPic.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 5).isActive = true
+        feedUserPic.centerYAnchor.constraint(equalTo: storyByLabel.centerYAnchor).isActive = true
+        feedUserPic.leftAnchor.constraint(equalTo: reportNameLabel.rightAnchor, constant: 2).isActive = true
+        
+        
+    }
+    
+    
+    func storyByLabelConstraints() {
+        
+        addSubview(storyByLabel)
+        
+        storyByLabel.leftAnchor.constraint(equalTo: postedImageView.rightAnchor, constant: 2).isActive = true
+        storyByLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/8).isActive = true
+        storyByLabel.topAnchor.constraint(equalTo: newsHeadingLabel.bottomAnchor, constant: 4).isActive = true
+        
+        
+    }
+    
+    func newsHeadingLabelConstraints() {
+        
+        
+        addSubview(newsHeadingLabel)
+        
+        newsHeadingLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0).isActive = true
+        newsHeadingLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 2).isActive = true
+        newsHeadingLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor).isActive = true
+        newsHeadingLabel.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/8).isActive = true
+        
+    }
+    
+    func timeLabelConstraints() {
+        
+        
+        addSubview(timeLabel)
+        
+        timeLabel.topAnchor.constraint(equalTo: postedImageView.bottomAnchor, constant: 2).isActive = true
+        timeLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 5).isActive = true
         
         
         

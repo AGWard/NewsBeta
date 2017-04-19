@@ -14,13 +14,31 @@ import Firebase
 
 class HomeController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-let cellId = "cellID"
+let feedCellID = "cellID"
+let mainStreamID = "MainStreamID"
+    let policeID = "policeCellID"
+    let kIPsID = "KIPCellID"
+
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
                             // ***************  Property/Views Setup *********** //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
+    
+    
+    
+    lazy var blur: UIVisualEffectView = {
+        
+        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
+        let views = UIVisualEffectView(effect: blurEffect)
+        views.translatesAutoresizingMaskIntoConstraints = false
+        views.isHidden = true
+        
+        
+        return views
+        
+    }()
 
 
     
@@ -68,10 +86,10 @@ let cellId = "cellID"
         let button = UILabel()
         button.text = firstIconHeading
         button.textAlignment = .center
-        button.textColor = .red
+        button.textColor = .darkText
         button.font = UIFont.boldSystemFont(ofSize: 16)
         button.isUserInteractionEnabled = true
-        button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postNewsAction)))
+//        button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postNewsAction)))
         button.frame = CGRect(x: 0, y: 0, width: 90, height: 30)
 
         
@@ -83,27 +101,31 @@ let cellId = "cellID"
     
     
     
-    lazy var rightButtonView: UIView = {
+    lazy var choosePhotoMenuIcon: UIImageView = {
         
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 40))
-        view.backgroundColor = .clear
-        view.layer.masksToBounds = true
-        
-        
-        
-        return view
-    }()
-    
-    
-    lazy var userMenuButton: UIImageView = {
-        
-       let button = UIImageView()
+        let button = UIImageView()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.contentMode = .scaleAspectFill
         button.layer.cornerRadius = 0.5 * 30
         button.alpha = 0.0
         button.clipsToBounds = true
-        button.image = UIImage(named: "default")
+        button.image = UIImage(named: "photos")
+        button.isUserInteractionEnabled = true
+        button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postNewsAction)))
+        
+        return button
+    }()
+    
+    
+    lazy var accessUserMenuButton: UIImageView = {
+        
+       let button = UIImageView()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.contentMode = .scaleAspectFill
+        button.layer.cornerRadius = 0.5 * 30
+        button.alpha = 1.0
+        button.clipsToBounds = true
+        button.image = UIImage(named: "home")
         button.isUserInteractionEnabled = true
         button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
         
@@ -114,11 +136,9 @@ let cellId = "cellID"
     lazy var rightbarPic: UIImageView = {
         
         let pic = UIImageView()
-        pic.translatesAutoresizingMaskIntoConstraints = false
-        pic.contentMode = .scaleAspectFill
-        pic.layer.cornerRadius = 0.5 * 40
-        pic.clipsToBounds = true
-        pic.image = UIImage(named: "menu")
+        pic.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+        pic.contentMode = .scaleAspectFit
+        pic.image = UIImage(named: "menublack")
         pic.isUserInteractionEnabled = true
         pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(expandMenu)))
         
@@ -128,19 +148,19 @@ let cellId = "cellID"
     
 
     
-    lazy var titleLogo: UIImageView = {
-        
-        let pic = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 30))
-        pic.contentMode = .scaleAspectFit
-        pic.clipsToBounds = true
-        pic.image = UIImage(named: "logoNews")
-        pic.isUserInteractionEnabled = true
-        
-        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postNewsAction)))
-        
-        
-        return pic
-    }()
+//    lazy var titleLogo: UIImageView = {
+//        
+//        let pic = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 30))
+//        pic.contentMode = .scaleAspectFit
+//        pic.clipsToBounds = true
+//        pic.image = UIImage(named: "logoNews")
+////        pic.isUserInteractionEnabled = true
+////        
+////        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postNewsAction)))
+//        
+//        
+//        return pic
+//    }()
 
     
     
@@ -165,6 +185,7 @@ let cellId = "cellID"
         view.backgroundColor = .darkText
         checkIfUserIsLoggedIn()
         
+        
 
        
     }
@@ -184,10 +205,11 @@ let cellId = "cellID"
                 
          collectionViewConstraints()
         
+ 
         
-        
+        UIApplication.shared.statusBarStyle = .default
 //        let leftLabel = UIBarButtonItem(customView: leftNavLabel)
-        let rightBarButton = UIBarButtonItem(customView: rightButtonView)
+        let rightBarButton = UIBarButtonItem(customView: rightbarPic)
         
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
 //        self.navigationItem.leftBarButtonItem = leftLabel
@@ -198,10 +220,13 @@ let cellId = "cellID"
 //        self.navigationItem.titleView = titleLogo
         self.navigationItem.titleView = titleLabel
         
-       
-        rightBarViewConstraints()
         menuBarConstraints()
-        userMenuButton.center = rightbarPic.center
+        blurConstraints()
+        menuBarBlurConstrainsts()
+        
+        
+        
+        
         
         
     }
@@ -352,10 +377,30 @@ let cellId = "cellID"
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: feedCellID, for: indexPath) as! FeedCell
+        cell.backgroundColor = .clear
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! FeedCell
-        cell.backgroundColor = .green
-               
+        
+        if indexPath.item == 1 {
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: mainStreamID, for: indexPath) as! MainStreamCell
+        
+            return cell
+ 
+        } else if indexPath.item == 2 {
+            
+            let policeCell = collectionView.dequeueReusableCell(withReuseIdentifier: policeID, for: indexPath) as! PoliceAlertCell
+            
+            return policeCell
+        } else if indexPath.item == 3 {
+            
+            
+            let kipCell = collectionView.dequeueReusableCell(withReuseIdentifier: kIPsID, for: indexPath) as! KIPCell
+            
+            return kipCell
+            
+        }
+        
         return cell
     }
     
@@ -363,14 +408,108 @@ let cellId = "cellID"
         return CGSize(width: view.frame.width, height: view.frame.height - 40)
     }
     
+    
+    
+    
     func expandMenu() {
         
-        UIView.animate(withDuration: 0.3) {
+
+        
+        if blur.center.x == 0 {
             
-            self.userMenuButton.alpha = 1.0
-            self.userMenuButton.center.x = 30
+            
+        
+            blur.frame = CGRect(x: 400, y: 0, width: view.frame.width, height: view.frame.height)
             
         }
+        
+        
+
+        
+        self.blur.isHidden = false
+        
+
+    
+        
+        if rightbarPic.image == #imageLiteral(resourceName: "menublack") {
+  
+            
+
+            UIView.animate(withDuration: 0.5, animations: { 
+                
+                self.blur.frame = CGRect(x: 150, y: 0, width: self.view.frame.width, height: self.view.frame.height)
+
+                
+                self.view.layoutIfNeeded()
+            
+            
+                UIView.animate(withDuration: 0.8) {
+
+                    
+                   
+                    self.titleLabel.isHidden = true
+                    self.rightbarPic.image = UIImage(named: "menuwhite1")
+                    self.collectionVw.isUserInteractionEnabled = false
+                    self.menuBar.isUserInteractionEnabled = false
+                    self.collectionVw.alpha = 0.7
+                    self.menuBar.collecV.alpha = 0.7
+                    
+
+            
+                
+            }
+                
+                if self.blur.center.x == 337.5 {
+                    
+                   
+  
+                }
+            
+
+                
+                })
+
+        } else {
+           
+            
+            
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.choosePhotoMenuIcon.alpha = 0.0
+                self.choosePhotoMenuIcon.center.x = 100
+                
+           
+            
+            
+            UIView.animate(withDuration: 0.5) {
+                
+                self.rightbarPic.image = UIImage(named: "menublack")
+                self.accessUserMenuButton.alpha = 0.0
+                self.accessUserMenuButton.center.x = self.rightbarPic.center.x
+                self.choosePhotoMenuIcon.center.x = self.rightbarPic.center.x
+                self.titleLabel.isHidden = false
+                self.collectionVw.isUserInteractionEnabled = true
+                self.menuBar.isUserInteractionEnabled = true
+                self.collectionVw.alpha = 1.0
+                self.menuBar.collecV.alpha = 1.0
+                
+            }
+                
+                UIView.animate(withDuration: 3.0, animations: {
+                    self.blur.center.x = 800
+                    
+                })
+            
+                
+         })
+
+
+            
+            
+        }
+        
+        
+
         
    
 

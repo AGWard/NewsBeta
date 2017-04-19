@@ -20,7 +20,7 @@ class DatabaseProperties: NSObject {
     var timestamp: String?
     var userImage: String?
     var stringTimestamp: String?
-    
+    var newsHeadlines: String?
     
 
 }

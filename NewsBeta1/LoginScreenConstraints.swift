@@ -171,13 +171,13 @@ extension LoginController {
         
 
         
-        view.addSubview(appLogo)
-        
-        
-        appLogo.widthAnchor.constraint(equalToConstant: 150).isActive = true
-        appLogo.heightAnchor.constraint(equalToConstant: 150).isActive = true
-        appLogo.bottomAnchor.constraint(equalTo: segmentedLoginRegToggle.topAnchor, constant: -20).isActive = true
-        appLogo.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        view.addSubview(appLogo)
+//        
+//        
+//        appLogo.widthAnchor.constraint(equalToConstant: 150).isActive = true
+//        appLogo.heightAnchor.constraint(equalToConstant: 150).isActive = true
+//        appLogo.bottomAnchor.constraint(equalTo: segmentedLoginRegToggle.topAnchor, constant: -20).isActive = true
+//        appLogo.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         
     }
@@ -189,7 +189,15 @@ extension LoginController {
         
         view.addSubview(backgroundImage)
         
-        backgroundImage.frame = view.frame
+        
+        backgroundImage.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        backgroundImage.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
+        
+        backgroundImage.addSubview(backgroundBlur)
+        
+        
+        backgroundBlur.widthAnchor.constraint(equalTo: backgroundImage.widthAnchor).isActive = true
+        backgroundBlur.heightAnchor.constraint(equalTo: backgroundImage.heightAnchor).isActive = true
         
     }
     

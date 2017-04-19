@@ -15,14 +15,22 @@ extension HomeController {
     // ***************  View Did Load/Will Appear *********** //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    
+    func blurConstraints() {
+        
+        view.addSubview(blur)
+
+
+        
+        
+    }
     
     
     func collectionViewConstraints() {
         
-        collectionVw.register(FeedCell.self, forCellWithReuseIdentifier: cellId)
-        
-        
+        collectionVw.register(FeedCell.self, forCellWithReuseIdentifier: feedCellID)
+        collectionVw.register(MainStreamCell.self, forCellWithReuseIdentifier: mainStreamID)
+        collectionVw.register(PoliceAlertCell.self, forCellWithReuseIdentifier: policeID)
+        collectionVw.register(KIPCell.self, forCellWithReuseIdentifier: kIPsID)
         view.addSubview(collectionVw)
         
         collectionVw.frame = view.frame
@@ -36,7 +44,7 @@ extension HomeController {
         
         view.addSubview(menuBar)
         
-        navigationController?.hidesBarsOnSwipe = true
+        navigationController?.hidesBarsOnSwipe = false
         
         
         //        menuBar.widthAnchor.constraint(equalToConstant: 380).isActive = true
@@ -53,24 +61,16 @@ extension HomeController {
     
     
     
-    func rightBarViewConstraints() {
+    func menuBarBlurConstrainsts() {
         
-        rightButtonView.addSubview(rightbarPic)
-        rightButtonView.addSubview(userMenuButton)
+     
+        self.blur.addSubview(self.accessUserMenuButton)
+        self.blur.addSubview(self.choosePhotoMenuIcon)
         
-        
-        
-        rightbarPic.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        rightbarPic.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        rightbarPic.rightAnchor.constraint(equalTo: rightButtonView.rightAnchor, constant: -2).isActive = true
-        rightbarPic.centerYAnchor.constraint(equalTo: rightButtonView.centerYAnchor).isActive = true
-        
-        
-        
-        userMenuButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        userMenuButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        userMenuButton.centerYAnchor.constraint(equalTo: rightButtonView.centerYAnchor).isActive = true
-        userMenuButton.rightAnchor.constraint(equalTo: rightButtonView.rightAnchor, constant: -2).isActive = true
+        accessUserMenuButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        accessUserMenuButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+
+
         
     }
  

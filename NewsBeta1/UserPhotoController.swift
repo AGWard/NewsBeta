@@ -202,7 +202,7 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
     func grabPhotos() {
         
         
-            
+            print("Loading................")
             
             
             let imageManager = PHCachingImageManager.default()
@@ -230,9 +230,11 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
                         
                         DispatchQueue.global(qos: .userInteractive).async {
                             
-                         
-                            self.picsArray.append(image!)
-                            self.collectionV.reloadData()
+                            DispatchQueue.main.async {
+                                self.picsArray.append(image!)
+                                self.collectionV.reloadData()
+                            }
+                            
                         }
                         
                         

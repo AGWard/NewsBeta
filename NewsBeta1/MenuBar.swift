@@ -19,7 +19,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
     var homeController: HomeController?
 
     
-    let menuIcons = [UIImage(named: "D News"), UIImage(named: "Public News"), UIImage(named: "Police"), UIImage(named: "lawyer")]
+    let menuIcons = [UIImage(named: "D News"), UIImage(named: "Public News"), UIImage(named: "Police"), UIImage(named: "KIP")]
     
     
     
