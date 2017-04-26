@@ -24,17 +24,19 @@ extension Date {
         
         let timeAgo = Int(Date().timeIntervalSince(self))
         
+       
+        
         if timeAgo < minute {
             
-            return "\(timeAgo) seconds ago"
+            return "\(timeAgo) secs ago"
             
         } else if timeAgo < hour {
             
-            return "\(timeAgo / minute) minutes ago"
+            return "\(timeAgo / minute) mins ago"
             
         } else if timeAgo < day {
             
-            return "\(timeAgo / hour) hours ago"
+            return "\(timeAgo / hour) hrs ago"
             
         } else if timeAgo < week {
             
@@ -43,15 +45,15 @@ extension Date {
             
         } else if timeAgo < month {
             
-            return "\(timeAgo / week) weeks ago"
+            return "\(timeAgo / week) wks ago"
             
         } else if timeAgo < year {
             
-            return "\(timeAgo / month) months ago"
+            return "\(timeAgo / month) mnths ago"
             
         }
         
-        return "\(timeAgo / year) years ago"
+        return "\(timeAgo / year) yrs ago"
         
         
         

@@ -8,10 +8,10 @@
 
 import UIKit
 
-public let firstIconHeading = "Bacchanal"
-public let secondIconHeading = "Mainstream"
-public let thirdIconHeading = "5.0 Alerts"
-public let fourthIconHeading = "K.I.Ps"
+let firstIconHeading = "Bacchanal"
+let secondIconHeading = "Mainstream"
+let thirdIconHeading = "5.0 Alerts"
+let fourthIconHeading = "K.I.Ps"
 
 
 class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

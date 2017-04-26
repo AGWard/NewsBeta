@@ -9,12 +9,23 @@
 import UIKit
 import Firebase
 
+
+protocol CellSegaway2Delegate {
+    func profilePicTapped()
+}
+
+
+
 var name: String!
 
-class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, CellSegwayDelegate {
+    
+    
+    
+    var delegate: CellSegaway2Delegate?
+    
     
     let cellID = "cellID"
-    
     var arrays = [DatabaseProperties]()
     var reveredArrays = [DatabaseProperties]()
     var userID: String?
@@ -31,7 +42,15 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     var postArray = [String]()
     
     
-      
+    lazy var refreshData: UIRefreshControl = {
+        
+        
+       let refresh = UIRefreshControl()
+        refresh.addTarget(self, action: #selector(performRefreshData), for: .valueChanged)
+        refresh.tintColor = UIColor(red:0.25, green:0.72, blue:0.85, alpha:1.0)
+        
+        return refresh
+    }()
     
     
 
@@ -45,7 +64,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         
         let collection  = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.backgroundColor = .lightGray
+        collection.backgroundColor = .black
         collection.dataSource = self
         collection.delegate = self
         
@@ -61,6 +80,18 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
 
         
         collectionViewContraints()
+        
+        if #available(iOS 10.0, *) {
+            
+            
+            collectionViews.refreshControl = refreshData
+        } else {
+            
+            
+            collectionViews.addSubview(refreshData)
+            
+        }
+        
         
        
     }
@@ -90,7 +121,12 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! TriniNewsCell
+        
+        
         cell.backgroundColor = .white
+        
+        cell.delegate = self
+        
         
         let newArrays = reveredArrays[indexPath.row]
         cell.postedImageView.sd_setImage(with: URL(string: newArrays.postedPicURL!))
@@ -110,8 +146,10 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
         
+        
         let dates = dateFormatter.date(from: newArrays.timeUTC!)
         cell.timeLabel.text = dates?.timeAgoDisplay()
+
         
         return cell
     }
@@ -121,9 +159,11 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
 //        let height = (frame.width - 16 - 16) * 9 / 16
 //        return CGSize(width: frame.width, height: height + 16 + 88)
         
-        return CGSize(width: frame.width, height: frame.height/2)
+        return CGSize(width: frame.width, height: frame.height / 1.2)
         
     }
+    
+
     
 
     
@@ -161,114 +201,26 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
             
         }, withCancel: nil)
         
-//        FIRDatabase.database().reference().child("PostedData").observe(.value, with: {(snapshot) in
-//            
-//            
-//        print(snapshot)
-//            
-//            if let dictionary = snapshot.value as? [String: [String: AnyObject]] {
-//                
-//                let userID = snapshot.key
-//                
-//                let message = TimeSort()
-//                message.setValuesForKeys(dictionary)
-//                print(message.reporterName!)
-//                
-//                self.arrays.append(message)
-//                print(self.arrays)
-//                
-//            }
-//            
-//    
-//            
-//        }, withCancel: nil)
+ 
+    }
+    
+    
+    
+    func performRefreshData() {
         
-   
+        getPostedData()
+        collectionViews.refreshControl?.endRefreshing()
         
+    }
+    
+    func feedPicTapped() {
         
-        
-//        FIRDatabase.database().reference().child("PostedData").observeSingleEvent(of: .value, with: {(snapshot) in
-//            
-//
-//            
-//        
-//            if let dictionary = snapshot.value as? [String: [String : String]] {
-//               
-//                
-//               
-//                
-//                print("*****THis is the dictionary \(dictionary).")
-//                
-//                for info in dictionary {
-//                    
-//                    self.idlist.append(info.key)
-//                    
-//                    
-//                    
-//                    
-//                }
-//                
-//              
-//
-//                for count in 0..<self.idlist.count {
-//                
-//                if let postedData = dictionary[self.idlist[count]]?["postedPicURL"], let postedInfo = dictionary[self.idlist[count]]?["postedText"], let name = dictionary[self.idlist[count]]?["reporterName"], let userpic = dictionary[self.idlist[count]]?["userImage"], let time = dictionary[self.idlist[count]]?[timestamp]{
-//                    
-//                    self.reporterList.append(name)
-//                    self.postedText.append(postedInfo)
-//                    
-//                    self.imageURLS.append(postedData)
-//                    self.userProfilePicFeed.append(userpic)
-//                    self.timestampArray.append(time)
-//                    
-//                    
-//                    print("*******POSTED DATA HERE \(postedData)")
-//                    
-//                    print("imageURL count is \(self.imageURLS.count) and data is \(self.imageURLS)")
-//                    
-//                  self.collectionViews.reloadData()
-//                    
-//                    
-//                }
-//                }
-//            }
-//        
-//            
-//        
-//        
-//        }, withCancel: nil)
-//        
-        
-        return
-        
+        //method below aquires delegate from HomeController
 
         
+        delegate?.profilePicTapped()
         
-      /*  let uid = FIRAuth.auth()?.currentUser?.uid
-        FIRDatabase.database().reference().child("Users").child(uid!).child("Posted Data").observeSingleEvent(of: .value, with: { (snapshot) in
-            
-            if let dictionary = snapshot.value as? [String: AnyObject] {
-                
-                
-                
-                if let postedPicURL = dictionary["postedPicURL"] as? String {
-                    
-                    self.imageURLS.append(postedPicURL)
-                    
-                    print(self.imageURLS.count)
-                    
-                    
-                    
-                    
-                    
-                }
-                
-            }
-            
-        }, withCancel: nil)
- 
- */
- 
+        
     }
  
  

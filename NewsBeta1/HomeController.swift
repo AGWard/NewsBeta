@@ -12,7 +12,10 @@ import Firebase
 
 
 
-class HomeController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class HomeController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CellSegaway2Delegate {
+    
+ 
+    
     
 let feedCellID = "cellID"
 let mainStreamID = "MainStreamID"
@@ -25,8 +28,8 @@ let mainStreamID = "MainStreamID"
                             // ***************  Property/Views Setup *********** //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    
-    
+
+
     
     lazy var blur: UIVisualEffectView = {
         
@@ -83,14 +86,11 @@ let mainStreamID = "MainStreamID"
     
     lazy var titleLabel: UILabel = {
         
-        let button = UILabel()
+        let button = UILabel(frame: CGRect(x: 0, y: 0, width: 90, height: 30))
         button.text = firstIconHeading
         button.textAlignment = .center
         button.textColor = .darkText
         button.font = UIFont.boldSystemFont(ofSize: 16)
-        button.isUserInteractionEnabled = true
-//        button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postNewsAction)))
-        button.frame = CGRect(x: 0, y: 0, width: 90, height: 30)
 
         
         
@@ -107,7 +107,6 @@ let mainStreamID = "MainStreamID"
         button.translatesAutoresizingMaskIntoConstraints = false
         button.contentMode = .scaleAspectFill
         button.layer.cornerRadius = 0.5 * 30
-        button.alpha = 0.0
         button.clipsToBounds = true
         button.image = UIImage(named: "photos")
         button.isUserInteractionEnabled = true
@@ -148,24 +147,7 @@ let mainStreamID = "MainStreamID"
     
 
     
-//    lazy var titleLogo: UIImageView = {
-//        
-//        let pic = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 30))
-//        pic.contentMode = .scaleAspectFit
-//        pic.clipsToBounds = true
-//        pic.image = UIImage(named: "logoNews")
-////        pic.isUserInteractionEnabled = true
-////        
-////        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postNewsAction)))
-//        
-//        
-//        return pic
-//    }()
 
-    
-    
-    
-    
     
     
     
@@ -182,11 +164,11 @@ let mainStreamID = "MainStreamID"
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .darkText
+        
         checkIfUserIsLoggedIn()
+        view.backgroundColor = .darkText
         
-        
-
+       
        
     }
 
@@ -203,7 +185,9 @@ let mainStreamID = "MainStreamID"
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
                 
-         collectionViewConstraints()
+        
+        
+        collectionViewConstraints()
         
  
         
@@ -379,7 +363,7 @@ let mainStreamID = "MainStreamID"
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: feedCellID, for: indexPath) as! FeedCell
         cell.backgroundColor = .clear
-        
+        cell.delegate = self
         
         if indexPath.item == 1 {
             
@@ -474,9 +458,8 @@ let mainStreamID = "MainStreamID"
             
             
             
-            UIView.animate(withDuration: 0.3, animations: {
-                self.choosePhotoMenuIcon.alpha = 0.0
-                self.choosePhotoMenuIcon.center.x = 100
+            UIView.animate(withDuration: 0.8, animations: {
+               
                 
            
             
@@ -484,9 +467,6 @@ let mainStreamID = "MainStreamID"
             UIView.animate(withDuration: 0.5) {
                 
                 self.rightbarPic.image = UIImage(named: "menublack")
-                self.accessUserMenuButton.alpha = 0.0
-                self.accessUserMenuButton.center.x = self.rightbarPic.center.x
-                self.choosePhotoMenuIcon.center.x = self.rightbarPic.center.x
                 self.titleLabel.isHidden = false
                 self.collectionVw.isUserInteractionEnabled = true
                 self.menuBar.isUserInteractionEnabled = true
@@ -497,6 +477,7 @@ let mainStreamID = "MainStreamID"
                 
                 UIView.animate(withDuration: 3.0, animations: {
                     self.blur.center.x = 800
+                    self.blur.isHidden = true
                     
                 })
             
@@ -508,17 +489,13 @@ let mainStreamID = "MainStreamID"
             
         }
         
-        
-
-        
-   
-
-        
+    
         
     }
     
 
-   
+
+    
     
     
 }

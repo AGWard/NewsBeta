@@ -11,7 +11,7 @@ import Firebase
 
 
 
-class PostingPageController: UIViewController, UITextFieldDelegate {
+class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
 
     
@@ -35,6 +35,8 @@ class PostingPageController: UIViewController, UITextFieldDelegate {
         field.textColor = .black
         field.backgroundColor = .gray
         field.delegate = self
+        field.autocapitalizationType = .allCharacters
+        field.delegate = self
         
         return field
     }()
@@ -56,7 +58,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate {
     }()
     
     
-    let postTextField: UITextView = {
+    lazy var postTextField: UITextView = {
         
        let field = UITextView()
         field.translatesAutoresizingMaskIntoConstraints = false
@@ -64,7 +66,8 @@ class PostingPageController: UIViewController, UITextFieldDelegate {
         field.backgroundColor = .white
         field.autocorrectionType = .yes
         field.autocapitalizationType = .sentences
-        field.textContainer.maximumNumberOfLines = 15
+        field.delegate = self
+        
         
         return field
     }()
@@ -153,6 +156,41 @@ class PostingPageController: UIViewController, UITextFieldDelegate {
         
         
     }
+    
+    
+    
+    
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+
+        
+        guard let text = textField.text else {
+            
+            return true
+            
+        }
+        
+        let newLengths = text.characters.count + string.characters.count - range.length
+        
+        return newLengths <=  15
+    }
+    
+    
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        
+        guard let textv = textView.text else {
+            
+            return true
+        }
+        
+        let newLength = textv.characters.count + text.characters.count - range.length
+        return newLength <= 300
+
+        
+    }
+    
 
     
     func cancelPosting() {

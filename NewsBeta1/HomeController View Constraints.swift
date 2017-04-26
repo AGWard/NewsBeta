@@ -69,6 +69,11 @@ extension HomeController {
         
         accessUserMenuButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         accessUserMenuButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        accessUserMenuButton.topAnchor.constraint(equalTo: blur.topAnchor, constant: 200).isActive = true
+        
+        choosePhotoMenuIcon.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        choosePhotoMenuIcon.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        choosePhotoMenuIcon.topAnchor.constraint(equalTo: accessUserMenuButton.bottomAnchor, constant: 20).isActive = true
 
 
         
