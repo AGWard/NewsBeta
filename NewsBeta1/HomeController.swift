@@ -17,8 +17,8 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
  
     
     
-let feedCellID = "cellID"
-let mainStreamID = "MainStreamID"
+    let feedCellID = "cellID"
+    let mainStreamID = "MainStreamID"
     let policeID = "policeCellID"
     let kIPsID = "KIPCellID"
 
@@ -28,21 +28,8 @@ let mainStreamID = "MainStreamID"
                             // ***************  Property/Views Setup *********** //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-
-
+    var database = [DatabaseProperties]()
     
-    lazy var blur: UIVisualEffectView = {
-        
-        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
-        let views = UIVisualEffectView(effect: blurEffect)
-        views.translatesAutoresizingMaskIntoConstraints = false
-        views.isHidden = true
-        
-        
-        return views
-        
-    }()
-
 
     
     
@@ -89,7 +76,7 @@ let mainStreamID = "MainStreamID"
         let button = UILabel(frame: CGRect(x: 0, y: 0, width: 90, height: 30))
         button.text = firstIconHeading
         button.textAlignment = .center
-        button.textColor = .darkText
+        button.textColor = .red
         button.font = UIFont.boldSystemFont(ofSize: 16)
 
         
@@ -99,50 +86,36 @@ let mainStreamID = "MainStreamID"
     }()
 
     
-    
-    
-    lazy var choosePhotoMenuIcon: UIImageView = {
-        
-        let button = UIImageView()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentMode = .scaleAspectFill
-        button.layer.cornerRadius = 0.5 * 30
-        button.clipsToBounds = true
-        button.image = UIImage(named: "photos")
-        button.isUserInteractionEnabled = true
-        button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postNewsAction)))
-        
-        return button
-    }()
-    
-    
-    lazy var accessUserMenuButton: UIImageView = {
-        
-       let button = UIImageView()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentMode = .scaleAspectFill
-        button.layer.cornerRadius = 0.5 * 30
-        button.alpha = 1.0
-        button.clipsToBounds = true
-        button.image = UIImage(named: "home")
-        button.isUserInteractionEnabled = true
-        button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
-        
-        return button
-    }()
+
     
     
     lazy var rightbarPic: UIImageView = {
         
         let pic = UIImageView()
-        pic.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+        pic.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         pic.contentMode = .scaleAspectFit
-        pic.image = UIImage(named: "menublack")
+        pic.image = UIImage(named: "settings")
         pic.isUserInteractionEnabled = true
-        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(expandMenu)))
+        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
         
         
         return pic
+    }()
+    
+    
+    lazy var leftBarPic: UIImageView = {
+        
+        let pic = UIImageView()
+        pic.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        pic.contentMode = .scaleAspectFit
+        pic.image = UIImage(named: "video2")
+        pic.isUserInteractionEnabled = true
+        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postNewsAction)))
+        
+        
+        return pic
+        
+        
     }()
     
 
@@ -165,6 +138,8 @@ let mainStreamID = "MainStreamID"
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
         checkIfUserIsLoggedIn()
         view.backgroundColor = .darkText
         
@@ -175,6 +150,7 @@ let mainStreamID = "MainStreamID"
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         
+        print("*************memory warning HomeCtroller")
        
     }
     
@@ -192,11 +168,11 @@ let mainStreamID = "MainStreamID"
  
         
         UIApplication.shared.statusBarStyle = .default
-//        let leftLabel = UIBarButtonItem(customView: leftNavLabel)
+        let leftLabel = UIBarButtonItem(customView: leftBarPic)
         let rightBarButton = UIBarButtonItem(customView: rightbarPic)
         
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
-//        self.navigationItem.leftBarButtonItem = leftLabel
+        self.navigationItem.leftBarButtonItem = leftLabel
         self.navigationItem.rightBarButtonItem = rightBarButton
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -205,12 +181,7 @@ let mainStreamID = "MainStreamID"
         self.navigationItem.titleView = titleLabel
         
         menuBarConstraints()
-        blurConstraints()
-        menuBarBlurConstrainsts()
-        
-        
-        
-        
+
         
         
     }
@@ -237,14 +208,15 @@ let mainStreamID = "MainStreamID"
             print("not signed in")
             
         }
+            
         else {
  
-                let uid = FIRAuth.auth()?.currentUser?.uid
-                
-                let fbAquisition = FireBaseAquistion(userIDNumber: uid!, childRef: parentUser, reference: username, profileImageRef: profileImageURL)
-                
-                fbAquisition.getUserDetails()
-   
+            let uid = FIRAuth.auth()?.currentUser?.uid
+            
+            let networkRequest = NetworkingService()
+            
+            networkRequest.getUserInfo(parentRef: firebaseParentUser, childRef: uid!, screen: "home")
+        
             
         }
     }
@@ -270,7 +242,26 @@ let mainStreamID = "MainStreamID"
         
     }
     
+
+    
+    func otherUserTapped(userID: String, userName: String) {
+        
+       
+        
+        let otherUserC = OtherUserController()
+        otherUserC.modalPresentationStyle = .pageSheet
+        otherUserC.userID = userID
+        otherUserC.userName = userName
+        let navC = UINavigationController(rootViewController: otherUserC)
+        
+        present(navC, animated: true, completion: nil)
+        
+    }
+    
+    
     func profilePicTapped() {
+        
+       
         
         let userHome = UserHomePageController()
         userHome.modalPresentationStyle = .pageSheet
@@ -361,11 +352,15 @@ let mainStreamID = "MainStreamID"
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: feedCellID, for: indexPath) as! FeedCell
-        cell.backgroundColor = .clear
-        cell.delegate = self
-        
-        if indexPath.item == 1 {
+        if indexPath.item == 0 {
+          
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: feedCellID, for: indexPath) as! FeedCell
+            cell.backgroundColor = .clear
+            cell.delegate = self
+            
+            return cell
+            
+        } else if indexPath.item == 1 {
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: mainStreamID, for: indexPath) as! MainStreamCell
         
@@ -373,9 +368,10 @@ let mainStreamID = "MainStreamID"
  
         } else if indexPath.item == 2 {
             
-            let policeCell = collectionView.dequeueReusableCell(withReuseIdentifier: policeID, for: indexPath) as! PoliceAlertCell
+            let policeCell = collectionView.dequeueReusableCell(withReuseIdentifier: policeID, for: indexPath) as! ServicesCell
             
             return policeCell
+            
         } else if indexPath.item == 3 {
             
             
@@ -385,115 +381,19 @@ let mainStreamID = "MainStreamID"
             
         }
         
-        return cell
+        return UICollectionViewCell()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: view.frame.height - 40)
-    }
-    
-    
-    
-    
-    func expandMenu() {
-        
-
-        
-        if blur.center.x == 0 {
-            
-            
-        
-            blur.frame = CGRect(x: 400, y: 0, width: view.frame.width, height: view.frame.height)
-            
-        }
+        return CGSize(width: view.bounds.width, height: view.bounds.height - 40)
         
         
-
         
-        self.blur.isHidden = false
         
-
-    
         
-        if rightbarPic.image == #imageLiteral(resourceName: "menublack") {
-  
-            
-
-            UIView.animate(withDuration: 0.5, animations: { 
-                
-                self.blur.frame = CGRect(x: 150, y: 0, width: self.view.frame.width, height: self.view.frame.height)
-
-                
-                self.view.layoutIfNeeded()
-            
-            
-                UIView.animate(withDuration: 0.8) {
-
-                    
-                   
-                    self.titleLabel.isHidden = true
-                    self.rightbarPic.image = UIImage(named: "menuwhite1")
-                    self.collectionVw.isUserInteractionEnabled = false
-                    self.menuBar.isUserInteractionEnabled = false
-                    self.collectionVw.alpha = 0.7
-                    self.menuBar.collecV.alpha = 0.7
-                    
-
-            
-                
-            }
-                
-                if self.blur.center.x == 337.5 {
-                    
-                   
-  
-                }
-            
-
-                
-                })
-
-        } else {
-           
-            
-            
-            
-            UIView.animate(withDuration: 0.8, animations: {
-               
-                
-           
-            
-            
-            UIView.animate(withDuration: 0.5) {
-                
-                self.rightbarPic.image = UIImage(named: "menublack")
-                self.titleLabel.isHidden = false
-                self.collectionVw.isUserInteractionEnabled = true
-                self.menuBar.isUserInteractionEnabled = true
-                self.collectionVw.alpha = 1.0
-                self.menuBar.collecV.alpha = 1.0
-                
-            }
-                
-                UIView.animate(withDuration: 3.0, animations: {
-                    self.blur.center.x = 800
-                    self.blur.isHidden = true
-                    
-                })
-            
-                
-         })
-
-
-            
-            
-        }
-        
-    
         
     }
     
-
 
     
     

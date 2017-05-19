@@ -8,12 +8,19 @@
 
 
 
-let mainstreamID = "cellID"
-let mainstreamHeaderID = "headerID"
+
 
 import UIKit
 
 class MainStreamCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    
+    
+    let mainstreamID = "cellID"
+    let mainstreamHeaderID = "headerID"
+    
+    
+    
     
     
     lazy var mainStramCollectionV: UICollectionView = {
@@ -50,7 +57,7 @@ class MainStreamCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSo
         mainStramCollectionV.register(MainstreamHeaderCell.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: mainstreamHeaderID)
         
         mainStramCollectionV.widthAnchor.constraint(equalTo: contentView.widthAnchor).isActive = true
-        mainStramCollectionV.topAnchor.constraint(equalTo: self.topAnchor, constant: 40).isActive = true
+        mainStramCollectionV.topAnchor.constraint(equalTo: self.topAnchor, constant: 20).isActive = true
         mainStramCollectionV.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -40).isActive = true
         
     }

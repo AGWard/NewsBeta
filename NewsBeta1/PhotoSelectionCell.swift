@@ -18,11 +18,15 @@ class PhotoSelectionCell: BaseCell {
         lable.translatesAutoresizingMaskIntoConstraints = false
         lable.contentMode = .scaleAspectFill
         lable.clipsToBounds = true
-        
+        lable.layer.masksToBounds = true
         
         
         return lable
     }()
+    
+    
+    
+    
     
     override var isSelected: Bool {
         
@@ -44,6 +48,7 @@ class PhotoSelectionCell: BaseCell {
         
         backgroundColor = .yellow
         lableCOnstraints()
+        
     }
 
     
@@ -52,9 +57,11 @@ class PhotoSelectionCell: BaseCell {
         
         addSubview(photoView)
         
-        photoView.frame = contentView.frame
+       photoView.frame = contentView.frame
         
     }
+    
+
 
     
     

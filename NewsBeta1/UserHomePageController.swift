@@ -15,15 +15,10 @@ let cellID = "cellID"
 
 class UserHomePageController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
-    var postedPhotos: [UIImage] = []
-    var postedText: [String] = []
-    var imageURLS: [String] = []
-    var idlist = [String]()
-    var reporterList = [String]()
 
-    
-    
-    
+    var imageURLS: [String] = []
+    var newsHeadline: [String] = []
+
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +31,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     var myNewsCollectionViewWidthAnchor: NSLayoutConstraint?
     
+    let currentID = FIRAuth.auth()?.currentUser?.uid
     
     
     lazy var selectedPictureActivityIndicator: UIActivityIndicatorView = {
@@ -59,7 +55,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         let layout = UICollectionViewFlowLayout()
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.backgroundColor = .yellow
+        cv.backgroundColor = .clear
         cv.translatesAutoresizingMaskIntoConstraints = false
         cv.delegate = self
         cv.dataSource = self
@@ -88,11 +84,11 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-    let rightView: UIView = {
+    lazy var rightView: UIView = {
         
         let rView = UIView()
         rView.translatesAutoresizingMaskIntoConstraints = false
-        rView.backgroundColor = .gray
+        rView.backgroundColor = .clear
         rView.layer.masksToBounds = true
         
     
@@ -121,7 +117,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-    let logoutButton: UIButton = {
+    lazy var logoutButton: UIButton = {
         
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -137,7 +133,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-    let genderLabel: UILabel = {
+    lazy var genderLabel: UILabel = {
         
        let gender = UILabel()
         
@@ -161,11 +157,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         return profile
     }()
-    
-    
-    
-    
-    
+
     
     
     lazy var leftBarButton: UIButton = {
@@ -184,7 +176,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-    var backgroundImage1: UIImageView = {
+    lazy var backgroundImage1: UIImageView = {
         
         let bkImage = UIImageView()
         bkImage.clipsToBounds = true
@@ -226,20 +218,19 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        checkIfUserIsLoggedIn()
         
         let leftNavButton = UIBarButtonItem(customView: leftBarButton)
         
         
         navigationItem.leftBarButtonItem = leftNavButton
         
-        getPostedData()
-        checkIfUserIsLoggedIn()
-        
-        
-        
 
         
     }
+    
+    
+    
     
     override func viewWillLayoutSubviews() {
         
@@ -278,16 +269,39 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return imageURLS.count
+        
+        
+        var cellCounter = 0
+
+        
+        for number in 0..<reveredArrays.count {
+            
+            
+            if currentID == reveredArrays[number].userID {
+                
+                imageURLS.append(reveredArrays[number].postedPicURL!)
+                newsHeadline.append(reveredArrays[number].newsHeadlines!)
+                cellCounter += 1
+                
+            }
+            
+        }
+  
+
+        return cellCounter
+        
     }
     
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! myNewsViewCell
-        cell.backgroundColor = .green
-        cell.photoView.sd_setImage(with: URL(string: imageURLS[indexPath.item]))
         
+
+            cell.photoView.sd_setImage(with: URL(string: imageURLS[indexPath.item]))
+            cell.newsHeadline.text = newsHeadline[indexPath.item]
+
+
         return cell
     }
     
@@ -297,7 +311,9 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(indexPath.item)
+    }
     
     
     
@@ -320,20 +336,22 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
         
         
-        if FIRAuth.auth()?.currentUser?.uid == nil {
+        if currentID == nil {
             
             perform(#selector(handleLogout), with: nil, afterDelay: 0)
             
         } else {
             
             
-            self.navigationItem.title = gotUserName
-            userNamelabelHolder.text = gotUserName
-            if userProfilePicURLString == nil {
-                print("empty dude!!")
+            self.navigationItem.title = registeredName
+            
+            userNamelabelHolder.text = registeredName
+            
+            if registeredPicURL == nil {
+                print("no profile picture selected yet!!")
             } else {
                 
-                profileRealImage.sd_setImage(with: URL(string: userProfilePicURLString))
+                profileRealImage.sd_setImage(with: URL(string: registeredPicURL!))  //<<<<<<<<<<<<<<<  remember to link profile PicURL string
             }
 
 
@@ -346,6 +364,8 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     func newsButtonTapped() {
+        
+        checkIfProfileImageSelected()
         
         let homeControl = HomeController()
         homeControl.modalPresentationStyle = .overCurrentContext
@@ -395,6 +415,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
             imagePicker.allowsEditing = true
             
             
+            
             self.present(imagePicker, animated: true, completion: nil)
             
             
@@ -407,6 +428,8 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
+        
+        
     }
     
     
@@ -427,66 +450,21 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
             
             
         }
+        
     
         if let selectedImage = selectedImageFromPicker {
             
             profileRealImage.image = selectedImage
             
             
+            guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
+            let networkRequest = NetworkingService()
+            networkRequest.setUserProfilePic(profileImage: profileRealImage.image!, uid: uid, identifier: "profile")
             
-            let imageName = NSUUID().uuidString
-            let storageRef = FIRStorage.storage().reference().child("profilr_Images").child("\(imageName).png")
             
-            if let uploadData = UIImagePNGRepresentation(self.profileRealImage.image!) {
-                
-                
-                storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
-                    
-                    if error != nil {
-                        
-                        print (error!)
-                        return
-                    }
-                    
-                    if let profileImageURL = metadata?.downloadURL()?.absoluteString {
-                        
-                        let ref = FIRDatabase.database().reference(fromURL: "https://news-cc704.firebaseio.com/")
-                        let cuid = FIRAuth.auth()?.currentUser?.uid
-                        let userReference = ref.child("Users").child(cuid!)
-                        let values = ["profileImageURL": profileImageURL]
-                        userReference.updateChildValues(values, withCompletionBlock: { (err, ref) in
-                            
-                            if err != nil {
-                                
-                                print(err!)
-                                return
-                            }
-                            
-                            print("picture saved")
-                            
-                            let uid = FIRAuth.auth()?.currentUser?.uid
-                            
-                            let fbAquisition = FireBaseAquistion(userIDNumber: uid!, childRef: parentUser, reference: username, profileImageRef: profileImageURL)
-                            
-                            fbAquisition.getUserDetails()
-                            
-                            self.dismiss(animated: true, completion: nil)
-                            
-                        })
-                    }
-                    
-                    
-                })
-                
-                
-            }
-
+            self.dismiss(animated: true, completion: nil)
             
         }
-        
-
-        
-        
     
     }
     
@@ -494,40 +472,25 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
 
     func setBackgroundBaseOnGender() {
         
-        let uid = FIRAuth.auth()?.currentUser?.uid
-        FIRDatabase.database().reference().child(parentUser).child(uid!).observeSingleEvent(of: .value, with: { (snapshot) in
+        
+        if registeredGender == "Male" {
             
-            if let dictoionary = snapshot.value as? [String: AnyObject] {
-                
-                self.genderLabel.text = dictoionary[gender] as? String
-                
-                if self.genderLabel.text == "Male" {
-                    
-                    self.backgroundImage1.image = UIImage(named: "male")
-                    self.profileRealImage.layer.borderColor = UIColor(red: 247/255, green: 201/255, blue: 165/255, alpha: 1).cgColor
-                    self.navigationController?.navigationBar.barTintColor = UIColor(red: 247/255, green: 201/255, blue: 165/255, alpha: 1)
-                    
-                } else if self.genderLabel.text == "Female" {
-                    
-                    self.backgroundImage1.image = UIImage(named: "femalebk")
-                    self.profileRealImage.layer.borderColor = UIColor(red: 101/255, green: 49/255, blue: 122/255, alpha: 1).cgColor
-                    self.navigationController?.navigationBar.barTintColor = UIColor(red: 101/255, green: 49/255, blue: 122/255, alpha: 1)
-                }
-                
-                
-                
-                
-                
-    
-            }
+            self.backgroundImage1.image = UIImage(named: "male")
+            self.profileRealImage.layer.borderColor = UIColor(red: 247/255, green: 201/255, blue: 165/255, alpha: 1).cgColor
+            self.navigationController?.navigationBar.barTintColor = UIColor(red: 247/255, green: 201/255, blue: 165/255, alpha: 1)
+            
+        } else if registeredGender == "Female" {
+            
+            self.backgroundImage1.image = UIImage(named: "femalebk")
+            self.profileRealImage.layer.borderColor = UIColor(red: 101/255, green: 49/255, blue: 122/255, alpha: 1).cgColor
+            self.navigationController?.navigationBar.barTintColor = UIColor(red: 101/255, green: 49/255, blue: 122/255, alpha: 1)
             
             
-        }, withCancel: nil)
+        }
         
-        
-        
-    
     }
+    
+    
     
     func yourPostsButtonTapped() {
        
@@ -544,54 +507,24 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
        
     }
     
-    func getPostedData() {
+    
+    func checkIfProfileImageSelected() {
         
-        
-        let uid = FIRAuth.auth()?.currentUser?.uid
-        
-        FIRDatabase.database().reference().child("Users").child(uid!).child("PostedDataByUser").observeSingleEvent(of: .value, with: {(snapshot) in
+        if profileRealImage.image == UIImage(named: "default") || profileRealImage.image == nil {
             
-            if let dictionary = snapshot.value as? [String: [String : String]] {
-                
- 
-                
-                for info in dictionary {
-                    
-                    self.idlist.append(info.key)
-                    
-                    
-                    
-                    
-                }
-                
-                
-                
-                for count in 0..<self.idlist.count {
-                    
-                    if let postedData = dictionary[self.idlist[count]]?["postedPicURL"], let postedInfo = dictionary[self.idlist[count]]?["postedText"], let name = dictionary[self.idlist[count]]?["reporterName"]{
-                        
-                        self.reporterList.append(name)
-                        self.postedText.append(postedInfo)
-                        
-                        self.imageURLS.append(postedData)
-                        
-                        
-                        self.myNewsCollectionView.reloadData()
-                        
-                        
-                    }
-                }
-            }
+            let alert = UIAlertController(title: "Profile Pic Required", message: "Please select a profile pic before moving forward", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "Got It", style: .default, handler: nil)
+            alert.addAction(ok)
+            
+            present(alert, animated: true, completion: nil)
+            return
             
             
-            
-        }, withCancel: nil)
-        
-        
-        return
+        }
         
         
     }
+    
     
     
 }

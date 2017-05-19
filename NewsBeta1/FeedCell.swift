@@ -12,10 +12,10 @@ import Firebase
 
 protocol CellSegaway2Delegate {
     func profilePicTapped()
+    func otherUserTapped(userID: String, userName: String)
 }
 
-
-
+var reveredArrays = [DatabaseProperties]()
 var name: String!
 
 class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, CellSegwayDelegate {
@@ -27,8 +27,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     let cellID = "cellID"
     var arrays = [DatabaseProperties]()
-    var reveredArrays = [DatabaseProperties]()
-    var userID: String?
+
     
     
     
@@ -41,27 +40,13 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     var timestampArray: [String] = []
     var postArray = [String]()
     
-    
-    lazy var refreshData: UIRefreshControl = {
-        
-        
-       let refresh = UIRefreshControl()
-        refresh.addTarget(self, action: #selector(performRefreshData), for: .valueChanged)
-        refresh.tintColor = UIColor(red:0.25, green:0.72, blue:0.85, alpha:1.0)
-        
-        return refresh
-    }()
-    
-    
 
-    
-   
-    
     
     lazy var collectionViews: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
-        
+        layout.minimumLineSpacing = 2.5
+                
         let collection  = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.backgroundColor = .black
@@ -73,28 +58,19 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         
     }()
     
+    
     override func setupViews() {
         super.setupViews()
         
         getPostedData()
-
-        
         collectionViewContraints()
         
-        if #available(iOS 10.0, *) {
-            
-            
-            collectionViews.refreshControl = refreshData
-        } else {
-            
-            
-            collectionViews.addSubview(refreshData)
-            
-        }
-        
+
         
        
     }
+    
+    
     
     
     func collectionViewContraints() {
@@ -119,29 +95,35 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         return reveredArrays.count
     }
     
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! TriniNewsCell
         
         
         cell.backgroundColor = .white
         
         cell.delegate = self
+        cell.feedCell = self
         
+
         
         let newArrays = reveredArrays[indexPath.row]
+        
+
+        cell.dataBaseCells = newArrays
+        
+        cell.playButton.isHidden = newArrays.postedVideoURL == "NoVids"
+        
+        
         cell.postedImageView.sd_setImage(with: URL(string: newArrays.postedPicURL!))
         cell.postedTextView.text = newArrays.postedText
         cell.reportNameLabel.text = newArrays.reporterName
         cell.feedUserPic.sd_setImage(with: URL(string: newArrays.userImage!))
-        
-        if let headline = newArrays.newsHeadlines {
-            
-            cell.newsHeadingLabel.text = headline
+        cell.newsHeadingLabel.text = newArrays.newsHeadlines
 
-        } else {
-            
-            cell.newsHeadingLabel.text = "Breaking News"
-        }
+       
+  
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
@@ -172,9 +154,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         let ref = FIRDatabase.database().reference().child("PostedData")
         ref.observe(.childAdded, with: { (snapshot) in
             
-            
-           
-            
+    
             if let dictionary = snapshot.value as? [String: AnyObject] {
             
             
@@ -182,36 +162,35 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
                 let dbProperties = DatabaseProperties()
                     dbProperties.setValuesForKeys(dictionary)
                 
+              
             
                     self.arrays.append(dbProperties)
-                    self.reveredArrays = self.arrays.reversed()
+//                        reveredArrays.insert(dbProperties, at: 0)
+                    reveredArrays = self.arrays.reversed()
                 
                 
                 
                 self.collectionViews.reloadData()
-                
-            
-
-                
                             
         }
 
             
-        
-            
         }, withCancel: nil)
-        
+
  
     }
     
-    
-    
-    func performRefreshData() {
+
+    func otherUserTapped(userID: String, userName: String) {
         
-        getPostedData()
-        collectionViews.refreshControl?.endRefreshing()
+        //method for other users, linked in Home Controller
+        
+        delegate?.otherUserTapped(userID: userID, userName: userName)
         
     }
+    
+    
+    
     
     func feedPicTapped() {
         
@@ -222,7 +201,85 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         
         
     }
- 
+    
+    var startingFrame: CGRect?
+    var blackBackgroundView: UIView?
+    
+    
+    func performStartZoomInForImage(imageView: UIImageView) {
+        
+        
+        
+        
+        startingFrame = imageView.superview?.convert(imageView.frame, to: nil)
+        
+        
+        let zoomingView = UIImageView(frame: startingFrame!)
+        zoomingView.backgroundColor = .red
+        zoomingView.image = imageView.image
+        zoomingView.isUserInteractionEnabled = true
+        
+        zoomingView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleZoomOut)))
+        
+        if let keyWindow = UIApplication.shared.keyWindow {
+            
+            blackBackgroundView = UIView(frame: keyWindow.frame)
+            blackBackgroundView?.backgroundColor = .black
+            blackBackgroundView?.alpha = 0
+            
+            keyWindow.addSubview(blackBackgroundView!)
+            keyWindow.addSubview(zoomingView)
+            
+            
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: { 
+                
+                self.blackBackgroundView?.alpha = 1
+                
+                zoomingView.frame = CGRect(x: 0, y: 0, width: keyWindow.frame.width, height: (self.startingFrame!.height))
+                zoomingView.center = keyWindow.center
+
+                
+                
+                
+            }, completion: nil)
+            
+   
+            
+        }
+        
+    }
+    
+    
+    func handleZoomOut(tapGesture: UITapGestureRecognizer) {
+        
+        if let zoomOutImage = tapGesture.view {
+            
+            
+            
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: { 
+                
+                
+                zoomOutImage.frame = self.startingFrame!
+                self.blackBackgroundView?.alpha = 0
+                
+                
+                
+            }, completion: { (completed: Bool) in
+                
+                
+                zoomOutImage.removeFromSuperview()
+            })
+            
+
+            
+            
+        }
+        
+        
+        
+    }
+    
+
  
 }
 

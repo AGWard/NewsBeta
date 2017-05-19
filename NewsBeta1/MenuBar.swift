@@ -10,7 +10,7 @@ import UIKit
 
 let firstIconHeading = "Bacchanal"
 let secondIconHeading = "Mainstream"
-let thirdIconHeading = "5.0 Alerts"
+let thirdIconHeading = "Services"
 let fourthIconHeading = "K.I.Ps"
 
 
@@ -70,6 +70,19 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         bar.translatesAutoresizingMaskIntoConstraints = false
         
         
+        let redBarLeft = UIView()
+        redBarLeft.backgroundColor = .red
+        redBarLeft.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        let whiteBar = UIView()
+        whiteBar.backgroundColor = .white
+        whiteBar.translatesAutoresizingMaskIntoConstraints = false
+        
+        let middleBlackBar = UIView()
+        middleBlackBar.backgroundColor = .darkText
+        middleBlackBar.translatesAutoresizingMaskIntoConstraints = false
+        
         
         addSubview(bar)
         
@@ -78,6 +91,30 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         bar.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         bar.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1/4).isActive = true
         bar.heightAnchor.constraint(equalToConstant: 4).isActive = true
+        
+        bar.addSubview(redBarLeft)
+        
+        redBarLeft.widthAnchor.constraint(equalTo: bar.widthAnchor, multiplier: 1/2).isActive = true
+        redBarLeft.heightAnchor.constraint(equalTo: bar.heightAnchor).isActive = true
+        redBarLeft.centerXAnchor.constraint(equalTo: bar.centerXAnchor).isActive = true
+        redBarLeft.bottomAnchor.constraint(equalTo: bar.bottomAnchor).isActive = true
+        
+        redBarLeft.addSubview(whiteBar)
+        
+        whiteBar.widthAnchor.constraint(equalTo: redBarLeft.widthAnchor, multiplier: 1/2).isActive = true
+        whiteBar.heightAnchor.constraint(equalTo: redBarLeft.heightAnchor).isActive = true
+        whiteBar.centerXAnchor.constraint(equalTo: redBarLeft.centerXAnchor).isActive = true
+        whiteBar.bottomAnchor.constraint(equalTo: redBarLeft.bottomAnchor).isActive = true
+        
+        whiteBar.addSubview(middleBlackBar)
+        
+        middleBlackBar.widthAnchor.constraint(equalTo: whiteBar.widthAnchor, multiplier: 3/4).isActive = true
+        middleBlackBar.heightAnchor.constraint(equalTo: whiteBar.heightAnchor).isActive = true
+        middleBlackBar.centerXAnchor.constraint(equalTo: whiteBar.centerXAnchor).isActive = true
+        middleBlackBar.bottomAnchor.constraint(equalTo: whiteBar.bottomAnchor).isActive = true
+        
+        
+        
         
     }
     

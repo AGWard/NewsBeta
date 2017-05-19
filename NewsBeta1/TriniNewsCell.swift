@@ -7,10 +7,13 @@
 //
 
 import UIKit
+import AVFoundation
+import Firebase
 
 // delegate for feedpic
 protocol CellSegwayDelegate: class {
     func feedPicTapped()
+    func otherUserTapped(userID: String, userName: String)
 }
 
 
@@ -18,6 +21,43 @@ protocol CellSegwayDelegate: class {
 class TriniNewsCell: BaseCell {
     
     weak var delegate: CellSegwayDelegate?
+    
+    var feedCell: FeedCell?
+    var dataBaseCells: DatabaseProperties?
+    
+    
+    
+    
+    
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        
+        let indicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.hidesWhenStopped = true
+        
+        
+        return indicator
+        
+    }()
+
+    
+    
+    
+    lazy var playButton: UIButton = {
+        
+        let button = UIButton()
+        button.setImage(UIImage(named: "newPlayButton")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isHidden = true
+        button.addTarget(self, action: #selector(playVideo), for: .touchUpInside)
+        button.tintColor = .red
+        
+        
+        
+       return button
+        
+    }()
+    
     
     
     
@@ -58,12 +98,15 @@ class TriniNewsCell: BaseCell {
     
     
     
-    lazy var timeLabelContainer: UIView = {
-        let pic = UIView()
+    lazy var timeLabelContainer: UIImageView = {
+        
+        let pic = UIImageView()
+        pic.image = UIImage(named: "label")?.withRenderingMode(.alwaysTemplate)
+        pic.tintColor = .red
+        pic.contentMode = .scaleAspectFill
         pic.translatesAutoresizingMaskIntoConstraints = false
-
-        pic.backgroundColor = .red
-        pic.alpha = 0.5
+        pic.clipsToBounds = true
+    
         
         return pic
 
@@ -71,13 +114,18 @@ class TriniNewsCell: BaseCell {
     }()
     
     
-    lazy var moreOptionsButton: UIButton = {
+    
+    
+    lazy var moreOptionsButton: UIImageView = {
         
-        let button = UIButton()
-        button.setTitle("***", for: .normal)
-        button.setTitleColor(.red, for: .normal)
+        let button = UIImageView()
+        
+        button.image = UIImage(named: "optionsDark")
+        button.contentMode = .scaleAspectFit
+        button.tintColor = .white
+        button.isUserInteractionEnabled = true
+        button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(moreOptionsButtonTapped)))
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(moreOptionsButtonTapped), for: .touchUpInside)
 
         return button
 
@@ -85,25 +133,26 @@ class TriniNewsCell: BaseCell {
     
     
     
-    let timeLabel: UILabel = {
+    lazy var timeLabel: UILabel = {
         
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
-        label.font = UIFont(name: "Avenir Next", size: 9)
+        label.font = UIFont(name: "Avenir Next", size: 10)
+
         
         return label
         
     }()
     
     
-    let newsHeadingLabel: UILabel = {
+    lazy var newsHeadingLabel: UILabel = {
         
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "BREAKING NEWS"
         label.textColor = .darkText
-        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.font = UIFont(name: "American Typewriter", size: 18)
         label.textAlignment = .left
         
         
@@ -134,19 +183,20 @@ class TriniNewsCell: BaseCell {
     
     
     
-    let reportNameLabel: UILabel = {
+    lazy var reportNameLabel: UILabel = {
         
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .blue
         label.font = UIFont(name: "Avenir Next", size: 12)
-        
+        label.isUserInteractionEnabled = true
+        label.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
         
         return label
     }()
 
     
-    let storyByLabel: UILabel = {
+    lazy var storyByLabel: UILabel = {
         
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -159,19 +209,21 @@ class TriniNewsCell: BaseCell {
     }()
     
     
-    let postedImageView: UIImageView = {
+    lazy var postedImageView: UIImageView = {
         
         let postedView = UIImageView()
         postedView.translatesAutoresizingMaskIntoConstraints = false
         postedView.backgroundColor = .white
-        postedView.contentMode = .scaleAspectFill
+        postedView.contentMode = .scaleAspectFit
         postedView.clipsToBounds = true
+        postedView.isUserInteractionEnabled = true
+        postedView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(zoomImage)))
         
        return postedView
     }()
     
     
-    let postedTextView: UITextView = {
+    lazy var postedTextView: UITextView = {
         
         let field = UITextView()
         field.translatesAutoresizingMaskIntoConstraints = false
@@ -195,14 +247,15 @@ class TriniNewsCell: BaseCell {
         postedImageViewConstraints()
         storyByLabelConstraints()
         postedTextViewConstraints()
-        reporterLabelConstraints()
         feedUserPicConstraints()
+        reporterLabelConstraints()
         timeLabelContainerConstraints()
         timeLabelConstraints()
         moreOptionsButtonConstraints()
         shareIconConstraints()
         commentIconConstraints()
-        
+        playButtonConstraints()
+        activityIndicatorConstraints()
         
         
         
@@ -212,7 +265,7 @@ class TriniNewsCell: BaseCell {
         
         addSubview(postedImageView)
         
-        postedImageView.topAnchor.constraint(equalTo: newsHeadingLabel.bottomAnchor, constant: 0).isActive = true
+        postedImageView.topAnchor.constraint(equalTo: newsHeadingLabel.bottomAnchor, constant: 10).isActive = true
         
         postedImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 0).isActive = true
         postedImageView.widthAnchor.constraint(equalTo: contentView.widthAnchor).isActive = true
@@ -236,6 +289,19 @@ class TriniNewsCell: BaseCell {
         
     }
     
+    func feedUserPicConstraints() {
+        
+        addSubview(feedUserPic)
+        
+        feedUserPic.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        feedUserPic.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        feedUserPic.centerYAnchor.constraint(equalTo: storyByLabel.centerYAnchor).isActive = true
+        feedUserPic.leftAnchor.constraint(equalTo: storyByLabel.rightAnchor, constant: 2).isActive = true
+        
+        
+    }
+
+    
     func reporterLabelConstraints() {
         
         
@@ -244,23 +310,12 @@ class TriniNewsCell: BaseCell {
         
         
         
-        reportNameLabel.leftAnchor.constraint(equalTo: storyByLabel.rightAnchor, constant: 2).isActive = true
-        reportNameLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/9).isActive = true
+        reportNameLabel.leftAnchor.constraint(equalTo: feedUserPic.rightAnchor, constant: 2).isActive = true
+        reportNameLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 2/5).isActive = true
         reportNameLabel.centerYAnchor.constraint(equalTo: storyByLabel.centerYAnchor).isActive = true
  
     }
     
-    func feedUserPicConstraints() {
-        
-        addSubview(feedUserPic)
-        
-        feedUserPic.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        feedUserPic.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        feedUserPic.centerYAnchor.constraint(equalTo: storyByLabel.centerYAnchor).isActive = true
-        feedUserPic.leftAnchor.constraint(equalTo: reportNameLabel.rightAnchor, constant: 2).isActive = true
-        
-        
-    }
     
     
     func storyByLabelConstraints() {
@@ -279,9 +334,9 @@ class TriniNewsCell: BaseCell {
         
         addSubview(newsHeadingLabel)
         
-        newsHeadingLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 40).isActive = true
+        newsHeadingLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30).isActive = true
         newsHeadingLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 2).isActive = true
-        newsHeadingLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/2).isActive = true
+        newsHeadingLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 3/4).isActive = true
         newsHeadingLabel.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/16).isActive = true
         
     }
@@ -292,9 +347,9 @@ class TriniNewsCell: BaseCell {
         
         
         
-        timeLabel.leftAnchor.constraint(equalTo: timeLabelContainer.leftAnchor, constant: 2).isActive = true
-        timeLabel.bottomAnchor.constraint(equalTo: timeLabelContainer.bottomAnchor).isActive = true
-        
+        timeLabel.leftAnchor.constraint(equalTo: timeLabelContainer.leftAnchor, constant: 6).isActive = true
+        timeLabel.centerYAnchor.constraint(equalTo: timeLabelContainer.centerYAnchor).isActive = true
+        timeLabel.widthAnchor.constraint(equalTo: timeLabelContainer.widthAnchor).isActive = true
         
         
     }
@@ -307,6 +362,8 @@ class TriniNewsCell: BaseCell {
         
         moreOptionsButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 0).isActive = true
         moreOptionsButton.centerYAnchor.constraint(equalTo: newsHeadingLabel.centerYAnchor).isActive = true
+        moreOptionsButton.leftAnchor.constraint(equalTo: newsHeadingLabel.rightAnchor, constant: 25).isActive = true
+        moreOptionsButton.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/16).isActive = true
         
         
     }
@@ -315,10 +372,10 @@ class TriniNewsCell: BaseCell {
         
         addSubview(timeLabelContainer)
         
-        timeLabelContainer.rightAnchor.constraint(equalTo: postedImageView.rightAnchor, constant: -2).isActive = true
-        timeLabelContainer.bottomAnchor.constraint(equalTo: postedImageView.bottomAnchor).isActive = true
-        timeLabelContainer.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/6).isActive = true
-        timeLabelContainer.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        timeLabelContainer.rightAnchor.constraint(equalTo: postedImageView.rightAnchor, constant: 0).isActive = true
+        timeLabelContainer.topAnchor.constraint(equalTo: postedImageView.topAnchor).isActive = true
+        timeLabelContainer.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/4).isActive = true
+        timeLabelContainer.heightAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/18).isActive = true
         
         
     }
@@ -330,7 +387,7 @@ class TriniNewsCell: BaseCell {
         
         addSubview(shareIconView)
         
-        shareIconView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -2).isActive = true
+        shareIconView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5).isActive = true
         shareIconView.centerYAnchor.constraint(equalTo: storyByLabel.centerYAnchor).isActive = true
         shareIconView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         shareIconView.heightAnchor.constraint(equalToConstant: 30).isActive = true
@@ -353,25 +410,153 @@ class TriniNewsCell: BaseCell {
         
     }
     
+    
+    
+    func playButtonConstraints() {
+        
+        
+        postedImageView.addSubview(playButton)
+        
+        playButton.centerYAnchor.constraint(equalTo: postedImageView.centerYAnchor).isActive = true
+        playButton.centerXAnchor.constraint(equalTo: postedImageView.centerXAnchor).isActive = true
+        playButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        playButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        
+    }
+    
+    func activityIndicatorConstraints() {
+        
+        postedImageView.addSubview(activityIndicator)
+        
+        activityIndicator.centerYAnchor.constraint(equalTo: postedImageView.centerYAnchor).isActive = true
+        activityIndicator.centerXAnchor.constraint(equalTo: postedImageView.centerXAnchor).isActive = true
+        activityIndicator.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        activityIndicator.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        
+    }
+    
+    lazy var moreOptionsView: MoreOptionsView = {
+        
+       let options = MoreOptionsView()
+        options.triniNewsCell = self
+        
+        
+        return options
+    }()
+    
+    
     func profilePicTapped() {
         
         
-        //method below uses delegate from FeedCell
- 
+        guard let id = dataBaseCells?.userID else {
+            
+            print("no ID number detected")
+            return
+            
+        }
         
-      delegate?.feedPicTapped()
+        if id == FIRAuth.auth()?.currentUser?.uid {
+            
+            //if true send user via delegate to userHome Page
+            self.delegate?.feedPicTapped()
+            
+        } else {
+            
+            //if not current user then view profile without access
+            
+            self.delegate?.otherUserTapped(userID: (dataBaseCells?.userID!)!, userName: (dataBaseCells?.reporterName!)!)
+            
+        }
         
         
         
     }
-
     
 
+
+    
+    
+    
     
     
     func moreOptionsButtonTapped() {
         
-        print("Abuse")
+        moreOptionsView.showOptions()
+        
+        
+    }
+    
+
+    
+    
+    
+    func zoomImage(tapGesture: UITapGestureRecognizer) {
+        
+        if dataBaseCells?.postedVideoURL != "NoVids" {
+            
+            return
+        }
+        
+        
+        if let imageView = tapGesture.view as? UIImageView {
+            
+            self.feedCell?.performStartZoomInForImage(imageView: imageView)
+            
+        }
+    
+        
+        
+        
+    }
+    
+    var playerLayer: AVPlayerLayer?
+    var player: AVPlayer?
+    
+    
+    func playVideo() {
+    
+        
+        
+        if let videoURLString = dataBaseCells?.postedVideoURL {
+            
+            if videoURLString != "NoVids" {
+                
+                let url = URL(string: (dataBaseCells?.postedVideoURL)!)
+                
+                player = AVPlayer(url: url!)
+                
+                playerLayer = AVPlayerLayer(player: player)
+                playerLayer?.frame = postedImageView.bounds
+                postedImageView.layer.addSublayer(playerLayer!)
+                
+                
+                
+                player?.play()
+                activityIndicator.startAnimating()
+                playButton.isHidden = true
+                
+                 print("attempt to play video")
+                
+            }
+            
+        }
+        
+        
+        
+    }
+    
+    
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        
+        playerLayer?.removeFromSuperlayer()
+        player?.pause()
+        activityIndicator.stopAnimating()
+        playButton.isHidden = false
         
         
     }

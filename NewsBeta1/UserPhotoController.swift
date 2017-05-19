@@ -8,8 +8,44 @@
 
 import UIKit
 import Photos
+import AVFoundation
+import MobileCoreServices
 
-class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+    
+    
+    
+    
+    
+    lazy var titleViewContainer: UIView = {
+        
+       let titleView = UIView(frame: CGRect(x: 0, y: 0, width: 80, height: 40))
+        titleView.backgroundColor = .red
+        
+        
+        
+        return titleView
+        
+    }()
+    
+    
+    lazy var titleImage: UIImageView = {
+       
+        let image = UIImageView(frame: CGRect(x: 0, y: 0, width: 80, height: 40))
+
+        image.backgroundColor = .clear
+        image.image = UIImage(named: "video2")
+        image.contentMode = .scaleAspectFit
+        image.clipsToBounds = true
+        image.layer.masksToBounds = true
+        image.isUserInteractionEnabled = true
+        image.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(selectVideo)))
+        
+        
+        
+        return image
+        
+    }()
     
  
     
@@ -55,8 +91,11 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
     var isAlbumFound: Bool = false
     var picsArray = [UIImage]()
     var fetchOptions = PHFetchOptions()
+    var imageFIle = [UIImage]()
+
+
     
-    fileprivate let imageManager = PHCachingImageManager()
+    fileprivate let imageManagerss = PHCachingImageManager()
     
     
     var albumName = "Snapchat"
@@ -83,32 +122,36 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        grabPhotos()
         
         let rightButton = UIBarButtonItem(customView: rightBarButton)
-        
+       
         
         navigationItem.rightBarButtonItem = rightButton
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(goBackToHomeScreen))
+        navigationItem.titleView = titleImage
         
         
         
-        
-//        getPhotos()
+
         
 
         
     }
     
     override func viewWillLayoutSubviews() {
+        
         collectionVConstraints()
         selectedImageViewConstraints()
+        
+        
         
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
 //        refreshPhotoView()
-        grabPhotos()
+        
     }
     
     
@@ -116,7 +159,11 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+        
+        print("memory warning UserPhotoController")
     }
+    
+
     
     
     
@@ -132,14 +179,19 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
         
     }
     
+    var selectedViewHeight: NSLayoutConstraint?
+    var selectedViewWidth: NSLayoutConstraint?
+    
     func selectedImageViewConstraints() {
         
         view.addSubview(selectedImageView)
         
+        let height = view.bounds.height / 2
         
-        
-        selectedImageView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        selectedImageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1/2).isActive = true
+        selectedViewWidth = selectedImageView.widthAnchor.constraint(equalTo: view.widthAnchor)
+        selectedViewWidth?.isActive = true
+        selectedViewHeight = selectedImageView.heightAnchor.constraint(equalToConstant: height)
+        selectedViewHeight?.isActive = true
         selectedImageView.bottomAnchor.constraint(equalTo: collectionV.topAnchor).isActive = true
         
         
@@ -156,17 +208,14 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as? PhotoSelectionCell
-        
+
         
         cell?.photoView.image = picsArray[indexPath.item]
         
-        if indexPath.item == 0 && indexPath.section == 0 {
-           selectedImageView.image = picsArray[0]
-            
-            
+        if indexPath.item == 0 && indexPath.section == 0 && selectedImageView.image == nil {
+        selectedImageView.image = picsArray[0]
+        
         }
-        
-        
         
         
         return cell!
@@ -191,55 +240,69 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        
-        
-        let image: UIImage = picsArray[indexPath.row]
-        selectedImageView.image = image
+
+    selectedImageView.image = picsArray[indexPath.item]
         
        print(indexPath.row)
     }
+    
+    
     
     func grabPhotos() {
         
         
             print("Loading................")
-            
-            
+        
+        
+        
+        
             let imageManager = PHCachingImageManager.default()
-            
-            
+        
+        
+        
             let requestOptions = PHImageRequestOptions()
+        
             requestOptions.isSynchronous = true
-            requestOptions.deliveryMode = .opportunistic
-            
+            requestOptions.deliveryMode = .highQualityFormat
+        
+        
             
             let fetchOptions = PHFetchOptions()
             fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-            
+        
             
             let fetchResult: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        
         
             
             if fetchResult.count > 0 {
                 
+    
+                
+                
                 for i in 0..<fetchResult.count {
                     
-                    imageManager.requestImage(for: fetchResult.object(at: i) as PHAsset, targetSize: CGSize(width: 100, height: 100), contentMode: .aspectFill, options: requestOptions, resultHandler: {
+                   
+                    imageManager.requestImage(for: fetchResult.object(at: i) as PHAsset, targetSize: CGSize(width: 100, height: 100), contentMode: .aspectFill, options: requestOptions, resultHandler: { (image, error) in
                         
-                        image, error in
-                        
-                        DispatchQueue.global(qos: .userInteractive).async {
-                            
+                        DispatchQueue.global(qos: .userInitiated).async {
                             DispatchQueue.main.async {
+                                
                                 self.picsArray.append(image!)
+                                
+                                
                                 self.collectionV.reloadData()
+                                
+                                
+                                
+                                
                             }
-                            
                         }
-                        
+
                         
                         
                     })
+                    
                     
                 }
                 
@@ -261,11 +324,119 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
     }
     
     
+    
+    func goBackToHomeScreen() {
+        
+       
+        dismiss(animated: true, completion: nil)
+        
+        
+    }
+    
+
+    
+    var videourls: URL?
+    
+    func selectVideo() {
+        
+        
+        print("videos selected")
+        
+        
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.photoLibrary) {
+            
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.sourceType = UIImagePickerControllerSourceType.photoLibrary
+            imagePicker.allowsEditing = true
+            imagePicker.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String]
+            
+            self.present(imagePicker, animated: true, completion: nil)
+            
+            
+        } else {
+            
+            print("not getting access to photo library")
+        }
+        
+        
+    }
+    
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        if let videoURL = info[UIImagePickerControllerMediaURL] as? URL{
+            
+            print(videoURL)
+            selectedImageView.image = videoPreviewImage(filename: videoURL)
+            videourls = videoURL
+
+            
+            dismiss(animated: true, completion: nil)
+            
+        }
+        
+        
+        
+
+        
+        var selectedImageFromPicker: UIImage?
+        
+        if let editImage = info [UIImagePickerControllerEditedImage] as? UIImage {
+            
+            selectedImageFromPicker = editImage
+            
+        } else if let chosenImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            
+            
+            selectedImageFromPicker = chosenImage
+            
+            
+        }
+        
+        if let selectedImage = selectedImageFromPicker {
+            
+            selectedImageView.image = selectedImage
+            
+            
+            dismiss(animated: true, completion: nil)
+        }
+    
+    }
+    
+    
+    func videoPreviewImage(filename: URL) -> UIImage? {
+        
+       
+        let asset = AVURLAsset(url: filename)
+        let generator = AVAssetImageGenerator(asset: asset)
+        generator.appliesPreferredTrackTransform = true
+        
+        let timestamp = CMTime(seconds: 2, preferredTimescale: 60)
+        
+        do {
+            let imageRef = try generator.copyCGImage(at: timestamp, actualTime: nil)
+            return UIImage(cgImage: imageRef)
+        }
+        catch let error as NSError
+        {
+            print("Image generation failed with error \(error)")
+            return nil
+        }
+        
+        
+        
+    }
+    
     func nextButtonPressed() {
         
-        print(selectedImageView.image!)
-        
-        
+
         
         let modalViewController = PostingPageController()
         
@@ -273,155 +444,22 @@ class UserPhotoController: UIViewController, UICollectionViewDelegate, UICollect
         modalViewController.modalPresentationStyle = .overCurrentContext
         modalViewController.selectedPic.image = selectedImageView.image
         
+        if videourls != nil {
+            
+           modalViewController.videoImageURL = videourls!
+        }
+        
+        
         let navController = UINavigationController(rootViewController: modalViewController)
         
         present(navController, animated: true, completion: nil)
         
     }
-    
-    func goBackToHomeScreen() {
-        
-        let homeController = HomeController()
-        
-        homeController.modalPresentationStyle = .overFullScreen
-        
-        let navController = UINavigationController(rootViewController: homeController)
-        
-        present(navController, animated: true, completion: nil)
-        
-        
-    }
-    
-    func checkIfThereArePhotos() {
-        
-        if picsArray.count == 0 {
-            
-            
-            collectionV.reloadData()
-            
-            
-        }
-        
-    }
-    
-  
-    
-    
+
+
     
 }
 
 
-    
-    
-    
-//    func getPhotos() {
-//        
-//        
-//        
-//        
-//        fetchOptions.predicate = NSPredicate(format: "title = %@", albumName)
-//        
-//        
-////        self.fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-//        
-//        let photoCollection = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: fetchOptions)
-//        
-//        
-//        //DNews folder already created
-//        print(photoCollection)
-//        
-//        if(photoCollection.firstObject != nil) {
-//            
-//            print("album found")
-//            
-//            self.isAlbumFound = true
-//            self.assetCollection = photoCollection.firstObject! as PHAssetCollection
-//            
-//            
-//            
-//            
-//        } else {
-//            
-//            //create DNewsPics folder
-//            print("folder does not exist, creating now...")
-//            
-//            try! PHPhotoLibrary.shared().performChangesAndWait {
-//                PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: self.albumName)
-// 
-//                
-//            }
-//            
-//
-//            
-//            
-////            PHPhotoLibrary.shared().performChanges({
-////                
-////                let request = PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: self.albumName)
-////                print(request)
-////                
-////                
-////            }, completionHandler: {(succes, error) in
-////                
-////              
-////                if succes {
-////                    
-////                    self.getPhotos()
-////                }
-////                
-////                
-////                
-////            })
-//            
-//        }
-//        
-//        
-//        
-//    }
-//    
-//    func refreshPhotoView() {
-//        
-//        if self.assetCollection == nil {
-//            
-//            self.getPhotos()
-//        }
-//
-//        
-//        
-//        self.fetchResult = PHAsset.fetchAssets(in: self.assetCollection, options: nil)
-//        
-//        
-//        
-//        
-//        for i in 0..<self.fetchResult.count {
-//            
-//            print("here is the new fetch result count\(self.fetchResult.count)")
-//            
-//            let requestOptions = PHImageRequestOptions()
-//            requestOptions.isSynchronous = true
-//            requestOptions.deliveryMode = .opportunistic
-//            
-//            
-//            
-//            let asset = self.fetchResult.object(at: i) as PHAsset
-//            self.imageManager.requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit, options: requestOptions, resultHandler: {(result, info) in
-//                
-//                
-//               
-//                self.picsArray.append(result!)
-//                
-//                
-//                
-//                self.collectionV.reloadData()
-//                
-//                
-//            })
-//        }
-//        
-//        
-//     self.fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-//        
-//    }
-
-    
     
 

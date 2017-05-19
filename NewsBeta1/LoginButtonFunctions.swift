@@ -15,12 +15,14 @@ import Firebase
 extension LoginController {
     
     
+    
+    
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     // ***************  Button Functions  *********** //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     
-    
+    // signup sign in button functions
     
     func toggleTapped() {
         
@@ -60,11 +62,16 @@ extension LoginController {
         
         if segmentedLoginRegToggle.selectedSegmentIndex == 0 {
             
+            
+            //log into homescreen
+            
             handleLogin()
             
             
             
         } else if segmentedLoginRegToggle.selectedSegmentIndex == 1 {
+            
+            //register user via sign up sheet then direct to userHome Page
             
             registerCheck()
         }
@@ -102,74 +109,12 @@ extension LoginController {
                         //******************************CREATION OF USER IN DATABASE*********************************//
                         
                         
-                        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error) in
-                            
-                            if error != nil {
-                                
-                                
-                                let alert = UIAlertController(title: "Password/Email Invalid", message: "Error - \(error!)", preferredStyle: .alert)
-                                let ok = UIAlertAction(title: "Got It", style: .default, handler: nil)
-                                alert.addAction(ok)
-                                
-                                self.present(alert, animated: true, completion: nil)
-                                self.indicatorContainerView.isHidden = true
-                                self.view.isUserInteractionEnabled = true
-                                self.activityIndicator.stopAnimating()
-                                
-                                return
-                            }
-                            
-                            guard let uid = user?.uid else {
-                                
-                                self.indicatorContainerView.isHidden = true
-                                self.view.isUserInteractionEnabled = true
-                                self.activityIndicator.stopAnimating()
-                                print("issue with user UID")
-                                return
-                            }
-                            
-                            
-                            let userRef = FIRDatabase.database().reference().child("Users").child(uid)
-                            let values = ["name": name, "email": email, "password": password, "gender": gender]
-                            userRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
-                                
-                                if err != nil {
-                                    //add prompt for email already in use
-                                    print(err!)
-                                    print("AAA")
-                                    self.indicatorContainerView.isHidden = true
-                                    self.view.isUserInteractionEnabled = true
-                                    self.activityIndicator.stopAnimating()
-                                    
-                                    return
-                                }
-                                
- 
-                                
-                                print("user info saved")
-                                
-                                let userHomePage = UserHomePageController()
-                                userHomePage.modalPresentationStyle = .overCurrentContext
-                                
-                                let navController = UINavigationController(rootViewController: userHomePage)
-                                
-                                self.present(navController, animated: true, completion: nil)
-                                self.indicatorContainerView.isHidden = true
-                                self.view.isUserInteractionEnabled = true
-                                self.activityIndicator.stopAnimating()
-                                
-                                
-                               
-                            })
-                            
-                            
-                            let fbAquisition = FireBaseAquistion(userIDNumber: uid, childRef: parentUser, reference: username, profileImageRef: profileImageURL)
-                            
-                            fbAquisition.getUserDetails()
-                            
-                        })
+                        let networkRequest = NetworkingService()
+                        networkRequest.loginC = self
                         
+                        networkRequest.signUpNewUser(username: name, email: email, password: password, gender: gender)
                         
+                                             
                         
                     } else {
                         
@@ -245,6 +190,8 @@ extension LoginController {
             
         }
     }
+    
+    
     
     
     func handleLogin() {
@@ -330,8 +277,6 @@ extension LoginController {
                 
             }
             
-          
-            
             
             print("login in successful")
             
@@ -349,9 +294,9 @@ extension LoginController {
             
             let uid = FIRAuth.auth()?.currentUser?.uid
             
-            let fbAquisition = FireBaseAquistion(userIDNumber: uid!, childRef: parentUser, reference: username, profileImageRef: profileImageURL)
+            let networkReq = NetworkingService()
+            networkReq.getUserInfo(parentRef: firebaseParentUser, childRef: uid!, screen: "home")
             
-            fbAquisition.getUserDetails()
             
         })
         
@@ -389,8 +334,7 @@ extension LoginController {
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         
-        //        self.view.endEditing(true)
-        
+
         
         return genders[row]
     }
@@ -402,16 +346,20 @@ extension LoginController {
         
         
         genderLabel.text = genders[row]
-        //        self.getGender.isHidden = true
         self.view.endEditing(true)
+        
     }
+    
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == self.genderLabel {
             
             self.getGender.isHidden = false
             textField.endEditing(true)
+            
         }
+        
+        
     }
     
     
@@ -469,7 +417,173 @@ extension LoginController {
         }
     }
     
+    
+    
+    
+    
+    
+    func presentUserHomeController() {
+        
+  
+            
+            let userHomePage = UserHomePageController()
+            userHomePage.modalPresentationStyle = .overCurrentContext
+            
+            let navController = UINavigationController(rootViewController: userHomePage)
+            
+            
+            self.present(navController, animated: true, completion: {
+                
+                self.indicatorContainerView.isHidden = true
+                self.view.isUserInteractionEnabled = true
+                self.activityIndicator.stopAnimating()
+                
+                
+                
+            })
 
+            
+            
+        
+        
+        
+        
+    }
+    
+    
+
+    
+    
+    func forgotPasswordTapped() {
+        
+        
+        forgotPassword.isUserInteractionEnabled = false
+        
+        
+        
+        verifyView = UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height))
+        verifyView?.backgroundColor = .white
+        verifyView?.alpha = 0
+        
+        
+        
+        verifyEmail = UITextField(frame: CGRect(x: (verifyView?.center.x)! / 3 , y: (verifyView?.center.y)!, width: (verifyView?.frame.width)! / 1.5, height: (verifyView?.frame.width)! / 8))
+        verifyEmail?.placeholder = "Enter email"
+        verifyEmail?.backgroundColor = .clear
+        
+        verifyDetails = UITextField(frame: CGRect(x: 0, y: (verifyView?.frame.width)! / 6, width: (verifyView?.frame.width)!, height: (verifyView?.frame.width)! / 8))
+        verifyDetails?.backgroundColor = .gray
+        verifyDetails?.textColor = .black
+        verifyDetails?.textAlignment = .center
+        verifyDetails?.text = "Forgot Password?"
+        
+        
+        let veryifyButton = UIButton(frame: CGRect(x: (verifyView?.center.x)! / 3, y: (verifyView?.center.y)! + (verifyEmail?.frame.height)! + 20, width: (verifyView?.frame.width)! / 1.5, height: (verifyView?.frame.width)! / 8))
+        veryifyButton.setTitle("Submit", for: .normal)
+        veryifyButton.setTitleColor(.red, for: .normal)
+        veryifyButton.backgroundColor = UIColor(red: 67/255, green: 64/255, blue: 84/255, alpha: 1)
+        veryifyButton.addTarget(self, action: #selector(verifyEmailTapped), for: .touchUpInside)
+        
+        
+        let cancelButton = UIButton(frame: CGRect(x: (verifyView?.center.x)! / 3, y: (verifyView?.center.y)! + (verifyEmail?.frame.height)! + 20 + veryifyButton.frame.height + 10, width: (verifyView?.frame.width)! / 1.5, height: (verifyView?.frame.width)! / 8))
+        cancelButton.setTitle("Cancel", for: .normal)
+        cancelButton.setTitleColor(.red, for: .normal)
+        cancelButton.backgroundColor = UIColor(red: 67/255, green: 64/255, blue: 84/255, alpha: 1)
+        cancelButton.addTarget(self, action: #selector(zoomOut), for: .touchUpInside)
+        
+        
+        
+        view.addSubview(verifyView!)
+        verifyView?.addSubview(verifyEmail!)
+        verifyView?.addSubview(verifyDetails!)
+        verifyView?.addSubview(veryifyButton)
+        verifyView?.addSubview(cancelButton)
+        
+        
+        
+        
+        
+        
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
+            
+            
+            self.verifyView?.alpha = 1
+            
+        }, completion: nil)
+        
+        
+        
+        
+    }
+    
+    
+    
+    
+    
+    func zoomOut() {
+        
+        forgotPassword.isUserInteractionEnabled = true
+        
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            
+            self.verifyView?.alpha = 0
+            
+        }, completion: nil)
+        
+        
+        
+    }
+    
+    func verifyEmailTapped() {
+        
+        
+        print("FIrebase stuff here")
+        
+        
+        FIRAuth.auth()?.sendPasswordReset(withEmail: (verifyEmail?.text)!, completion: { (error) in
+            
+            if error == nil {
+                
+                print("email verification sent!!!")
+                
+            } else {
+                
+                
+                
+                print("here is the verify erro *** \(error!)")
+            }
+            
+            
+            
+        })
+        
+        
+        
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        // Username (aka userNameLabel) character limit
+        
+        guard let text = textField.text else {
+            
+            return true
+            
+        }
+        
+        if textField == userNameLabel {
+            
+            let newLengths = text.characters.count + string.characters.count - range.length
+            
+            return newLengths <= 12
+            
+        }
+
+        
+        return true
+    }
     
 
     

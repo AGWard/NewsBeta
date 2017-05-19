@@ -46,6 +46,7 @@ class SubMainstreamCells: BaseCell {
         label.textColor = .black
         label.font = UIFont(name: "Avenir Next", size: 9)
         label.textAlignment = .center
+        label.isUserInteractionEnabled = false
         
         return label
         

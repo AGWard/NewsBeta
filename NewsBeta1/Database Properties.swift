@@ -12,7 +12,7 @@ class DatabaseProperties: NSObject {
     
     
     
-    var childByAutoID: String?
+    var userID: String?
     var postedPicURL: String?
     var postedText: String?
     var reporterName: String?
@@ -21,6 +21,22 @@ class DatabaseProperties: NSObject {
     var userImage: String?
     var stringTimestamp: String?
     var newsHeadlines: String?
+    var postedVideoURL: String?
     
 
+}
+
+
+class UserInfoDatabase: NSObject {
+    
+    
+    
+    var email: String?
+    var gender: String?
+    var name: String?
+    var password: String?
+    var uid: String?
+    
+    
+    
 }

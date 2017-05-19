@@ -17,6 +17,11 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     
     let genders: [String] = ["Male", "Female", "Alien", "Santa", "Kanye West"]
     
+    // forgot password screen properties < located @ loginButtonFunctions
+    var verifyView: UIView?
+    var verifyEmail: UITextField?
+    var verifyDetails: UITextField?
+    
     
     
     
@@ -24,13 +29,10 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
                             // ***************  Icon Creation  *********** //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    
-    
-    
 
     
     
-    let emailIcon: UIImageView = {
+    lazy var emailIcon: UIImageView = {
         
        let iconV = UIImageView()
         iconV.backgroundColor = .clear
@@ -46,7 +48,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     }()
 
     
-    let passwordIcons: UIImageView = {
+    lazy var passwordIcons: UIImageView = {
         
         let iconVs = UIImageView()
         iconVs.backgroundColor = .clear
@@ -62,7 +64,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     }()
 
     
-    let userIcon: UIImageView = {
+    lazy var userIcon: UIImageView = {
         
         let iconVs = UIImageView()
         iconVs.backgroundColor = .clear
@@ -79,7 +81,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     
     
     
-    let appLogo: UIImageView = {
+    lazy var appLogo: UIImageView = {
         
        let app = UIImageView()
         app.backgroundColor = .clear
@@ -113,6 +115,8 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         forgotLabel.textColor = UIColor(red: 114/255.0, green: 110/255.0, blue: 133/255.0, alpha: 1)
         forgotLabel.font = UIFont(name: "Avenir", size: 12)
         forgotLabel.translatesAutoresizingMaskIntoConstraints = false
+        forgotLabel.isUserInteractionEnabled = true
+        forgotLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(forgotPasswordTapped)))
         
         return forgotLabel
         
@@ -123,7 +127,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     lazy var loadingIndicatorText: UILabel = {
         
        let indicatorText = UILabel()
-        indicatorText.text = "LOADING"
+        indicatorText.text = "Loading..."
         indicatorText.textColor = .white
         indicatorText.font = UIFont(name: "Avenir Next", size: 13)
         indicatorText.translatesAutoresizingMaskIntoConstraints = false
@@ -180,24 +184,26 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     }()
     
     
-    var backgroundImage: UIImageView = {
+    lazy var backgroundImage: UIImageView = {
         
         let bkImage = UIImageView()
         bkImage.image = UIImage(named: "captures")
         bkImage.translatesAutoresizingMaskIntoConstraints = false
         bkImage.contentMode = .scaleAspectFill
-        
+        bkImage.isUserInteractionEnabled = true
+        bkImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(zoomOut)))
         
         return bkImage
     }()
     
-    var backgroundBlur: UIVisualEffectView = {
+    lazy var backgroundBlur: UIVisualEffectView = {
         
         let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
         let views = UIVisualEffectView(effect: blurEffect)
         views.translatesAutoresizingMaskIntoConstraints = false
         views.isHidden = false
         views.alpha = 0.6
+        
         
         return views
         
@@ -392,23 +398,19 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        resetUserData()
-        
-        backgroundConstrainst()
-        segmentedLoginRegToggle.removeBorders()
         UIApplication.shared.statusBarStyle = .lightContent
-//        view.backgroundColor = UIColor(red: 77/255.0, green: 74/255.0, blue: 92/255.0, alpha: 1)
-        
         view.isUserInteractionEnabled = true
         indicatorContainerView.isHidden = true
         activityIndicator.stopAnimating()
+
         
-
+        backgroundConstrainst()
+        segmentedLoginRegToggle.removeBorders()
         containerContstraint()
-
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: Notification.Name.UIKeyboardWillHide, object: nil)
+        
         genderLabel.inputView = getGender
         
     }
@@ -419,20 +421,14 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        
+        print("*******MEMORY WARNING IN LOGIN CONTROLLER*********")
        
     }
     
     
-    func resetUserData() {
-        
-        gotUserName = "username"
-        userProfilePicURLString = ""
-        
-        
-    }
     
-
- 
+     
 
 }
 
