@@ -31,7 +31,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     var myNewsCollectionViewWidthAnchor: NSLayoutConstraint?
     
-    let currentID = FIRAuth.auth()?.currentUser?.uid
+    let currentID = Auth.auth().currentUser?.uid
     
     
     lazy var selectedPictureActivityIndicator: UIActivityIndicatorView = {
@@ -385,7 +385,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         do {
             
-            try FIRAuth.auth()?.signOut()
+            try Auth.auth().signOut()
         } catch let logoutError {
             
             print(logoutError)
@@ -457,7 +457,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
             profileRealImage.image = selectedImage
             
             
-            guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
+            guard let uid = Auth.auth().currentUser?.uid else { return }
             let networkRequest = NetworkingService()
             networkRequest.setUserProfilePic(profileImage: profileRealImage.image!, uid: uid, identifier: "profile")
             

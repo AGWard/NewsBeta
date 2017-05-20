@@ -17,6 +17,7 @@ protocol CellSegwayDelegate: class {
 }
 
 
+var numberOfViews = 0
 
 class TriniNewsCell: BaseCell {
     
@@ -71,6 +72,7 @@ class TriniNewsCell: BaseCell {
         pic.image = UIImage(named: "comments1")
         pic.isUserInteractionEnabled = true
         pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
+       
         
         
         return pic
@@ -120,9 +122,9 @@ class TriniNewsCell: BaseCell {
         
         let button = UIImageView()
         
-        button.image = UIImage(named: "optionsDark")
+        button.image = UIImage(named: "moreOptions")?.withRenderingMode(.alwaysTemplate)
         button.contentMode = .scaleAspectFit
-        button.tintColor = .white
+        button.tintColor = .black
         button.isUserInteractionEnabled = true
         button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(moreOptionsButtonTapped)))
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -151,8 +153,8 @@ class TriniNewsCell: BaseCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "BREAKING NEWS"
-        label.textColor = .darkText
-        label.font = UIFont(name: "American Typewriter", size: 18)
+        label.textColor = .black
+        label.font = UIFont(name: "Baskerville", size: 18)
         label.textAlignment = .left
         
         
@@ -217,7 +219,13 @@ class TriniNewsCell: BaseCell {
         postedView.contentMode = .scaleAspectFit
         postedView.clipsToBounds = true
         postedView.isUserInteractionEnabled = true
-        postedView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(zoomImage)))
+        
+        let tap = UITapGestureRecognizer()
+        tap.numberOfTapsRequired = 3
+        tap.addTarget(self, action: #selector(doubleTapped))
+        postedView.addGestureRecognizer(tap)
+       
+        
         
        return postedView
     }()
@@ -241,6 +249,8 @@ class TriniNewsCell: BaseCell {
     
     override func setupViews() {
         super.setupViews()
+        
+        
         
         newsHeadingLabelConstraints()
         
@@ -360,9 +370,9 @@ class TriniNewsCell: BaseCell {
         addSubview(moreOptionsButton)
         
         
-        moreOptionsButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 0).isActive = true
+        moreOptionsButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10).isActive = true
         moreOptionsButton.centerYAnchor.constraint(equalTo: newsHeadingLabel.centerYAnchor).isActive = true
-        moreOptionsButton.leftAnchor.constraint(equalTo: newsHeadingLabel.rightAnchor, constant: 25).isActive = true
+        moreOptionsButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/16).isActive = true
         moreOptionsButton.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/16).isActive = true
         
         
@@ -372,7 +382,7 @@ class TriniNewsCell: BaseCell {
         
         addSubview(timeLabelContainer)
         
-        timeLabelContainer.rightAnchor.constraint(equalTo: postedImageView.rightAnchor, constant: 0).isActive = true
+        timeLabelContainer.rightAnchor.constraint(equalTo: postedImageView.rightAnchor, constant: 12).isActive = true
         timeLabelContainer.topAnchor.constraint(equalTo: postedImageView.topAnchor).isActive = true
         timeLabelContainer.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/4).isActive = true
         timeLabelContainer.heightAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/18).isActive = true
@@ -457,10 +467,10 @@ class TriniNewsCell: BaseCell {
             
         }
         
-        if id == FIRAuth.auth()?.currentUser?.uid {
+        if id == Auth.auth().currentUser?.uid {
             
             //if true send user via delegate to userHome Page
-            self.delegate?.feedPicTapped()
+            goToUserMenu()
             
         } else {
             
@@ -474,12 +484,15 @@ class TriniNewsCell: BaseCell {
         
     }
     
+    
+    func goToUserMenu() {
+        
+        self.delegate?.feedPicTapped()
+    
+        
+    }
+    
 
-
-    
-    
-    
-    
     
     func moreOptionsButtonTapped() {
         
@@ -488,28 +501,36 @@ class TriniNewsCell: BaseCell {
         
     }
     
-
     
-    
-    
-    func zoomImage(tapGesture: UITapGestureRecognizer) {
+    func doubleTapped(tap: UITapGestureRecognizer) {
         
-        if dataBaseCells?.postedVideoURL != "NoVids" {
-            
-            return
-        }
+        numberOfViews += 1
         
-        
-        if let imageView = tapGesture.view as? UIImageView {
-            
-            self.feedCell?.performStartZoomInForImage(imageView: imageView)
-            
-        }
-    
-        
-        
+        print(numberOfViews)
         
     }
+    
+
+
+    
+//    func zoomImage(tapGesture: UITapGestureRecognizer) {
+//        
+//        if dataBaseCells?.postedVideoURL != "NoVids" {
+//            
+//            return
+//        }
+//        
+//        
+//        if let imageView = tapGesture.view as? UIImageView {
+//            
+//            self.feedCell?.performStartZoomInForImage(imageView: imageView)
+//            
+//        }
+//    
+//        
+//        
+//        
+//    }
     
     var playerLayer: AVPlayerLayer?
     var player: AVPlayer?

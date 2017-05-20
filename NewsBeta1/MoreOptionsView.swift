@@ -83,6 +83,8 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
             UIView.animate(withDuration: 0.5, animations: {
                 self.blackView.alpha = 1
                 self.moreOptionsCollectionView.frame = CGRect(x: 0, y: y, width: self.moreOptionsCollectionView.frame.width, height: self.moreOptionsCollectionView.frame.height)
+                self.triniNewsCell?.moreOptionsButton.tintColor = .red
+                
             })
             
         }
@@ -106,9 +108,11 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
 
         }) { (completed: Bool) in
             
+            self.triniNewsCell?.moreOptionsButton.tintColor = .black
+            
             if options.names == "Settings" {
                 
-                self.triniNewsCell?.profilePicTapped()
+                self.triniNewsCell?.goToUserMenu()
             }
             
             
