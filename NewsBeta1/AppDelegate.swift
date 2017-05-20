@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
 //        UINavigationBar.appearance().tintColor = .green
         
-        FIRApp.configure()
+        FirebaseApp.configure()
         return true
     }
 

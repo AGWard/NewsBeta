@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "MediaController.viewWillAppear(Bool) -&gt; ():MediaController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "(PHFetchResult&lt;AnyObject&gt;!)self.photoAssets">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MediaController.viewDidLoad() -&gt; ():MediaController.swift">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

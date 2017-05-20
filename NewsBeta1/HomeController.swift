@@ -202,7 +202,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func checkIfUserIsLoggedIn() {
         
         
-        if FIRAuth.auth()?.currentUser?.uid == nil {
+        if Auth.auth().currentUser?.uid == nil {
             
             perform(#selector(handleLogout), with: nil, afterDelay: 0)
             print("not signed in")
@@ -211,7 +211,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
             
         else {
  
-            let uid = FIRAuth.auth()?.currentUser?.uid
+            let uid = Auth.auth().currentUser?.uid
             
             let networkRequest = NetworkingService()
             
@@ -228,7 +228,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         do {
             
-            try FIRAuth.auth()?.signOut()
+            try Auth.auth().signOut()
         } catch let logoutError {
             
             print(logoutError)

@@ -151,7 +151,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func getPostedData() {
         
-        let ref = FIRDatabase.database().reference().child("PostedData")
+        let ref = Database.database().reference().child("PostedData")
         ref.observe(.childAdded, with: { (snapshot) in
             
     

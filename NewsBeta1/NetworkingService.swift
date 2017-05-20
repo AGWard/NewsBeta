@@ -29,12 +29,12 @@ class NetworkingService {
     var userInfoArray = [UserInfoDatabase]()
     
     
-    var database: FIRDatabaseReference {
-        return FIRDatabase.database().reference()
+    var database: DatabaseReference {
+        return Database.database().reference()
     }
     
-    var storage: FIRStorageReference {
-        return FIRStorage.storage().reference()
+    var storage: StorageReference {
+        return Storage.storage().reference()
     }
     
     
@@ -44,7 +44,7 @@ class NetworkingService {
     func signUpNewUser(username: String, email: String, password: String, gender: String) {
         
         
-        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user, error) in
+        Auth.auth().createUser(withEmail: email, password: password, completion: { (user, error) in
             
             
             if error == nil {
@@ -65,12 +65,12 @@ class NetworkingService {
     }
     
     
-    private func setUserInfo(user: FIRUser, username: String, email: String, password: String, gender: String) {
+    private func setUserInfo(user: User, username: String, email: String, password: String, gender: String) {
         
 
         
         
-        let chnageRequest = user.profileChangeRequest()
+        let chnageRequest = user.createProfileChangeRequest()
         chnageRequest.displayName = username
 
         chnageRequest.commitChanges { (err) in
@@ -92,7 +92,7 @@ class NetworkingService {
     }
     
     
-    private func saveInfo(user: FIRUser, username: String, email: String, password: String, gender: String) {
+    private func saveInfo(user: User, username: String, email: String, password: String, gender: String) {
         
         
         let userInfo = ["name": username, "email": user.email, "password": password, "gender": gender, "uid": user.uid]
@@ -122,7 +122,7 @@ class NetworkingService {
             
             let videoName = "\(videoImageURL!).mov"
             
-            storage.child(folder).child(videoName).putFile(videoImageURL!, metadata: nil, completion: { (metadata, error) in
+            storage.child(folder).child(videoName).putFile(from: videoImageURL!, metadata: nil, completion: { (metadata, error) in
                 
                 if error != nil {
                     
@@ -135,7 +135,9 @@ class NetworkingService {
                 let uploadData = UIImagePNGRepresentation(image!)
                 
                 
-                self.storage.child(folder).child(imagePath).put(uploadData!, metadata: nil, completion: { (metadat, err) in
+                
+                
+                self.storage.child(folder).child(imagePath).putData(uploadData!, metadata: nil, completion: { (metadat, err) in
                     
                     if err != nil {
                         
@@ -157,7 +159,7 @@ class NetworkingService {
             let uploadData = UIImagePNGRepresentation(image!)
             
             
-            self.storage.child(folder).child(imagePath).put(uploadData!, metadata: nil, completion: { (metadat, err) in
+            self.storage.child(folder).child(imagePath).putData(uploadData!, metadata: nil, completion: { (metadat, err) in
                 
                 if err != nil {
                     
@@ -184,10 +186,10 @@ class NetworkingService {
     
    
     
-    private func postData(videoMeta: FIRStorageMetadata?, imageMetadata: FIRStorageMetadata?, uid: String, headlines: String, newsBody: String, timestamp: String, timeUTC: String, reporterName: String, userPorfileImage: String) {
+    private func postData(videoMeta: StorageMetadata?, imageMetadata: StorageMetadata?, uid: String, headlines: String, newsBody: String, timestamp: String, timeUTC: String, reporterName: String, userPorfileImage: String) {
         
         
-        let ref = FIRDatabase.database().reference(fromURL: "https://news-cc704.firebaseio.com/")
+        let ref = Database.database().reference(fromURL: "https://news-cc704.firebaseio.com/")
 
         let postedReference = ref.child("PostedData")
         let autoID = postedReference.child(timestamp)
@@ -295,7 +297,7 @@ class NetworkingService {
             
             
             
-            storage.child(imagePath).put(uploadData, metadata: nil, completion: { (metadata, err) in
+            storage.child(imagePath).putData(uploadData, metadata: nil, completion: { (metadata, err) in
                 
                 if err != nil {
                     
@@ -308,7 +310,7 @@ class NetworkingService {
                 if let profileImageURL = metadata?.downloadURL()?.absoluteString {
                     
                     
-                    let ref = FIRDatabase.database().reference(fromURL: "https://news-cc704.firebaseio.com/")
+                    let ref = Database.database().reference(fromURL: "https://news-cc704.firebaseio.com/")
                     let userRef = ref.child(firebaseParentUser).child(uid)
                     let values = ["profileImageURL": profileImageURL]
                     

@@ -208,18 +208,18 @@ extension LoginController {
             return
         }
         
-        FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
+        Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
             
             
             
             if error != nil {
                 
                 
-                if let errCode = FIRAuthErrorCode(rawValue: error!._code) {
+                if let errCode = AuthErrorCode(rawValue: error!._code) {
                     
                     switch errCode {
                         
-                    case .errorCodeInvalidEmail:
+                    case .invalidEmail:
                         let alert = UIAlertController(title: "Invalid Email", message: "Kindly ensure a valid email is entered with the correct spelling", preferredStyle: .alert)
                         let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
                         alert.addAction(ok)
@@ -231,7 +231,7 @@ extension LoginController {
                         
                         return
                         
-                    case .errorCodeWrongPassword:
+                    case .wrongPassword:
                         let alert = UIAlertController(title: "Password Incorrect", message: "Kindly recheck your password", preferredStyle: .alert)
                         let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
                         alert.addAction(ok)
@@ -243,7 +243,7 @@ extension LoginController {
                         
                         return
                         
-                    case .errorCodeUserNotFound:
+                    case .userNotFound:
                         let alert = UIAlertController(title: "User Not Found", message: "Please ensure this is the email address you signed up with", preferredStyle: .alert)
                         let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
                         alert.addAction(ok)
@@ -292,7 +292,7 @@ extension LoginController {
             self.activityIndicator.stopAnimating()
             
             
-            let uid = FIRAuth.auth()?.currentUser?.uid
+            let uid = Auth.auth().currentUser?.uid
             
             let networkReq = NetworkingService()
             networkReq.getUserInfo(parentRef: firebaseParentUser, childRef: uid!, screen: "home")
@@ -542,7 +542,7 @@ extension LoginController {
         print("FIrebase stuff here")
         
         
-        FIRAuth.auth()?.sendPasswordReset(withEmail: (verifyEmail?.text)!, completion: { (error) in
+        Auth.auth().sendPasswordReset(withEmail: (verifyEmail?.text)!, completion: { (error) in
             
             if error == nil {
                 

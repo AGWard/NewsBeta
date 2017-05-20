@@ -397,7 +397,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         }
         
         
-        let uidd = FIRAuth.auth()?.currentUser?.uid
+        let uidd = Auth.auth().currentUser?.uid
         
         let utcTimeZoneStr = String(describing: date)
         let timestamp = Int(Date().timeIntervalSince1970)
