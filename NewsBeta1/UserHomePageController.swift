@@ -13,11 +13,16 @@ import Firebase
 let cellID = "cellID"
 
 
-class UserHomePageController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class UserHomePageController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout{
     
 
     var imageURLS: [String] = []
     var newsHeadline: [String] = []
+    var timeStampID: [String] = []
+    var imageNames: [String] = []
+    var vidNames: [String] = []
+    
+    let currentID = Auth.auth().currentUser?.uid
 
     
     
@@ -25,13 +30,15 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
                                 // ***************  Property Views Setup  *********** //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
+    lazy var networkReq: NetworkingService = {
+        
+       let service = NetworkingService()
+        service.userHome = self
+        
+        return service
+    }()
     
-    
-    
-    
-    var myNewsCollectionViewWidthAnchor: NSLayoutConstraint?
-    
-    let currentID = Auth.auth().currentUser?.uid
+
     
     
     lazy var selectedPictureActivityIndicator: UIActivityIndicatorView = {
@@ -54,13 +61,15 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         let layout = UICollectionViewFlowLayout()
         
+       
+        
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .clear
         cv.translatesAutoresizingMaskIntoConstraints = false
         cv.delegate = self
         cv.dataSource = self
         cv.register(myNewsViewCell.self, forCellWithReuseIdentifier: cellID)
-        
+    
         
         return cv
         
@@ -276,9 +285,12 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         for number in 0..<reveredArrays.count {
             
-            
-            if currentID == reveredArrays[number].userID {
+            print(reveredArrays.count)
+            if currentID == reveredArrays[number].userID{
                 
+                imageNames.append(reveredArrays[number].imageName!)
+                vidNames.append(reveredArrays[number].videoName!)
+                timeStampID.append(reveredArrays[number].timestamp!)
                 imageURLS.append(reveredArrays[number].postedPicURL!)
                 newsHeadline.append(reveredArrays[number].newsHeadlines!)
                 cellCounter += 1
@@ -296,8 +308,10 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! myNewsViewCell
-        
-
+            cell.userHome = self
+            cell.vidNames.text = vidNames[indexPath.item]
+            cell.imgNames.text = imageNames[indexPath.item]
+            cell.label.text = timeStampID[indexPath.item]
             cell.photoView.sd_setImage(with: URL(string: imageURLS[indexPath.item]))
             cell.newsHeadline.text = newsHeadline[indexPath.item]
 
@@ -456,13 +470,22 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
             
             profileRealImage.image = selectedImage
             
+            if let userID = currentID {
+                
+                let networkRequest = NetworkingService()
+                networkRequest.setUserProfilePic(profileImage: profileRealImage.image!, uid: userID, identifier: "profile")
+                
+                
+                self.dismiss(animated: true, completion: nil)
+
+                
+            } else {
+                
+                
+                handleLogout()
+            }
             
-            guard let uid = Auth.auth().currentUser?.uid else { return }
-            let networkRequest = NetworkingService()
-            networkRequest.setUserProfilePic(profileImage: profileRealImage.image!, uid: uid, identifier: "profile")
             
-            
-            self.dismiss(animated: true, completion: nil)
             
         }
     
@@ -524,6 +547,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         
     }
+    
     
     
     

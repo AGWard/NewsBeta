@@ -14,6 +14,7 @@ class OtherUserController: UIViewController, UICollectionViewDelegate, UICollect
     var imageURLS: [String] = []
     var newsHeadline: [String] = []
     var postedText: [String] = []
+    var videoURLString: [String] = []
     let cellIDs = "cellID"
     var userID: String?
     var userName: String?
@@ -85,6 +86,7 @@ class OtherUserController: UIViewController, UICollectionViewDelegate, UICollect
                 imageURLS.append(reveredArrays[number].postedPicURL!)
                 newsHeadline.append(reveredArrays[number].newsHeadlines!)
                 postedText.append(reveredArrays[number].postedText!)
+                videoURLString.append(reveredArrays[number].postedVideoURL!)
                 
                 cellCounter += 1
                 
@@ -100,6 +102,7 @@ class OtherUserController: UIViewController, UICollectionViewDelegate, UICollect
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIDs, for: indexPath) as! OtherUsertCell
         
+        cell.playButton.isHidden = videoURLString[indexPath.item] == "NoVids"
         cell.postedImageView.sd_setImage(with: URL(string: imageURLS[indexPath.item]))
         cell.newsHeadingLabel.text = newsHeadline[indexPath.item]
         cell.postedTextView.text = postedText[indexPath.item]

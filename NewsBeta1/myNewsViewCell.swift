@@ -7,8 +7,65 @@
 //
 
 import UIKit
+import Firebase
 
-class myNewsViewCell: BaseCell {
+class myNewsViewCell: BaseCell, RefreshDataDelegate {
+    
+    var userHome: UserHomePageController?
+    
+    lazy var networkRequest: NetworkingService = {
+        
+        let netReq = NetworkingService()
+        netReq.myView = self
+        netReq.delegate = self
+
+        
+        return netReq
+    }()
+
+    
+    
+    lazy var imgNames: UILabel = {
+        
+        let label = UILabel()
+        
+        
+        return label
+    }()
+
+    
+    
+    
+    lazy var vidNames: UILabel = {
+        
+        let label = UILabel()
+        
+        
+        return label
+    }()
+
+    
+    
+
+    lazy var label: UILabel = {
+        
+       let label = UILabel()
+        
+        
+        return label
+    }()
+
+    lazy var deleteButton: UIButton = {
+        
+       let button = UIButton()
+        
+        button.setTitle("Delete", for: .normal)
+        button.setTitleColor(.red, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(deletePosts), for: .touchUpInside)
+        
+        return button
+    }()
     
     lazy var photoView: UIImageView = {
         
@@ -53,6 +110,7 @@ class myNewsViewCell: BaseCell {
         
         addSubview(photoView)
         addSubview(newsHeadline)
+        addSubview(deleteButton)
         
         photoView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 5).isActive = true
         photoView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/3).isActive = true
@@ -66,15 +124,46 @@ class myNewsViewCell: BaseCell {
         newsHeadline.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/2).isActive = true
         
         
+        deleteButton.bottomAnchor.constraint(equalTo: newsHeadline.topAnchor, constant: -2).isActive = true
+        deleteButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0).isActive = true
+        deleteButton.leftAnchor.constraint(equalTo: photoView.rightAnchor, constant: 10).isActive = true
+        
         
         
     }
     
     
+    func deletePosts() {
+        
+        
+        let alert = UIAlertController(title: "Delete Post?", message: "You are about to delete this post, are you sure?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Delete", style: .default) { (alert: UIAlertAction) in
+            
+            let path = self.label.text
+            
+            self.networkRequest.deletePosts(feedpath: path!, imageName: self.imgNames.text, videoName: self.vidNames.text)
+            
+            }
+        )
     
+      userHome?.present(alert, animated: true, completion: nil)
+
+    }
     
+    func refreshData() {
+        print("Refresh")
+        
+        
+    }
     
-    
+    func refresh2() {
+        
+        print("lets see")
+        
+        
+        self.userHome?.myNewsCollectionView.reloadData()
+    }
     
     
 }

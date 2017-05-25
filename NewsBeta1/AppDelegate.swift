@@ -30,8 +30,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
 //        UINavigationBar.appearance().tintColor = .green
         
-        FirebaseApp.configure()
+        
         return true
+    }
+    
+    
+    override init() {
+        super.init()
+        
+        FirebaseApp.configure()
+        Database.database().isPersistenceEnabled = true
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

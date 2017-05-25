@@ -79,13 +79,12 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
             blackView.isUserInteractionEnabled = true
             blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleDismiss)))
             
-            
-            UIView.animate(withDuration: 0.5, animations: {
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: { 
                 self.blackView.alpha = 1
                 self.moreOptionsCollectionView.frame = CGRect(x: 0, y: y, width: self.moreOptionsCollectionView.frame.width, height: self.moreOptionsCollectionView.frame.height)
                 self.triniNewsCell?.moreOptionsButton.tintColor = .red
-                
-            })
+            }, completion: nil)
+            
             
         }
         

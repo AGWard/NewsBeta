@@ -133,15 +133,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
 
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        print(indexPath.item)
-//        
-//        
-//        let x = CGFloat(indexPath.item) * frame.width / 4
-//        barLeftAnchor?.constant = x
-//        
-//        UIView.animate(withDuration: 0.70, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-//            self.layoutIfNeeded()
-//        }, completion: nil)
+
         
         let intIndex = Int(indexPath.item)
         
@@ -174,8 +166,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIDs, for: indexPath) as! MenuCell
-        
-//        cell.menuLabel.text = menuLabels[indexPath.item]
+
         cell.menuIconB.image = menuIcons[indexPath.item]
        
        

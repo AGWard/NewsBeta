@@ -8,19 +8,21 @@
 
 import UIKit
 import Firebase
+import MobileCoreServices
+import AVFoundation
 
 
-
-class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
+class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     
-    private let area = ["Arima", "Arouca/Maloney", "Barataria/San Juan", "Black Rock", "Bon Air", "Cambee", "Caroni", "Chaguanas", "Charlotteville", "Couva", "Crown Point", "Cumuto", "D'Abadie/O'Meara", "Diego Martin", "Fyzabad", "La Brea", "La Horquette", "Laventille", "Lopinot", "Manzanilla", "Mayaro", "Moruga/Tableland", "Naparima", "Oropouche", "Point Fortin", "Pointe-A-Pierre", "Port Of Spain", "Princess Town", "Scarborough", "San Fernando", "Siparia", "St.Anns", "St.Augustine", "St.Joseph", "Tabaquite", "Toco", "Tunapuna"]
+    let currentID = Auth.auth().currentUser?.uid
     
-    var videoImageURL: URL?
+    private let area = ["Arima", "Arouca/Maloney", "Barataria/San Juan", "Black Rock", "Bon Air", "Cambee", "Caroni", "Chaguanas", "Charlotteville", "Couva", "Crown Point", "Cumuto", "D'Abadie/O'Meara", "Diego Martin", "Fyzabad", "La Brea", "La Horquette", "Laventille", "Lopinot", "Manzanilla", "Mayaro", "Moruga/Tableland", "Naparima", "Oropouche", "Point Fortin", "Pointe-A-Pierre", "Port Of Spain", "Princess Town", "Scarborough", "San Fernando", "Siparia", "St.Anns", "St.Augustine", "St.Joseph", "Tabaquite", "Toco", "Tunapuna", "International"]
+    
     
     lazy var date = Date()
     
-    
+    var selectedVidURL: URL?
     
     
     
@@ -122,6 +124,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         field.autocapitalizationType = .allCharacters
         field.delegate = self
         field.autocorrectionType = .yes
+        field.textAlignment = .center
 
         
         return field
@@ -143,13 +146,26 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
     }()
     
     
+    lazy var postedTextLabel: UILabel = {
+        
+        let lable = UILabel()
+        lable.translatesAutoresizingMaskIntoConstraints = false
+        lable.textColor = .darkText
+        lable.textAlignment = .center
+        lable.text = "Tell us more about your story"
+        lable.font = UIFont.boldSystemFont(ofSize: 13)
+        lable.backgroundColor = .white
+        
+        return lable
+        
+    }()
+    
+    
     lazy var postTextField: UITextView = {
         
        let field = UITextView()
         field.translatesAutoresizingMaskIntoConstraints = false
-        field.text = "My story here"
         field.backgroundColor = .white
-        field.clearsOnInsertion = true
         field.autocorrectionType = .yes
         field.autocapitalizationType = .sentences
         field.delegate = self
@@ -164,10 +180,12 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
     lazy var selectedPic: UIImageView = {
         
        let pic = UIImageView()
-        pic.backgroundColor = .green
+        pic.image = UIImage(named: "selectPicSquare")
         pic.contentMode = .scaleAspectFill
         pic.translatesAutoresizingMaskIntoConstraints = false
         pic.clipsToBounds = true
+        pic.isUserInteractionEnabled = true
+        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(selectVideo)))
         
         
         return pic
@@ -183,6 +201,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         newsHeadlineConstraints()
         postButton.isEnabled = true
         postedPicConstraints()
+        postedTextLabelConstraints()
         postedTextFieldConstraints()
         goodBadSegConstraints()
         newsTypeLabelConstraints()
@@ -190,11 +209,12 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         areaLabelConstraints()
         postButtonConstraints()
         
+        
         areaLabel.inputView = areaSelection
         
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelPosting))
-        navigationItem.title = "PrintNews"
+        navigationItem.title = "NewsFeed"
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: Notification.Name.UIKeyboardWillHide, object: nil)
@@ -241,6 +261,19 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         
     }
     
+    func postedTextLabelConstraints() {
+        
+        view.addSubview(postedTextLabel)
+        
+        postedTextLabel.topAnchor.constraint(equalTo: selectedPic.bottomAnchor, constant: 10).isActive = true
+        postedTextLabel.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        postedTextLabel.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        
+        
+        
+    }
+
+    
     
     func postedTextFieldConstraints() {
         
@@ -248,7 +281,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         
         postTextField.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
         postTextField.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1/7).isActive = true
-        postTextField.topAnchor.constraint(equalTo: selectedPic.bottomAnchor, constant: 5).isActive = true
+        postTextField.topAnchor.constraint(equalTo: postedTextLabel.bottomAnchor, constant: 1).isActive = true
         
         
     }
@@ -315,7 +348,8 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         
         
     }
-
+    
+    
     
     
     
@@ -334,7 +368,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         
         let newLengths = text.characters.count + string.characters.count - range.length
         
-        return newLengths <=  20
+        return newLengths <=  25
     }
     
     
@@ -372,6 +406,20 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
 
         postButton.isEnabled = false
         
+        if selectedPic.image == nil {
+            
+            let alert = UIAlertController(title: "Headline Required", message: "Enter some context about your news", preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(action)
+            present(alert, animated: true, completion: nil)
+            postButton.isEnabled = true
+            return
+            
+            
+        }
+
+        
+        
         if newsHeadline.text == "" {
             
             let alert = UIAlertController(title: "Headline Required", message: "Enter some context about your news", preferredStyle: .alert)
@@ -397,7 +445,6 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         }
         
         
-        let uidd = Auth.auth().currentUser?.uid
         
         let utcTimeZoneStr = String(describing: date)
         let timestamp = Int(Date().timeIntervalSince1970)
@@ -412,15 +459,12 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         }
         
         let networkRequest = NetworkingService()
-        networkRequest.saveNewsFeed(uid: uidd!, headlines: newsHeadlines, newsBody: textEntered, image: selectedPic.image, videoImageURL: videoImageURL, timestamp: timestampstring, timeUTC: utcTimeZoneStr, reporterName: registeredName!, userPorfileImage: registeredPicURL!)
+        networkRequest.saveNewsFeed(uid: currentID!, headlines: newsHeadlines, newsBody: textEntered, image: selectedPic.image, videoImageURL: selectedVidURL, timestamp: timestampstring, timeUTC: utcTimeZoneStr, reporterName: registeredName!, userPorfileImage: registeredPicURL!)
         
         
-        let homeC = HomeController()
-        homeC.modalPresentationStyle = .overFullScreen
+        dismiss(animated: true, completion: nil)
         
-        let navController = UINavigationController(rootViewController: homeC)
         
-        self.present(navController, animated: true, completion: nil)
         
         
 
@@ -522,7 +566,110 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         }
     
     
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // ***************  Select pic or video functions  *********** //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
+    
+    func selectVideo() {
+        
+        
+        print("videos selected")
+        
+        
+        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.photoLibrary) {
+            
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.sourceType = UIImagePickerControllerSourceType.photoLibrary
+            imagePicker.allowsEditing = true
+            imagePicker.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String]
+            
+            self.present(imagePicker, animated: true, completion: nil)
+            
+            
+        } else {
+            
+            print("not getting access to photo library")
+        }
+        
+        
+    }
+    
+    
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        if let videoURL = info[UIImagePickerControllerMediaURL] as? URL{
+            
+            
+            selectedPic.image = videoPreviewImage(filename: videoURL)
+            selectedVidURL = videoURL
+            
+            
+            dismiss(animated: true, completion: nil)
+            
+        }
+        
+        
+        
+        
+        
+        var selectedImageFromPicker: UIImage?
+        
+        if let editImage = info [UIImagePickerControllerEditedImage] as? UIImage {
+            
+            selectedImageFromPicker = editImage
+            
+        } else if let chosenImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            
+            
+            selectedImageFromPicker = chosenImage
+            
+            
+        }
+        
+        if let selectedImage = selectedImageFromPicker {
+            
+            selectedPic.image = selectedImage
+            
+            
+            dismiss(animated: true, completion: nil)
+        }
+        
+    }
+
+    
+    func videoPreviewImage(filename: URL) -> UIImage? {
+        
+        
+        let asset = AVURLAsset(url: filename)
+        let generator = AVAssetImageGenerator(asset: asset)
+        generator.appliesPreferredTrackTransform = true
+        
+        let timestamp = CMTime(seconds: 2, preferredTimescale: 60)
+        
+        do {
+            let imageRef = try generator.copyCGImage(at: timestamp, actualTime: nil)
+            return UIImage(cgImage: imageRef)
+        }
+        catch let error as NSError
+        {
+            print("Image generation failed with error \(error)")
+            return nil
+        }
+        
+        
+        
+    }
+
+
+
 
     
 }

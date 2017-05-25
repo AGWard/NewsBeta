@@ -16,6 +16,7 @@ protocol CellSegaway2Delegate {
 }
 
 var reveredArrays = [DatabaseProperties]()
+
 var name: String!
 
 class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, CellSegwayDelegate {
@@ -26,8 +27,6 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     
     let cellID = "cellID"
-    var arrays = [DatabaseProperties]()
-
     
     
     
@@ -39,6 +38,16 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     var userProfilePicFeed = [String]()
     var timestampArray: [String] = []
     var postArray = [String]()
+    
+    
+    lazy var networkRequest: NetworkingService = {
+        
+        let netReq = NetworkingService()
+        netReq.feedCell = self
+        
+        
+        return netReq
+    }()
     
 
     
@@ -91,6 +100,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
+
         
         return reveredArrays.count
     }
@@ -151,31 +161,7 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func getPostedData() {
         
-        let ref = Database.database().reference().child("PostedData")
-        ref.observe(.childAdded, with: { (snapshot) in
-            
-    
-            if let dictionary = snapshot.value as? [String: AnyObject] {
-            
-            
-            
-                let dbProperties = DatabaseProperties()
-                    dbProperties.setValuesForKeys(dictionary)
-                
-              
-            
-                    self.arrays.append(dbProperties)
-//                        reveredArrays.insert(dbProperties, at: 0)
-                    reveredArrays = self.arrays.reversed()
-                
-                
-                
-                self.collectionViews.reloadData()
-                            
-        }
-
-            
-        }, withCancel: nil)
+        networkRequest.getPostedData()
 
  
     }

@@ -22,6 +22,8 @@ class DatabaseProperties: NSObject {
     var stringTimestamp: String?
     var newsHeadlines: String?
     var postedVideoURL: String?
+    var videoName: String?
+    var imageName: String?
     
 
 }

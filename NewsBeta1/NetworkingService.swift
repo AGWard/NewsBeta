@@ -18,12 +18,23 @@ var registeredPicURL: String?
 var assignedUid: String?
 
 
+protocol RefreshDataDelegate: class {
+    func refreshData()
+    func refresh2()
+}
+
+
 class NetworkingService {
     
     //properties
     
+    let id = Auth.auth().currentUser?.uid
+    
     var loginC: LoginController?
-    var UserHomeC: UserHomePageController?
+    var myView: myNewsViewCell?
+    var feedCell: FeedCell?
+    var userHome: UserHomePageController?
+    
     
     
     var userInfoArray = [UserInfoDatabase]()
@@ -37,11 +48,16 @@ class NetworkingService {
         return Storage.storage().reference()
     }
     
+    weak var delegate: RefreshDataDelegate?
+    
+    
     
     
     //register a new user
     
     func signUpNewUser(username: String, email: String, password: String, gender: String) {
+        
+        
         
         
         Auth.auth().createUser(withEmail: email, password: password, completion: { (user, error) in
@@ -54,6 +70,80 @@ class NetworkingService {
                 
                 
             } else {
+                
+                
+                if let errCode = AuthErrorCode(rawValue: error!._code) {
+                    
+                    switch errCode {
+                        
+                    case .invalidEmail:
+                        let alert = UIAlertController(title: "Invalid Email", message: "Kindly ensure a valid email is entered with the correct spelling", preferredStyle: .alert)
+                        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                        alert.addAction(ok)
+                        
+                        self.loginC?.present(alert, animated: true, completion: nil)
+                        self.loginC?.indicatorContainerView.isHidden = true
+                        self.loginC?.view.isUserInteractionEnabled = true
+                        self.loginC?.activityIndicator.stopAnimating()
+                        
+                        return
+                        
+                    case .wrongPassword:
+                        let alert = UIAlertController(title: "Password Incorrect", message: "Kindly recheck your password", preferredStyle: .alert)
+                        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                        alert.addAction(ok)
+                        
+                        self.loginC?.present(alert, animated: true, completion: nil)
+                        self.loginC?.indicatorContainerView.isHidden = true
+                        self.loginC?.view.isUserInteractionEnabled = true
+                        self.loginC?.activityIndicator.stopAnimating()
+                        
+                        return
+                        
+                    case .userNotFound:
+                        let alert = UIAlertController(title: "User Not Found", message: "Please ensure this is the email address you signed up with", preferredStyle: .alert)
+                        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                        alert.addAction(ok)
+                        
+                        self.loginC?.present(alert, animated: true, completion: nil)
+                        self.loginC?.indicatorContainerView.isHidden = true
+                        self.loginC?.view.isUserInteractionEnabled = true
+                        self.loginC?.activityIndicator.stopAnimating()
+                        
+                        return
+                        
+                    case .emailAlreadyInUse:
+                        let alert = UIAlertController(title: "Email Already In Use", message: "Do you have an account with us already?", preferredStyle: .alert)
+                        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                        alert.addAction(ok)
+                        
+                        self.loginC?.present(alert, animated: true, completion: nil)
+                        self.loginC?.indicatorContainerView.isHidden = true
+                        self.loginC?.view.isUserInteractionEnabled = true
+                        self.loginC?.activityIndicator.stopAnimating()
+                        
+                        return
+                        
+                        
+                    default:
+                        let alert = UIAlertController(title: "Invalid Email/Password", message: "Error - \(error!)", preferredStyle: .alert)
+                        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                        alert.addAction(ok)
+                        
+                        
+                        
+                        self.loginC?.present(alert, animated: true, completion: nil)
+                        self.loginC?.indicatorContainerView.isHidden = true
+                        self.loginC?.view.isUserInteractionEnabled = true
+                        self.loginC?.activityIndicator.stopAnimating()
+                        
+                        return
+
+                    
+                        
+                    }
+
+                }
                 
                 print(error!.localizedDescription)
                 
@@ -113,16 +203,19 @@ class NetworkingService {
     func saveNewsFeed(uid: String, headlines: String, newsBody: String, image: UIImage?, videoImageURL: URL?, timestamp: String, timeUTC: String, reporterName: String, userPorfileImage: String) {
         
         let imageName = NSUUID().uuidString
-        let imagePath = "profileImage\(imageName).png"
+        let imagePath = "posted\(imageName).png"
         
-        let folder = "NewsVideos/Pics"
+        let folder = "NewsFeed"
+        let userName = id!
+        let subPicFolder = "Pics"
+        let subVidFolder = "Videos"
     
         
         if videoImageURL != nil {
             
             let videoName = "\(videoImageURL!).mov"
             
-            storage.child(folder).child(videoName).putFile(from: videoImageURL!, metadata: nil, completion: { (metadata, error) in
+            storage.child(folder).child(userName).child(subVidFolder).child(videoName).putFile(from: videoImageURL!, metadata: nil, completion: { (metadata, error) in
                 
                 if error != nil {
                     
@@ -137,7 +230,7 @@ class NetworkingService {
                 
                 
                 
-                self.storage.child(folder).child(imagePath).putData(uploadData!, metadata: nil, completion: { (metadat, err) in
+                self.storage.child(folder).child(userName).child(subPicFolder).child(imagePath).putData(uploadData!, metadata: nil, completion: { (metadat, err) in
                     
                     if err != nil {
                         
@@ -146,7 +239,7 @@ class NetworkingService {
                         
                     }
                     
-                    self.postData(videoMeta: metadata, imageMetadata: metadat, uid: uid, headlines: headlines, newsBody: newsBody, timestamp: timestamp, timeUTC: timeUTC, reporterName: reporterName, userPorfileImage: userPorfileImage)
+                    self.postData(videoMeta: metadata, imageMetadata: metadat, uid: uid, headlines: headlines, newsBody: newsBody, timestamp: timestamp, timeUTC: timeUTC, reporterName: reporterName, userPorfileImage: userPorfileImage, videoName: videoName, imageName: imagePath)
                     
                 })
 
@@ -159,7 +252,7 @@ class NetworkingService {
             let uploadData = UIImagePNGRepresentation(image!)
             
             
-            self.storage.child(folder).child(imagePath).putData(uploadData!, metadata: nil, completion: { (metadat, err) in
+            self.storage.child(folder).child(userName).child(subPicFolder).child(imagePath).putData(uploadData!, metadata: nil, completion: { (metadat, err) in
                 
                 if err != nil {
                     
@@ -168,25 +261,18 @@ class NetworkingService {
                     
                 }
                 
-                self.postData(videoMeta: nil, imageMetadata: metadat, uid: uid, headlines: headlines, newsBody: newsBody, timestamp: timestamp, timeUTC: timeUTC, reporterName: reporterName, userPorfileImage: userPorfileImage)
+                self.postData(videoMeta: nil, imageMetadata: metadat, uid: uid, headlines: headlines, newsBody: newsBody, timestamp: timestamp, timeUTC: timeUTC, reporterName: reporterName, userPorfileImage: userPorfileImage, videoName: nil, imageName: imagePath)
                 
             })
             
-
-            
-            
-            
         }
-            
-        
-        
 
     }
     
     
    
     
-    private func postData(videoMeta: StorageMetadata?, imageMetadata: StorageMetadata?, uid: String, headlines: String, newsBody: String, timestamp: String, timeUTC: String, reporterName: String, userPorfileImage: String) {
+    private func postData(videoMeta: StorageMetadata?, imageMetadata: StorageMetadata?, uid: String, headlines: String, newsBody: String, timestamp: String, timeUTC: String, reporterName: String, userPorfileImage: String, videoName: String?, imageName: String) {
         
         
         let ref = Database.database().reference(fromURL: "https://news-cc704.firebaseio.com/")
@@ -197,12 +283,16 @@ class NetworkingService {
         let vidStorageURL = videoMeta?.downloadURL()?.absoluteString
         
         let imageStorageURL = imageMetadata?.downloadURL()?.absoluteString
-        
-        
+        let noVidName = "No Video Name Required"
+
         
         if videoMeta != nil {
             
-            let values = ["postedPicURL": imageStorageURL!, "postedText": newsBody, "timestamp": timestamp, "timeUTC": timeUTC, "reporterName": reporterName, "userImage": userPorfileImage, "newsHeadlines": headlines, "postedVideoURL": vidStorageURL!, "userID": uid] as [String : Any]
+            guard let vidName = videoName else {
+                print("videoName missing")
+                return }
+            
+            let values = ["postedPicURL": imageStorageURL!, "postedText": newsBody, "timestamp": timestamp, "timeUTC": timeUTC, "reporterName": reporterName, "userImage": userPorfileImage, "newsHeadlines": headlines, "postedVideoURL": vidStorageURL!, "userID": uid, "videoName": vidName, "imageName": imageName] as [String : Any]
             
             
             autoID.updateChildValues(values, withCompletionBlock: { (err, ref) in
@@ -223,7 +313,7 @@ class NetworkingService {
             
         } else {
             
-            let values = ["postedPicURL": imageStorageURL!, "postedText": newsBody, "timestamp": timestamp, "timeUTC": timeUTC, "reporterName": reporterName, "userImage": userPorfileImage, "newsHeadlines": headlines, "postedVideoURL": "NoVids", "userID": uid] as [String : Any]
+            let values = ["postedPicURL": imageStorageURL!, "postedText": newsBody, "timestamp": timestamp, "timeUTC": timeUTC, "reporterName": reporterName, "userImage": userPorfileImage, "newsHeadlines": headlines, "postedVideoURL": "NoVids", "userID": uid, "videoName": noVidName, "imageName": imageName] as [String : Any]
             
             
             autoID.updateChildValues(values, withCompletionBlock: { (err, ref) in
@@ -238,12 +328,8 @@ class NetworkingService {
                 
                 
             })
-
-            
             
         }
-        
-        
         
     }
     
@@ -271,6 +357,10 @@ class NetworkingService {
                     
                     self.loginC?.presentUserHomeController()
                     
+                } else if screen == "home" {
+                    
+                    
+                    self.loginC?.presentMainFeed()
                 }
                 
                 
@@ -282,22 +372,59 @@ class NetworkingService {
     }
     
     
+    func getPostedData() {
+        
+        var arraysN: [DatabaseProperties] = []
+        
+        let ref = database.child("PostedData")
+        ref.observe(.childAdded, with: { (snapshot) in
+            
+            
+            if let dictionary = snapshot.value as? [String: AnyObject] {
+                
+                
+                
+                let dbProperties = DatabaseProperties()
+                dbProperties.setValuesForKeys(dictionary)
+                
+                
+                
+                arraysN.append(dbProperties)
+                //                        reveredArrays.insert(dbProperties, at: 0)
+                reveredArrays = arraysN.reversed()
+                
+                
+                print("I am here")
+                self.feedCell?.collectionViews.reloadData()
+                
+                
+            }
+            
+            self.delegate?.refreshData()
+            
+        }, withCancel: nil)
+        
+        
+    }
+
+    
+    
     
     
     func setUserProfilePic(profileImage: UIImage, uid: String, identifier: String) {
         
         
         
-        let imageName = NSUUID().uuidString
-        let imagePath = "profileImage\(imageName).png"
         
+        let imagePath = "\(id!).png"
+        let folder = "Profile Pics"
         
         
         if let uploadData = UIImagePNGRepresentation(profileImage) {
             
             
             
-            storage.child(imagePath).putData(uploadData, metadata: nil, completion: { (metadata, err) in
+            storage.child(folder).child(imagePath).putData(uploadData, metadata: nil, completion: { (metadata, err) in
                 
                 if err != nil {
                     
@@ -327,27 +454,172 @@ class NetworkingService {
                         self.getUserInfo(parentRef: firebaseParentUser, childRef: uid, screen: "user")
                         
                     })
-               
-                    
-                    
-                    
                     
                     
                 }
- 
-                
-                
+
             })
+            
+        }
+        
+    }
+    
+    
+    func handleLogin(email: String, password: String) {
+      Auth.auth().signIn(withEmail: email, password: password) {(user, error) in
+        
+        if error != nil {
+            
+            if let errCode = AuthErrorCode(rawValue: error!._code) {
+                
+                switch errCode {
+                    
+                case .invalidEmail:
+                    let alert = UIAlertController(title: "Invalid Email", message: "Kindly ensure a valid email is entered with the correct spelling", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alert.addAction(ok)
+                    
+                    self.loginC?.present(alert, animated: true, completion: nil)
+                    self.loginC?.indicatorContainerView.isHidden = true
+                    self.loginC?.view.isUserInteractionEnabled = true
+                    self.loginC?.activityIndicator.stopAnimating()
+                    
+                    return
+                    
+                case .wrongPassword:
+                    let alert = UIAlertController(title: "Password Incorrect", message: "Kindly recheck your password", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alert.addAction(ok)
+                    
+                    self.loginC?.present(alert, animated: true, completion: nil)
+                    self.loginC?.indicatorContainerView.isHidden = true
+                    self.loginC?.view.isUserInteractionEnabled = true
+                    self.loginC?.activityIndicator.stopAnimating()
+                    
+                    return
+                    
+                case .userNotFound:
+                    let alert = UIAlertController(title: "User Not Found", message: "Please ensure this is the email address you signed up with", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alert.addAction(ok)
+                    
+                    self.loginC?.present(alert, animated: true, completion: nil)
+                    self.loginC?.indicatorContainerView.isHidden = true
+                    self.loginC?.view.isUserInteractionEnabled = true
+                    self.loginC?.activityIndicator.stopAnimating()
+                    
+                    return
+                    
+                case .emailAlreadyInUse:
+                    let alert = UIAlertController(title: "Email Already In Use", message: "Do you have an account with us already?", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alert.addAction(ok)
+                    
+                    self.loginC?.present(alert, animated: true, completion: nil)
+                    self.loginC?.indicatorContainerView.isHidden = true
+                    self.loginC?.view.isUserInteractionEnabled = true
+                    self.loginC?.activityIndicator.stopAnimating()
+                    
+                    return
+                    
+                    
+                default:
+                    let alert = UIAlertController(title: "Invalid Email/Password", message: "Error - \(error!)", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alert.addAction(ok)
+                    
+                    self.loginC?.present(alert, animated: true, completion: nil)
+                    self.loginC?.indicatorContainerView.isHidden = true
+                    self.loginC?.view.isUserInteractionEnabled = true
+                    self.loginC?.activityIndicator.stopAnimating()
+                    
+                    return
+                    
+                }
+                
+            }
+        
+        }
+        
+        let uid = Auth.auth().currentUser?.uid
+        
+        self.getUserInfo(parentRef: firebaseParentUser, childRef: uid!, screen: "home")
+        
+        
+        }
+        
+    }
+    
+    func deletePosts(feedpath: String, imageName: String?, videoName: String?) {
+        
+        
+        let folder = "NewsFeed"
+        let userID = id!
+        let subPicFolder = "Pics"
+        let subVidFolder = "Videos"
+        
+        let storage = Storage.storage().reference(forURL: "gs://news-cc704.appspot.com/")
+
+
+        database.child(firebaseParentPostedData).child(feedpath).removeValue()
+        self.getPostedData()
+        
+        if videoName == "No Video Name Required" {
+            
+            let imageRef = storage.child(folder).child(userID).child(subPicFolder).child(imageName!)
+            imageRef.delete(completion: { (error) in
+                if error != nil {
+                    
+                    print("There was an error deleting the image storage - \(error!)")
+                } else {
+                    
+                    print("Image storage deleted successfully")
+                    
+                    self.delegate?.refresh2()
+                    
+                }
+            })
+            
+        } else {
+            
+            let imageRef = storage.child(folder).child(userID).child(subPicFolder).child(imageName!)
+            imageRef.delete(completion: { (error) in
+                if error != nil {
+                    
+                    print("There was an error deleting the image storage - \(error!)")
+                } else {
+                    
+                    let vidRef = storage.child(folder).child(userID).child(subVidFolder).child(videoName!)
+                    vidRef.delete(completion: { (err) in
+                        if err != nil {
+                            
+                            print("There was an error deleting the video storage - \(err!)")
+                            
+                            
+                        } else {
+                            
+                            print("evrything Deleted succesfully!")
+                            
+                            
+                            
+                        }
+                    })
+                    
+                }
+            })
+
+            
             
             
         }
         
-    
+        
+        
+       
         
         
     }
     
-
     
     
 }

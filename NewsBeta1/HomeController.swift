@@ -16,13 +16,12 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
  
     
-    
     let feedCellID = "cellID"
     let mainStreamID = "MainStreamID"
     let policeID = "policeCellID"
     let kIPsID = "KIPCellID"
 
-    
+    let currentID = Auth.auth().currentUser?.uid
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
                             // ***************  Property/Views Setup *********** //
@@ -31,7 +30,6 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     var database = [DatabaseProperties]()
     
 
-    
     
     lazy var collectionVw: UICollectionView = {
         
@@ -85,9 +83,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
     }()
 
-    
 
-    
     
     lazy var rightbarPic: UIImageView = {
         
@@ -143,6 +139,10 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         checkIfUserIsLoggedIn()
         view.backgroundColor = .darkText
         
+//        DispatchQueue.global(qos: .background).async {
+////             self.userPhotoPage.grabPhotos()
+//        }
+       
        
        
     }
@@ -202,7 +202,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func checkIfUserIsLoggedIn() {
         
         
-        if Auth.auth().currentUser?.uid == nil {
+        if currentID == nil {
             
             perform(#selector(handleLogout), with: nil, afterDelay: 0)
             print("not signed in")
@@ -210,12 +210,11 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         }
             
         else {
- 
-            let uid = Auth.auth().currentUser?.uid
+
             
             let networkRequest = NetworkingService()
             
-            networkRequest.getUserInfo(parentRef: firebaseParentUser, childRef: uid!, screen: "home")
+            networkRequest.getUserInfo(parentRef: firebaseParentUser, childRef: currentID!, screen: "alreadyHome")
         
             
         }
@@ -277,7 +276,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func postNewsAction() {
         
-        let mediaController = UserPhotoController()
+        let mediaController = PostingPageController()
         mediaController.modalPresentationStyle = .popover
         
         let navController = UINavigationController(rootViewController: mediaController)

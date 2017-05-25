@@ -7,8 +7,43 @@
 //
 
 import UIKit
+import AVFoundation
 
 class OtherUsertCell: BaseCell {
+    
+    var dataBaseCells: DatabaseProperties?
+    
+    
+    
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        
+        let indicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.hidesWhenStopped = true
+        
+        
+        return indicator
+        
+    }()
+    
+    
+    
+    
+    lazy var playButton: UIButton = {
+        
+        let button = UIButton()
+        button.setImage(UIImage(named: "newPlayButton")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isHidden = false
+        button.addTarget(self, action: #selector(playotherUserVideo), for: .touchUpInside)
+        button.tintColor = .red
+        
+        return button
+        
+    }()
+    
+    
+
     
     
     lazy var postedImageView: UIImageView = {
@@ -57,7 +92,7 @@ class OtherUsertCell: BaseCell {
         super.setupViews()
        
         addConstraints()
-        
+      
         
     }
     
@@ -67,6 +102,9 @@ class OtherUsertCell: BaseCell {
         addSubview(postedImageView)
         addSubview(newsHeadingLabel)
         addSubview(postedTextView)
+        postedImageView.addSubview(playButton)
+        
+    
         
         postedImageView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         postedImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
@@ -82,7 +120,67 @@ class OtherUsertCell: BaseCell {
         postedTextView.leftAnchor.constraint(equalTo: postedImageView.rightAnchor, constant: 5).isActive = true
         postedTextView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5).isActive = true
         postedTextView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -2).isActive = true
+
+        playButton.centerYAnchor.constraint(equalTo: postedImageView.centerYAnchor).isActive = true
+        playButton.centerXAnchor.constraint(equalTo: postedImageView.centerXAnchor).isActive = true
+        playButton.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        playButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        
     }
+    
+    
+    var playerLayer: AVPlayerLayer?
+    var player: AVPlayer?
+    
+    
+    func playotherUserVideo() {
+        
+
+        print("anything")
+        
+        if let videoURLString = dataBaseCells?.postedVideoURL {
+            
+            if videoURLString != "NoVids" {
+                
+                let url = URL(string: (videoURLString))
+                
+                player = AVPlayer(url: url!)
+                
+                playerLayer = AVPlayerLayer(player: player)
+                playerLayer?.frame = postedImageView.bounds
+                postedImageView.layer.addSublayer(playerLayer!)
+                
+                
+                
+                player?.play()
+                activityIndicator.startAnimating()
+                playButton.isHidden = true
+                
+                print("attempt to play video")
+                
+            }
+            
+        }
+        
+        
+        
+    }
+    
+    
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        
+        playerLayer?.removeFromSuperlayer()
+        player?.pause()
+        activityIndicator.stopAnimating()
+        playButton.isHidden = false
+        
+        
+    }
+
 
     
 }

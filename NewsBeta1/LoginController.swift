@@ -29,6 +29,14 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
                             // ***************  Icon Creation  *********** //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
+    lazy var networkRequest: NetworkingService = {
+        
+        let netReq = NetworkingService()
+        netReq.loginC = self
+        
+        
+        return netReq
+    }()
 
     
     

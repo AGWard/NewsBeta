@@ -77,8 +77,8 @@ extension LoginController {
         }
     }
     
-    
-    
+
+ 
     
     
     func registerCheck() {
@@ -107,10 +107,7 @@ extension LoginController {
                         }
                         
                         //******************************CREATION OF USER IN DATABASE*********************************//
-                        
-                        
-                        let networkRequest = NetworkingService()
-                        networkRequest.loginC = self
+                    
                         
                         networkRequest.signUpNewUser(username: name, email: email, password: password, gender: gender)
                         
@@ -208,97 +205,28 @@ extension LoginController {
             return
         }
         
-        Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
-            
-            
-            
-            if error != nil {
-                
-                
-                if let errCode = AuthErrorCode(rawValue: error!._code) {
-                    
-                    switch errCode {
-                        
-                    case .invalidEmail:
-                        let alert = UIAlertController(title: "Invalid Email", message: "Kindly ensure a valid email is entered with the correct spelling", preferredStyle: .alert)
-                        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
-                        alert.addAction(ok)
-                        
-                        self.present(alert, animated: true, completion: nil)
-                        self.indicatorContainerView.isHidden = true
-                        self.view.isUserInteractionEnabled = true
-                        self.activityIndicator.stopAnimating()
-                        
-                        return
-                        
-                    case .wrongPassword:
-                        let alert = UIAlertController(title: "Password Incorrect", message: "Kindly recheck your password", preferredStyle: .alert)
-                        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
-                        alert.addAction(ok)
-                        
-                        self.present(alert, animated: true, completion: nil)
-                        self.indicatorContainerView.isHidden = true
-                        self.view.isUserInteractionEnabled = true
-                        self.activityIndicator.stopAnimating()
-                        
-                        return
-                        
-                    case .userNotFound:
-                        let alert = UIAlertController(title: "User Not Found", message: "Please ensure this is the email address you signed up with", preferredStyle: .alert)
-                        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
-                        alert.addAction(ok)
-                        
-                        self.present(alert, animated: true, completion: nil)
-                        self.indicatorContainerView.isHidden = true
-                        self.view.isUserInteractionEnabled = true
-                        self.activityIndicator.stopAnimating()
-                        
-                        return
-                        
-                    default:
-                        let alert = UIAlertController(title: "Invalid Email/Password", message: "Error - \(error!)", preferredStyle: .alert)
-                        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
-                        alert.addAction(ok)
-                        
-                        
-                        
-                        self.present(alert, animated: true, completion: nil)
-                        self.indicatorContainerView.isHidden = true
-                        self.view.isUserInteractionEnabled = true
-                        self.activityIndicator.stopAnimating()
-                        
-                        return
-                        
-                    }
-                    
-                    
-                }
-                
-                
-            }
-            
-            
-            print("login in successful")
-            
-            let home = HomeController()
-            home.modalPresentationStyle = .overCurrentContext
-            
-            let navController = UINavigationController(rootViewController: home)
-            
-            self.present(navController, animated: true, completion: nil)
-            
-            self.indicatorContainerView.isHidden = true
-            self.view.isUserInteractionEnabled = true
-            self.activityIndicator.stopAnimating()
-            
-            
-            let uid = Auth.auth().currentUser?.uid
-            
-            let networkReq = NetworkingService()
-            networkReq.getUserInfo(parentRef: firebaseParentUser, childRef: uid!, screen: "home")
-            
-            
-        })
+        
+        networkRequest.handleLogin(email: email, password: password)
+        
+    }
+    
+    
+    
+    func presentMainFeed() {
+        
+        
+        let home = HomeController()
+        home.modalPresentationStyle = .overCurrentContext
+        
+        let navController = UINavigationController(rootViewController: home)
+        
+        self.present(navController, animated: true, completion: nil)
+        
+        self.indicatorContainerView.isHidden = true
+        self.view.isUserInteractionEnabled = true
+        self.activityIndicator.stopAnimating()
+
+        
         
     }
     

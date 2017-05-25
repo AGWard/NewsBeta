@@ -27,7 +27,7 @@ class TriniNewsCell: BaseCell {
     var dataBaseCells: DatabaseProperties?
     
     
-    
+    let currentID = Auth.auth().currentUser?.uid
     
     
     lazy var activityIndicator: UIActivityIndicatorView = {
@@ -467,7 +467,7 @@ class TriniNewsCell: BaseCell {
             
         }
         
-        if id == Auth.auth().currentUser?.uid {
+        if id == currentID {
             
             //if true send user via delegate to userHome Page
             goToUserMenu()
@@ -548,15 +548,17 @@ class TriniNewsCell: BaseCell {
                 
                 player = AVPlayer(url: url!)
                 
+    
                 playerLayer = AVPlayerLayer(player: player)
                 playerLayer?.frame = postedImageView.bounds
                 postedImageView.layer.addSublayer(playerLayer!)
                 
                 
-                
                 player?.play()
                 activityIndicator.startAnimating()
                 playButton.isHidden = true
+                loopVideo(videoPlayer: player!)
+
                 
                  print("attempt to play video")
                 
@@ -566,6 +568,14 @@ class TriniNewsCell: BaseCell {
         
         
         
+    }
+    
+    
+    func loopVideo(videoPlayer: AVPlayer) {
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil, queue: nil) { notification in
+            videoPlayer.seek(to: kCMTimeZero)
+            videoPlayer.play()
+        }
     }
     
     
@@ -581,6 +591,9 @@ class TriniNewsCell: BaseCell {
         
         
     }
+    
+    
+    
     
     
     
