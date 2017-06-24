@@ -10,12 +10,23 @@ import UIKit
 
 class SubMainstreamCells: BaseCell {
     
-    var postedNewsImage: UIImageView = {
+    
+    lazy var authorLabel: UILabel = {
+        
+        let authorLabel = UILabel()
+        authorLabel.textColor = .gray
+        authorLabel.translatesAutoresizingMaskIntoConstraints = false
+        authorLabel.font = UIFont.boldSystemFont(ofSize: 12)
+        
+        return authorLabel
+    }()
+    
+    lazy var postedNewsImage: UIImageView = {
         
        let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.backgroundColor = .darkText
-        image.contentMode = .scaleAspectFit
+        image.contentMode = .scaleAspectFill
         image.clipsToBounds = true
         
         return image
@@ -23,7 +34,7 @@ class SubMainstreamCells: BaseCell {
     }()
     
     
-    var postedNewsDetails: UILabel = {
+   lazy var postedNewsDetails: UILabel = {
         
        let text = UILabel()
         text.translatesAutoresizingMaskIntoConstraints = false
@@ -37,7 +48,7 @@ class SubMainstreamCells: BaseCell {
     }()
     
     
-    var mainstremTimeStamp: UILabel = {
+    lazy var mainstremTimeStamp: UILabel = {
         
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -45,7 +56,7 @@ class SubMainstreamCells: BaseCell {
         label.text = "2days ago"
         label.textColor = .black
         label.font = UIFont(name: "Avenir Next", size: 9)
-        label.textAlignment = .center
+        label.textAlignment = .left
         label.isUserInteractionEnabled = false
         
         return label
@@ -62,7 +73,7 @@ class SubMainstreamCells: BaseCell {
         postedNewsImageConstraints()
         postedNewsDetailsCOnstraints()
         mainstreamTimestampConstraints()
-        
+        authorLabelConstraints()
         
     }
     
@@ -88,7 +99,7 @@ class SubMainstreamCells: BaseCell {
         
         postedNewsDetails.leftAnchor.constraint(equalTo: postedNewsImage.rightAnchor, constant: 5).isActive = true
         postedNewsDetails.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5).isActive = true
-        postedNewsDetails.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/2).isActive = true
+        postedNewsDetails.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 3/4).isActive = true
         postedNewsDetails.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5).isActive = true
         
         
@@ -101,6 +112,19 @@ class SubMainstreamCells: BaseCell {
         mainstremTimeStamp.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -2).isActive = true
         mainstremTimeStamp.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/5).isActive = true
         mainstremTimeStamp.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/8).isActive = true
+        
+    }
+    
+    func authorLabelConstraints() {
+        
+       addSubview(authorLabel)
+        
+        authorLabel.centerYAnchor.constraint(equalTo: mainstremTimeStamp.centerYAnchor).isActive = true
+        authorLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -2).isActive = true
+        authorLabel.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/7).isActive = true
+        authorLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/5).isActive = true
+        
+        
         
     }
 

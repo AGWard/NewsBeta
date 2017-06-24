@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Firebase
 
 class MenuList: NSObject {
     
@@ -32,12 +32,21 @@ class MenuList: NSObject {
 
 class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
-    var triniNewsCell: TriniNewsCell?
     
-    let menuList: [MenuList] = {
-        
-        return [MenuList(name: "Settings", imageName: "settingsOpt"), MenuList(name: "Report Abuse", imageName: "report"), MenuList(name: "Help", imageName: "help1"), MenuList(name: "Cancel", imageName: "cancel")]
-    }()
+    var menuList: [MenuList]
+    
+    
+    var triniNewsCell: TriniNewsCell?
+    var homeController: HomeController?
+    var subscripPage: SubscriptionsFeedCell?
+    let networkRequest = NetworkingService()
+    
+    
+    var imageToShare: UIImage?
+    var headlineToShare: String?
+    var userNameID: String?
+    var homeScreen: Bool?
+    var selectedPath: IndexPath?
     
     
     let cellIDview = "cellID"
@@ -58,8 +67,13 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
     }()
     
     
-    func showOptions() {
+    
+    func showOptions(image: UIImage?, headline: String?, userName: String?, screen: Bool?) {
         
+        imageToShare = image
+        headlineToShare = headline
+        userNameID = userName
+        homeScreen = screen
         
         if let window = UIApplication.shared.keyWindow {
             
@@ -70,7 +84,7 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
             window.addSubview(moreOptionsCollectionView)
             
             let height: CGFloat = 200
-            let y = window.frame.height - 200
+            let y = window.frame.height - CGFloat(menuList.count * 50)
             
             moreOptionsCollectionView.frame = CGRect(x: 0, y: window.frame.height, width: window.frame.width, height: height)
             
@@ -81,7 +95,7 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
             
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: { 
                 self.blackView.alpha = 1
-                self.moreOptionsCollectionView.frame = CGRect(x: 0, y: y, width: self.moreOptionsCollectionView.frame.width, height: self.moreOptionsCollectionView.frame.height)
+                self.moreOptionsCollectionView.frame = CGRect(x: 0, y: y, width: self.moreOptionsCollectionView.frame.width, height: self.moreOptionsCollectionView.frame.height + 50)
                 self.triniNewsCell?.moreOptionsButton.tintColor = .red
             }, completion: nil)
             
@@ -91,7 +105,7 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
         
     }
     
-    func handleDismiss(options: MenuList) {
+    @objc func handleDismiss(options: MenuList) {
         
         
         
@@ -100,7 +114,7 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
             
             if let window = UIApplication.shared.keyWindow {
                 
-                self.moreOptionsCollectionView.frame = CGRect(x: 0, y: window.frame.height, width: self.moreOptionsCollectionView.frame.width, height: self.moreOptionsCollectionView.frame.height)
+                self.moreOptionsCollectionView.frame = CGRect(x: 0, y: window.frame.height, width: self.moreOptionsCollectionView.frame.width, height: self.moreOptionsCollectionView.frame.height + 50)
                 
             }
             
@@ -109,18 +123,64 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
             
             self.triniNewsCell?.moreOptionsButton.tintColor = .black
             
-            if options.names == "Settings" {
+            
+            
+            switch options.names {
                 
-                self.triniNewsCell?.goToUserMenu()
+                case "Share":
+                    let activityVC = UIActivityViewController(activityItems: [self.headlineToShare!, self.imageToShare!], applicationActivities: nil)
+                    activityVC.popoverPresentationController?.sourceView = self.homeController?.view
+                    if self.homeScreen == true {
+                        self.triniNewsCell?.shareOptionsTapped(view: activityVC, alert: nil)
+                        break
+                    } else if self.homeScreen == false {
+                        self.subscripPage?.shareOptionsTapped(view: activityVC, alert: nil)
+                        break
+                    }
+                    break
+                case "Subscribe":
+                    self.networkRequest.subscribe(user: self.userNameID!)
+                    break
+                case "Un-Subscribe":
+                    self.networkRequest.unsubscribe(userID: self.userNameID!)
+                    break
+                case "Report Abuse":
+                    self.triniNewsCell?.showAbuseOptions()
+                    break
+                case "Report!":
+                    self.subscripPage?.showAbuseOptions()
+                    break
+                case "Inappropriate Photo", "Photo Rights", "Hate Speech":
+                    if self.selectedPath?.row != 3 && self.selectedPath != nil {
+                    self.triniNewsCell?.postAbuseReport(abuseID: self.menuList[(self.selectedPath?.row)!].names)
+                        let alert = UIAlertController(title: "Thank You", message: "Your report has been rec'd and an Administrator will review. If you require an urgent response please contact us @ ttnewsfeed@gmail.com", preferredStyle: .alert)
+                        let OK = UIAlertAction(title: "OK", style: .default, handler: nil)
+                        alert.addAction(OK)
+                        self.triniNewsCell?.shareOptionsTapped(view: nil, alert: alert)
+                        self.selectedPath = nil
+                    }
+                case "Not Appropriate", "Photo Rights!", "Hate Speech!":
+                    if self.selectedPath?.row != 3 && self.selectedPath != nil {
+                    self.subscripPage?.postAbuseReport(abuseID: self.menuList[(self.selectedPath?.row)!].names)
+                        let alert = UIAlertController(title: "Thank You", message: "Your report has been rec'd and an Administrator will review. If you require an urgent response please contact us @ ttnewsfeed@gmail.com", preferredStyle: .alert)
+                        let OK = UIAlertAction(title: "OK", style: .default, handler: nil)
+                        alert.addAction(OK)
+                        self.subscripPage?.shareOptionsTapped(view: nil, alert: alert)
+                        self.selectedPath = nil
+                    }
+
+                default:
+                    return
+                
             }
             
-            
+
         }
         
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return menuList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -138,6 +198,8 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedPath = indexPath
+
         
      let name = menuList[indexPath.item]
             
@@ -148,7 +210,8 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
     
     
     
-    override init() {
+    init(menuList: [MenuList]) {
+        self.menuList = menuList
         super.init()
         
         moreOptionsCollectionView.dataSource = self

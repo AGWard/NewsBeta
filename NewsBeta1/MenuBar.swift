@@ -8,18 +8,20 @@
 
 import UIKit
 
-let firstIconHeading = "Bacchanal"
+let firstIconHeading = "NewsFeed"
 let secondIconHeading = "Mainstream"
 let thirdIconHeading = "Services"
-let fourthIconHeading = "K.I.Ps"
+let fourthIconHeading = "Subscriptions"
+let fifthIconHeading = "K.I.Ps"
 
 
 class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var homeController: HomeController?
+    var userProfile: UserHomePageController?
 
     
-    let menuIcons = [UIImage(named: "D News"), UIImage(named: "Public News"), UIImage(named: "Police"), UIImage(named: "KIP")]
+    let menuIcons = [UIImage(named: "D News"), UIImage(named: "Public News"), UIImage(named: "Police"), UIImage(named: "subscriptions"), UIImage(named: "KIP")]
     
     
     
@@ -89,7 +91,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         barLeftAnchor = bar.leftAnchor.constraint(equalTo: self.leftAnchor)
         barLeftAnchor?.isActive = true
         bar.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        bar.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1/4).isActive = true
+        bar.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1/5).isActive = true
         bar.heightAnchor.constraint(equalToConstant: 4).isActive = true
         
         bar.addSubview(redBarLeft)
@@ -148,6 +150,8 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
             homeController?.titleLabel.text = thirdIconHeading
         case 3:
             homeController?.titleLabel.text = fourthIconHeading
+        case 4:
+            homeController?.titleLabel.text = fifthIconHeading
         default:
             print("other")
         }
@@ -160,7 +164,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return 4
+        return menuIcons.count
     }
     
     
@@ -178,7 +182,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: frame.width / 4.05, height: frame.height)
+        return CGSize(width: frame.width / 5.05, height: frame.height)
     }
     
     //gets rid of default spacing between cells

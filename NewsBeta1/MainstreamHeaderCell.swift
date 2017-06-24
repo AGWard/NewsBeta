@@ -94,7 +94,7 @@ class MainstreamHeaderCell: BaseCell {
         addSubview(newsHeadlineTimestamp)
         
         newsHeadlineTimestamp.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5).isActive = true
-        newsHeadlineTimestamp.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        newsHeadlineTimestamp.centerYAnchor.constraint(equalTo: newsHeadlineImage.bottomAnchor, constant: 0).isActive = true
         newsHeadlineTimestamp.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/6).isActive = true
         newsHeadlineTimestamp.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/12).isActive = true
         

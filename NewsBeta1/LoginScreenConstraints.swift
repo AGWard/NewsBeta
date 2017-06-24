@@ -32,7 +32,7 @@ extension LoginController {
         containerViewTop?.isActive = false
         containerViewHeightAnchor = continerView.heightAnchor.constraint(equalToConstant: 120)
         containerViewHeightAnchor?.isActive = true
-        containerViewHeightAnchor?.priority = 1000
+        containerViewHeightAnchor?.priority = UILayoutPriority(rawValue: 1000)
         continerView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor, constant: 10).isActive = true
         continerView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor, constant: -10).isActive = true
         continerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -136,30 +136,7 @@ extension LoginController {
         segmentedLoginRegToggle.widthAnchor.constraint(equalTo: continerView.widthAnchor).isActive = true
         segmentedLoginRegToggle.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
-        
-        
-        indicatorContainerView.addSubview(activityIndicator)
-        
-        activityIndicator.centerXAnchor.constraint(equalTo: indicatorContainerView.centerXAnchor).isActive = true
-        activityIndicator.centerYAnchor.constraint(equalTo: indicatorContainerView.centerYAnchor, constant: -20).isActive = true
-        
-
-        
-        view.addSubview(indicatorContainerView)
-        indicatorContainerView.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        indicatorContainerView.widthAnchor.constraint(equalToConstant: 150).isActive = true
-        indicatorContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
-        indicatorContainerView.bottomAnchor.constraint(equalTo: segmentedLoginRegToggle.topAnchor, constant: -5).isActive = true
-        
-        
-        
-        indicatorContainerView.addSubview(loadingIndicatorText)
-        
-        loadingIndicatorText.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: 10).isActive = true
-        loadingIndicatorText.widthAnchor.constraint(equalTo: indicatorContainerView.widthAnchor).isActive = true
-        loadingIndicatorText.centerXAnchor.constraint(equalTo: indicatorContainerView.centerXAnchor).isActive = true
-        
-        
+   
         
         view.addSubview(forgotPassword)
         
@@ -170,15 +147,6 @@ extension LoginController {
         forgotPassword.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
 
-        
-//        view.addSubview(appLogo)
-//        
-//        
-//        appLogo.widthAnchor.constraint(equalToConstant: 150).isActive = true
-//        appLogo.heightAnchor.constraint(equalToConstant: 150).isActive = true
-//        appLogo.bottomAnchor.constraint(equalTo: segmentedLoginRegToggle.topAnchor, constant: -20).isActive = true
-//        appLogo.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
         
     }
     

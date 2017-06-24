@@ -9,15 +9,15 @@
 import UIKit
 import Firebase
 
-class myNewsViewCell: BaseCell, RefreshDataDelegate {
+class myNewsViewCell: BaseCell {
     
     var userHome: UserHomePageController?
     
     lazy var networkRequest: NetworkingService = {
         
         let netReq = NetworkingService()
-        netReq.myView = self
-        netReq.delegate = self
+        
+        
 
         
         return netReq
@@ -133,7 +133,7 @@ class myNewsViewCell: BaseCell, RefreshDataDelegate {
     }
     
     
-    func deletePosts() {
+    @objc func deletePosts() {
         
         
         let alert = UIAlertController(title: "Delete Post?", message: "You are about to delete this post, are you sure?", preferredStyle: .alert)

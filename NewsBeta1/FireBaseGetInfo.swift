@@ -34,6 +34,7 @@ let firebaseGenderString = "gender"
 let firebaseUsernameString = "name"
 let firebasepasswordString = "password"
 let firebaseProfileImageURLString = "profileImageURL"
+let firebaseSubscribers = "subscriberCount"
 
 
 

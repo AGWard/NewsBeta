@@ -9,8 +9,9 @@
 import UIKit
 import Firebase
 
-
 let cellID = "cellID"
+let menuCellID = "menuCell"
+
 
 
 class UserHomePageController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout{
@@ -23,12 +24,70 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     var vidNames: [String] = []
     
     let currentID = Auth.auth().currentUser?.uid
-
     
+    let menuNames = ["My News", "BookMarked", "Edit Profile", "Settings"]
+
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
                                 // ***************  Property Views Setup  *********** //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    lazy var subCounterLabel: UILabel = {
+       let label = UILabel()
+        label.textColor = .white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Subscribers"
+        return label
+    }()
+    
+    
+    lazy var subCounter: UILabel = {
+        
+       let label = UILabel()
+        label.textColor = .red
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    
+    
+    lazy var selectedImage: UIImageView = {
+        
+       let select = UIImageView()
+        select.contentMode = .scaleAspectFill
+        
+        return select
+        
+    }()
+    
+
+
+//    
+//    lazy var backgroundImage1: UIImageView = {
+//        
+//        let bkImage = UIImageView()
+//        bkImage.clipsToBounds = true
+//        bkImage.translatesAutoresizingMaskIntoConstraints = false
+//        bkImage.contentMode = .scaleAspectFill
+//        
+//        
+//        
+//        return bkImage
+//    }()
+    
+    lazy var blackView: UIView = {
+        
+        let bView = UIView()
+        bView.translatesAutoresizingMaskIntoConstraints = false
+        bView.backgroundColor = .black
+        bView.alpha = 0.7
+        
+        
+        
+        return bView
+    }()
+    
     
     lazy var networkReq: NetworkingService = {
         
@@ -38,43 +97,44 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         return service
     }()
     
-
-    
-    
-    lazy var selectedPictureActivityIndicator: UIActivityIndicatorView = {
-        
-        let indicator = UIActivityIndicatorView()
-        indicator.activityIndicatorViewStyle = .whiteLarge
-        indicator.hidesWhenStopped = true
-        indicator.stopAnimating()
-        indicator.clipsToBounds = true
-        indicator.translatesAutoresizingMaskIntoConstraints = false
-        
-        
-        return indicator
-    }()
-    
     
     
     
     lazy var myNewsCollectionView: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
-        
-       
+        layout.minimumInteritemSpacing = 1
+        layout.minimumLineSpacing = 1
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .clear
         cv.translatesAutoresizingMaskIntoConstraints = false
         cv.delegate = self
         cv.dataSource = self
-        cv.register(myNewsViewCell.self, forCellWithReuseIdentifier: cellID)
+        cv.register(MyNewsCell.self, forCellWithReuseIdentifier: cellID)
     
         
         return cv
         
     }()
     
+    
+    lazy var userButtonsCollBar: UICollectionView = {
+        
+       let layout = UICollectionViewFlowLayout()
+    
+        layout.minimumInteritemSpacing = 0
+        let userView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        userView.translatesAutoresizingMaskIntoConstraints = false
+        userView.delegate = self
+        userView.dataSource = self
+        userView.register(userProfileMenuButtonCell.self, forCellWithReuseIdentifier: menuCellID)
+        userView.backgroundColor = .clear
+        
+        
+        
+        return userView
+    }()
     
     
     
@@ -93,7 +153,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-    lazy var rightView: UIView = {
+    lazy var bottomView: UIView = {
         
         let rView = UIView()
         rView.translatesAutoresizingMaskIntoConstraints = false
@@ -108,15 +168,13 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-    lazy var leftView: UIView = {
+    lazy var topView: UIImageView = {
         
-      let lView = UIView()
+      let lView = UIImageView()
         lView.translatesAutoresizingMaskIntoConstraints = false
-        lView.backgroundColor = .clear
+        lView.backgroundColor = .blue
         lView.layer.masksToBounds = true
-        
-        
-        
+        lView.contentMode = .scaleAspectFill
         
         return lView
         
@@ -183,37 +241,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     }()
 
     
-    
-    
-    lazy var backgroundImage1: UIImageView = {
-        
-        let bkImage = UIImageView()
-        bkImage.clipsToBounds = true
-        bkImage.translatesAutoresizingMaskIntoConstraints = false
-        bkImage.contentMode = .scaleAspectFill
-        
-        
-        return bkImage
-    }()
 
-    
-    
-    lazy var userNamelabelHolder: UILabel = {
-        
-       let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont(name: "Avenir Next", size: 14)
-        label.numberOfLines = 1
-        label.textAlignment = .center
-        
-        
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
-    
-
-    
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,7 +262,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         navigationItem.leftBarButtonItem = leftNavButton
         
-
+       
         
     }
     
@@ -245,21 +273,17 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         super.viewWillLayoutSubviews()        
         
-        backgroundImageConstraints()
-        leftRightViewConstraints()
-        
-        usernameHolderContraints()
-        profileRealImageConstraints()
-        reportedNewsButtonCOnstraints()
-        
-        
-        
-        
-        
+//        backgroundImageConstraints()
+        topViewConstraints()
         setBackgroundBaseOnGender()
+        
+        profileRealImageConstraints()
+        userButtonsCollBarConstraints()
+        reportedNewsButtonCOnstraints()
+        bottomViewConstraints()
+        blackViewCOnstraints()
         logoutButtonConstraints()
-        selectedPicActivityIndicatorConstraints()
-        selectedPictureActivityIndicator.startAnimating()
+        subCountLabelConstraints()
         
     }
     
@@ -279,54 +303,103 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        
-        var cellCounter = 0
-
-        
-        for number in 0..<reveredArrays.count {
+        if collectionView == myNewsCollectionView {
             
-            print(reveredArrays.count)
-            if currentID == reveredArrays[number].userID{
+            var cellCounter = 0
+            for number in 0..<reveredArrays.count {
                 
-                imageNames.append(reveredArrays[number].imageName!)
-                vidNames.append(reveredArrays[number].videoName!)
-                timeStampID.append(reveredArrays[number].timestamp!)
-                imageURLS.append(reveredArrays[number].postedPicURL!)
-                newsHeadline.append(reveredArrays[number].newsHeadlines!)
-                cellCounter += 1
+                
+                if currentID == reveredArrays[number].userID{
+                    
+                    imageNames.append(reveredArrays[number].imageName!)
+                    vidNames.append(reveredArrays[number].videoName!)
+                    timeStampID.append(reveredArrays[number].timestamp!)
+                    imageURLS.append(reveredArrays[number].postedPicURL!)
+                    newsHeadline.append(reveredArrays[number].newsHeadlines!)
+                    cellCounter += 1
+                    
+                }
                 
             }
             
+            
+            return cellCounter
+            
         }
-  
-
-        return cellCounter
+        
+        
+        return 4
         
     }
     
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! myNewsViewCell
-            cell.userHome = self
-            cell.vidNames.text = vidNames[indexPath.item]
-            cell.imgNames.text = imageNames[indexPath.item]
-            cell.label.text = timeStampID[indexPath.item]
+        
+        if collectionView == myNewsCollectionView {
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MyNewsCell
+
+            
             cell.photoView.sd_setImage(with: URL(string: imageURLS[indexPath.item]))
-            cell.newsHeadline.text = newsHeadline[indexPath.item]
+            
+            return cell
 
-
-        return cell
+            
+        }
+        
+        let menuCell = collectionView.dequeueReusableCell(withReuseIdentifier: menuCellID, for: indexPath) as! userProfileMenuButtonCell
+        menuCell.menulabel.text = menuNames[indexPath.item]
+        
+        return menuCell
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: rightView.frame.width, height: 100)
+        
+        if collectionView == myNewsCollectionView {
+            
+            return CGSize(width: (bottomView.frame.width / 4) - 1, height: (bottomView.frame.width / 4) - 1)
+        }
+        
+        return CGSize(width: (userButtonsCollBar.frame.width / 4) - 1.5, height: userButtonsCollBar.frame.height)
+        
     }
     
     
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(indexPath.item)
+        
+        if collectionView != myNewsCollectionView {
+            
+            switch indexPath.row {
+            case 0:
+                yourPostsButtonTapped()
+                return
+            default:
+                return
+            }
+        } else {
+            
+           
+            selectedImage.sd_setImage(with: URL(string: imageURLS[indexPath.item]))
+            
+
+            let deletePostC = DeletePostsController()
+            deletePostC.postedPic = selectedImage.image
+            deletePostC.newsHeadline.text = newsHeadline[indexPath.item]
+            deletePostC.videoName = vidNames[indexPath.item]
+            deletePostC.imageName = imageNames[indexPath.item]
+            deletePostC.timeStamp = timeStampID[indexPath.item]
+            deletePostC.modalPresentationStyle = .fullScreen
+            
+            let navC = UINavigationController(rootViewController: deletePostC)
+            
+            present(navC, animated: true, completion: { 
+                
+            })
+        }
+        
     }
     
     
@@ -359,7 +432,13 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
             
             self.navigationItem.title = registeredName
             
-            userNamelabelHolder.text = registeredName
+            if registeredSubCount == nil {
+                self.subCounter.text = "0"
+                
+            } else{
+            
+            self.subCounter.text = registeredSubCount
+            }
             
             if registeredPicURL == nil {
                 print("no profile picture selected yet!!")
@@ -377,7 +456,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-    func newsButtonTapped() {
+    @objc func newsButtonTapped() {
         
         checkIfProfileImageSelected()
         
@@ -394,7 +473,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-    func handleLogout() {
+    @objc func handleLogout() {
         
         
         do {
@@ -412,14 +491,10 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         present(loginVC, animated: true, completion: nil)
         
     }
-    
-    
-    
 
-        
 
     
-    func choosePic() {
+    @objc func choosePic() {
         
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.photoLibrary) {
             
@@ -498,13 +573,15 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
         
         if registeredGender == "Male" {
             
-            self.backgroundImage1.image = UIImage(named: "male")
-            self.profileRealImage.layer.borderColor = UIColor(red: 247/255, green: 201/255, blue: 165/255, alpha: 1).cgColor
-            self.navigationController?.navigationBar.barTintColor = UIColor(red: 247/255, green: 201/255, blue: 165/255, alpha: 1)
+//            self.backgroundImage1.image = UIImage(named: "male")
+            self.topView.image = UIImage(named: "maleSpace2")
+            self.profileRealImage.layer.borderColor = UIColor(red: 5/255, green: 34/255, blue: 59/255, alpha: 1).cgColor
+            self.navigationController?.navigationBar.barTintColor = UIColor(red: 5/255, green: 34/255, blue: 59/255, alpha: 1)
             
         } else if registeredGender == "Female" {
             
-            self.backgroundImage1.image = UIImage(named: "femalebk")
+//            self.backgroundImage1.image = UIImage(named: "femalebk")
+            self.topView.image = UIImage(named: "femaleSpace")
             self.profileRealImage.layer.borderColor = UIColor(red: 101/255, green: 49/255, blue: 122/255, alpha: 1).cgColor
             self.navigationController?.navigationBar.barTintColor = UIColor(red: 101/255, green: 49/255, blue: 122/255, alpha: 1)
             
@@ -515,17 +592,17 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
     
     
     
-    func yourPostsButtonTapped() {
+    @objc func yourPostsButtonTapped() {
        
 
         myNewsCollectionViewConstraints()
         
         
-        UIView.animate(withDuration: 1.0) {
-            self.myNewsCollectionView.frame = CGRect(x: 0, y: 0, width: self.rightView.frame.width, height: self.rightView.frame.height)
-            self.view.layoutIfNeeded()
-            
-        }
+//        UIView.animate(withDuration: 1.0) {
+//            self.myNewsCollectionView.frame = CGRect(x: 0, y: 0, width: self.bottomView.frame.width, height: self.bottomView.frame.height)
+//            self.view.layoutIfNeeded()
+//            
+//        }
         
        
     }

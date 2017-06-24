@@ -22,10 +22,12 @@ extension HomeController {
         collectionVw.register(FeedCell.self, forCellWithReuseIdentifier: feedCellID)
         collectionVw.register(MainStreamCell.self, forCellWithReuseIdentifier: mainStreamID)
         collectionVw.register(ServicesCell.self, forCellWithReuseIdentifier: policeID)
+        collectionVw.register(SubscriptionsCell.self, forCellWithReuseIdentifier: subscriptionsID)
         collectionVw.register(KIPCell.self, forCellWithReuseIdentifier: kIPsID)
         view.addSubview(collectionVw)
         
         collectionVw.frame = view.frame
+        
         
     }
     
@@ -40,7 +42,7 @@ extension HomeController {
         
         
         //        menuBar.widthAnchor.constraint(equalToConstant: 380).isActive = true
-        menuBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        menuBar.heightAnchor.constraint(equalToConstant: 30).isActive = true
         menuBar.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
         menuBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         menuBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true

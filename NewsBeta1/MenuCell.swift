@@ -82,15 +82,20 @@ class MenuCell: UICollectionViewCell {
     
     func setupConstraints() {
         
-//        menuLabel.frame = contentView.frame
-        
-        
      
       menuIconB.frame = contentView.frame
         
         
         
+//        menuIconB.widthAnchor.constraint(equalToConstant: 20).isActive = true
+//        menuIconB.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        
+        
     }
+    
+    
+
     
     
 }

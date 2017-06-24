@@ -14,10 +14,11 @@ import Firebase
 protocol CellSegwayDelegate: class {
     func feedPicTapped()
     func otherUserTapped(userID: String, userName: String)
+    func shareOption(view: UIActivityViewController?, alert: UIAlertController?)
 }
 
 
-var numberOfViews = 0
+
 
 class TriniNewsCell: BaseCell {
     
@@ -25,10 +26,56 @@ class TriniNewsCell: BaseCell {
     
     var feedCell: FeedCell?
     var dataBaseCells: DatabaseProperties?
-    
+
+
     
     let currentID = Auth.auth().currentUser?.uid
     
+    let abuseList: [MenuList] = [MenuList(name: "Inappropriate Photo", imageName: "report"), MenuList(name: "Photo Rights", imageName: "photoRights2"), MenuList(name: "Hate Speech", imageName: "hateSpeech"), MenuList(name: "Cancel", imageName: "cancel")]
+    
+    let menuList1: [MenuList] = {
+        
+        return [MenuList(name: "Report Abuse", imageName: "report"), MenuList(name: "Subscribe", imageName: "subscriptions"), MenuList(name: "Comment", imageName: "comment"), MenuList(name: "Share", imageName: "shareArrow"), MenuList(name: "Cancel", imageName: "cancel")]
+    }()
+
+    
+    lazy var netRequest: NetworkingService = {
+       
+        let request = NetworkingService()
+        request.trinicell = self
+        
+        return request
+    }()
+    
+    
+    lazy var readCounter: UILabel = {
+        
+       let counter = UILabel()
+        counter.translatesAutoresizingMaskIntoConstraints = false
+        counter.textColor = .black
+        counter.font = UIFont.boldSystemFont(ofSize: 10)
+       
+        return counter
+    }()
+    
+    
+    lazy var timeID: UILabel = {
+        
+        let label = UILabel()
+        
+        
+        return label
+    }()
+
+    lazy var userID: UILabel = {
+        
+        let label = UILabel()
+        
+        
+        return label
+    }()
+    
+
     
     lazy var activityIndicator: UIActivityIndicatorView = {
         
@@ -47,11 +94,11 @@ class TriniNewsCell: BaseCell {
     lazy var playButton: UIButton = {
         
         let button = UIButton()
-        button.setImage(UIImage(named: "newPlayButton")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.setImage(UIImage(named: "newPlayButton"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.isHidden = true
         button.addTarget(self, action: #selector(playVideo), for: .touchUpInside)
-        button.tintColor = .red
+
         
         
         
@@ -62,17 +109,17 @@ class TriniNewsCell: BaseCell {
     
     
     
-    lazy var commentIcon: UIImageView = {
+    lazy var readIcon: UIImageView = {
         
         let pic = UIImageView()
         pic.translatesAutoresizingMaskIntoConstraints = false
         pic.contentMode = .scaleAspectFill
         pic.layer.cornerRadius = 0.5 * 30
         pic.clipsToBounds = true
-        pic.image = UIImage(named: "comments1")
+        pic.image = UIImage(named: "check")
         pic.isUserInteractionEnabled = true
-        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
-       
+        pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(unreadTapped)))
+        pic.isHidden = true
         
         
         return pic
@@ -82,16 +129,16 @@ class TriniNewsCell: BaseCell {
     
     
     
-    lazy var shareIconView: UIImageView = {
+    lazy var unreadIcon: UIImageView = {
         let pic = UIImageView()
         pic.translatesAutoresizingMaskIntoConstraints = false
         pic.contentMode = .scaleAspectFill
         pic.layer.cornerRadius = 0.5 * 30
         pic.clipsToBounds = true
-        pic.image = UIImage(named: "share")
+        pic.image = UIImage(named: "shareArrow")
         pic.isUserInteractionEnabled = true
         pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
-        
+        pic.isHidden = true
         
         return pic
 
@@ -103,8 +150,7 @@ class TriniNewsCell: BaseCell {
     lazy var timeLabelContainer: UIImageView = {
         
         let pic = UIImageView()
-        pic.image = UIImage(named: "label")?.withRenderingMode(.alwaysTemplate)
-        pic.tintColor = .red
+        pic.image = UIImage(named: "label")
         pic.contentMode = .scaleAspectFill
         pic.translatesAutoresizingMaskIntoConstraints = false
         pic.clipsToBounds = true
@@ -122,9 +168,8 @@ class TriniNewsCell: BaseCell {
         
         let button = UIImageView()
         
-        button.image = UIImage(named: "moreOptions")?.withRenderingMode(.alwaysTemplate)
+        button.image = UIImage(named: "moreOptions")
         button.contentMode = .scaleAspectFit
-        button.tintColor = .black
         button.isUserInteractionEnabled = true
         button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(moreOptionsButtonTapped)))
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -211,17 +256,19 @@ class TriniNewsCell: BaseCell {
     }()
     
     
+    
     lazy var postedImageView: UIImageView = {
         
         let postedView = UIImageView()
         postedView.translatesAutoresizingMaskIntoConstraints = false
         postedView.backgroundColor = .white
-        postedView.contentMode = .scaleAspectFit
+        postedView.contentMode = .scaleAspectFill
         postedView.clipsToBounds = true
         postedView.isUserInteractionEnabled = true
         
+        
         let tap = UITapGestureRecognizer()
-        tap.numberOfTapsRequired = 3
+        tap.numberOfTapsRequired = 2
         tap.addTarget(self, action: #selector(doubleTapped))
         postedView.addGestureRecognizer(tap)
        
@@ -262,10 +309,13 @@ class TriniNewsCell: BaseCell {
         timeLabelContainerConstraints()
         timeLabelConstraints()
         moreOptionsButtonConstraints()
-        shareIconConstraints()
-        commentIconConstraints()
+        readCounterConstraints()
+        readIconConstraints()
         playButtonConstraints()
         activityIndicatorConstraints()
+        
+        
+        
         
         
         
@@ -392,30 +442,44 @@ class TriniNewsCell: BaseCell {
     
     
     
-    func shareIconConstraints() {
+    func unreadIconConstraints() {
         
         
-        addSubview(shareIconView)
-        
-        shareIconView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5).isActive = true
-        shareIconView.centerYAnchor.constraint(equalTo: storyByLabel.centerYAnchor).isActive = true
-        shareIconView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        shareIconView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+//        addSubview(unreadIcon)
+//        
+//        unreadIcon.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10).isActive = true
+//        unreadIcon.centerYAnchor.constraint(equalTo: storyByLabel.centerYAnchor).isActive = true
+//        unreadIcon.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/17).isActive = true
+//        unreadIcon.heightAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/17).isActive = true
         
         
     }
     
+    func readCounterConstraints() {
+        
+        addSubview(readCounter)
+        
+        readCounter.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10).isActive = true
+        readCounter.centerYAnchor.constraint(equalTo: storyByLabel.centerYAnchor).isActive = true
+        readCounter.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/6).isActive = true
+        readCounter.heightAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/14).isActive = true
+        
+        
+        
+    }
+
     
     
-    func commentIconConstraints() {
+    
+    func readIconConstraints() {
         
         
-        addSubview(commentIcon)
+        addSubview(readIcon)
         
-        commentIcon.rightAnchor.constraint(equalTo: shareIconView.leftAnchor, constant: -8).isActive = true
-        commentIcon.centerYAnchor.constraint(equalTo: storyByLabel.centerYAnchor).isActive = true
-        commentIcon.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        commentIcon.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        readIcon.rightAnchor.constraint(equalTo: readCounter.leftAnchor, constant: -5).isActive = true
+        readIcon.centerYAnchor.constraint(equalTo: storyByLabel.centerYAnchor).isActive = true
+        readIcon.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/15).isActive = true
+        readIcon.heightAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/16).isActive = true
         
         
     }
@@ -429,8 +493,8 @@ class TriniNewsCell: BaseCell {
         
         playButton.centerYAnchor.constraint(equalTo: postedImageView.centerYAnchor).isActive = true
         playButton.centerXAnchor.constraint(equalTo: postedImageView.centerXAnchor).isActive = true
-        playButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        playButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        playButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        playButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         
     }
@@ -447,9 +511,21 @@ class TriniNewsCell: BaseCell {
         
     }
     
+
+    
+    
     lazy var moreOptionsView: MoreOptionsView = {
         
-       let options = MoreOptionsView()
+       let options = MoreOptionsView(menuList: self.menuList1)
+        options.triniNewsCell = self
+        
+        
+        return options
+    }()
+    
+    lazy var abuseOptions: MoreOptionsView = {
+        
+        let options = MoreOptionsView(menuList: self.abuseList)
         options.triniNewsCell = self
         
         
@@ -457,7 +533,8 @@ class TriniNewsCell: BaseCell {
     }()
     
     
-    func profilePicTapped() {
+    
+    @objc func profilePicTapped() {
         
         
         guard let id = dataBaseCells?.userID else {
@@ -485,6 +562,17 @@ class TriniNewsCell: BaseCell {
     }
     
     
+    func shareOptionsTapped(view: UIActivityViewController?, alert: UIAlertController?) {
+        
+        
+        self.delegate?.shareOption(view: view, alert: alert)
+
+        
+    }
+    
+    
+
+    
     func goToUserMenu() {
         
         self.delegate?.feedPicTapped()
@@ -494,23 +582,39 @@ class TriniNewsCell: BaseCell {
     
 
     
-    func moreOptionsButtonTapped() {
+    @objc func moreOptionsButtonTapped() {
         
-        moreOptionsView.showOptions()
+        moreOptionsView.showOptions(image: postedImageView.image!, headline: newsHeadingLabel.text!, userName: userID.text!, screen: true)
         
-        
-    }
-    
-    
-    func doubleTapped(tap: UITapGestureRecognizer) {
-        
-        numberOfViews += 1
-        
-        print(numberOfViews)
         
     }
     
+    
+    @objc func doubleTapped(tap: UITapGestureRecognizer) {
+        
+        guard let user = timeID.text else { return }
+        
+        if readIcon.isHidden == true {
+            
+            readIcon.isHidden = false
+            netRequest.readPost(userID: user)
 
+        }
+        
+        
+ 
+    }
+    
+    
+    @objc func unreadTapped() {
+        
+        guard let user = timeID.text else { return }
+        readIcon.isHidden = true
+        netRequest.unreadPost(userId: user)
+        
+    }
+
+    
 
     
 //    func zoomImage(tapGesture: UITapGestureRecognizer) {
@@ -536,7 +640,7 @@ class TriniNewsCell: BaseCell {
     var player: AVPlayer?
     
     
-    func playVideo() {
+    @objc func playVideo() {
     
         
         
@@ -592,8 +696,21 @@ class TriniNewsCell: BaseCell {
         
     }
     
+    func postAbuseReport(abuseID: String) {
+        
+        netRequest.postAbuseReport(byUser: currentID!, postID: timeID.text!, abuseDetails: abuseID)
+        
+        
+    }
     
     
+    func showAbuseOptions() {
+    
+        abuseOptions.showOptions(image: nil, headline: nil, userName: nil, screen: nil)
+        
+
+        
+    }
     
     
     

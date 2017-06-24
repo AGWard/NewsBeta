@@ -55,7 +55,7 @@ class OtherUserController: UIViewController, UICollectionViewDelegate, UICollect
         
     }
     
-    func dismissController() {
+    @objc func dismissController() {
         
         dismiss(animated: true, completion: nil)
         

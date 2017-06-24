@@ -13,31 +13,24 @@ import Firebase
 protocol CellSegaway2Delegate {
     func profilePicTapped()
     func otherUserTapped(userID: String, userName: String)
+    func presentShareController(viewS: UIActivityViewController?, alerts: UIAlertController?)
 }
 
 var reveredArrays = [DatabaseProperties]()
+var reversedReads = [DatabaseProperties]()
 
 var name: String!
 
 class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, CellSegwayDelegate {
     
-    
+    let currentUser = Auth.auth().currentUser?.uid
     
     var delegate: CellSegaway2Delegate?
     
     
     let cellID = "cellID"
     
-    
-    
-    var postedPhotos: [UIImage] = []
-    var postedText: [String] = []
-    var imageURLS: [String] = []
-    var idlist = [String]()
-    var reporterList = [String]()
-    var userProfilePicFeed = [String]()
-    var timestampArray: [String] = []
-    var postArray = [String]()
+
     
     
     lazy var networkRequest: NetworkingService = {
@@ -54,13 +47,14 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     lazy var collectionViews: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 2.5
-                
+        layout.minimumLineSpacing = 8
+        
         let collection  = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.backgroundColor = .black
         collection.dataSource = self
         collection.delegate = self
+        
         
         
         return collection
@@ -80,14 +74,12 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     }
     
     
-    
-    
     func collectionViewContraints() {
         
         addSubview(collectionViews)
         collectionViews.register(TriniNewsCell.self, forCellWithReuseIdentifier: cellID)
         
-        collectionViews.topAnchor.constraint(equalTo: self.topAnchor, constant: 20).isActive = true
+        collectionViews.topAnchor.constraint(equalTo: self.topAnchor, constant: 10).isActive = true
         collectionViews.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -40).isActive = true
         collectionViews.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         collectionViews.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
@@ -110,19 +102,21 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! TriniNewsCell
         
+        if currentUser == nil {
+            
+            return cell
+        }
         
         cell.backgroundColor = .white
-        
+
         cell.delegate = self
         cell.feedCell = self
         
-
         
         let newArrays = reveredArrays[indexPath.row]
         
 
         cell.dataBaseCells = newArrays
-        
         cell.playButton.isHidden = newArrays.postedVideoURL == "NoVids"
         
         
@@ -131,9 +125,44 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         cell.reportNameLabel.text = newArrays.reporterName
         cell.feedUserPic.sd_setImage(with: URL(string: newArrays.userImage!))
         cell.newsHeadingLabel.text = newArrays.newsHeadlines
+        cell.timeID.text = newArrays.timestamp
+        cell.userID.text = newArrays.userID
+        
+        if let reads = newArrays.reads {
+            
+            if reads == "0" {
+                
+                cell.readIcon.isHidden = true
+            }
+            
+            cell.readCounter.text = "\(reads) reads"
+            
+        
+            
+        } else {
+            
+            cell.readCounter.text = "0 reads"
+            cell.readIcon.isHidden = true
+        }
+        
+        
+        if newArrays.pplWhoRead != nil {
+            
+            
+            for person in (newArrays.pplWhoRead?.values)! {
+                
+                if person == currentUser! {
+                    
+                    cell.readIcon.isHidden = false
+                    break
+                    
+                }
+                
+            }
 
-       
-  
+            
+        }
+
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
@@ -148,20 +177,24 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-//        let height = (frame.width - 16 - 16) * 9 / 16
-//        return CGSize(width: frame.width, height: height + 16 + 88)
         
         return CGSize(width: frame.width, height: frame.height / 1.2)
         
     }
     
+    func shareOption(view: UIActivityViewController?, alert: UIAlertController?) {
+       
+        delegate?.presentShareController(viewS: view, alerts: alert)
+    }
+    
+
 
     
 
     
     func getPostedData() {
         
-        networkRequest.getPostedData()
+        networkRequest.getPostedData(area: "FeedCell")
 
  
     }
@@ -187,6 +220,9 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         
         
     }
+    
+    
+
     
 //    var startingFrame: CGRect?
 //    var blackBackgroundView: UIView?

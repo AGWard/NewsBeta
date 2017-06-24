@@ -79,13 +79,13 @@ class MoreOptionsViewCell: BaseCell {
         addSubview(labelImages)
         addSubview(nameLabel)
         
-        labelImages.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
+        labelImages.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 5).isActive = true
         labelImages.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        labelImages.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/6).isActive = true
+        labelImages.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 1/16).isActive = true
         labelImages.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 1/2).isActive = true
         
         
-        nameLabel.leftAnchor.constraint(equalTo: labelImages.rightAnchor).isActive = true
+        nameLabel.leftAnchor.constraint(equalTo: labelImages.rightAnchor, constant: 10).isActive = true
         nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         
         

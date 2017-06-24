@@ -134,7 +134,7 @@ class OtherUsertCell: BaseCell {
     var player: AVPlayer?
     
     
-    func playotherUserVideo() {
+    @objc func playotherUserVideo() {
         
 
         print("anything")

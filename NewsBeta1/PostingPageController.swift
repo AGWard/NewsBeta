@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import MobileCoreServices
 import AVFoundation
+import SVProgressHUD
 
 
 class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -212,7 +213,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         
         areaLabel.inputView = areaSelection
         
-        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(postNews))
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelPosting))
         navigationItem.title = "NewsFeed"
         
@@ -390,7 +391,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
     
 
     
-    func cancelPosting() {
+    @objc func cancelPosting() {
         
         dismiss(animated: true, completion: nil)
     }
@@ -399,16 +400,16 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
 
     
     
-    func postNews() {
+    @objc func postNews() {
         
         print("Posting.............")
         
 
         postButton.isEnabled = false
         
-        if selectedPic.image == nil {
+        if selectedPic.image == nil || selectedPic.image == UIImage(named: "selectPicSquare") {
             
-            let alert = UIAlertController(title: "Headline Required", message: "Enter some context about your news", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Picture Required", message: "Share your news via a picture", preferredStyle: .alert)
             let action = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(action)
             present(alert, animated: true, completion: nil)
@@ -444,7 +445,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
             
         }
         
-        
+        SVProgressHUD.showSuccess(withStatus: "Article Published")
         
         let utcTimeZoneStr = String(describing: date)
         let timestamp = Int(Date().timeIntervalSince1970)
@@ -461,18 +462,21 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         let networkRequest = NetworkingService()
         networkRequest.saveNewsFeed(uid: currentID!, headlines: newsHeadlines, newsBody: textEntered, image: selectedPic.image, videoImageURL: selectedVidURL, timestamp: timestampstring, timeUTC: utcTimeZoneStr, reporterName: registeredName!, userPorfileImage: registeredPicURL!)
         
-        
-        dismiss(animated: true, completion: nil)
-        
-        
-        
-        
-
+        perform(#selector(dismissPostScreen), with: nil, afterDelay: 2)
     
     }
     
     
-    func goodBadSegTapped() {
+    @objc func dismissPostScreen() {
+        
+        dismiss(animated: true) {
+            SVProgressHUD.dismiss()
+        }
+        
+    }
+    
+    
+    @objc func goodBadSegTapped() {
 
         switch goodBadSeg.selectedSegmentIndex {
         case 0:
@@ -539,7 +543,6 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
     
     
     
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         newsHeadline.resignFirstResponder()
         postTextField.resignFirstResponder()
@@ -553,13 +556,13 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         super.touchesBegan(touches, with: event)
     }
     
-    func keyboardWillShow(notification: Notification) {
+    @objc func keyboardWillShow(notification: Notification) {
     
             self.view.layoutIfNeeded()
         
     }
     
-    func keyboardWillHide(notification: Notification) {
+    @objc func keyboardWillHide(notification: Notification) {
         
 
             self.view.layoutIfNeeded()
@@ -571,9 +574,9 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     
-    func selectVideo() {
+    @objc func selectVideo() {
         
-        
+        SVProgressHUD.show(withStatus: "fetching photos")
         print("videos selected")
         
         
@@ -586,7 +589,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
             imagePicker.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String]
             
             self.present(imagePicker, animated: true, completion: nil)
-            
+            SVProgressHUD.dismiss()
             
         } else {
             
@@ -600,6 +603,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
+        SVProgressHUD.dismiss()
     }
     
     

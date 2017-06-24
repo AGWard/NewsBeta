@@ -8,8 +8,7 @@
 
 import UIKit
 import Firebase
-
-
+import SVProgressHUD
 
 
 
@@ -28,6 +27,9 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
                             // ***************  Icon Creation  *********** //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+
+    
     
     lazy var networkRequest: NetworkingService = {
         
@@ -93,13 +95,13 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         
        let app = UIImageView()
         app.backgroundColor = .clear
-        app.image = UIImage(named: "Dlogo")
+        app.image = UIImage(named: "NewsFeed")
         
         app.translatesAutoresizingMaskIntoConstraints = false
         
         return app
     }()
-        
+    
         
         
 
@@ -130,50 +132,6 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         
     }()
     
-    
-    
-    lazy var loadingIndicatorText: UILabel = {
-        
-       let indicatorText = UILabel()
-        indicatorText.text = "Loading..."
-        indicatorText.textColor = .white
-        indicatorText.font = UIFont(name: "Avenir Next", size: 13)
-        indicatorText.translatesAutoresizingMaskIntoConstraints = false
-        indicatorText.textAlignment = .center
-        indicatorText.clipsToBounds = true
-        
-        return indicatorText
-    }()
-    
-    
-    lazy var indicatorContainerView: UIView = {
-        let activityView = UIView()
-        activityView.backgroundColor = .clear
-        
-        
-        
-        activityView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return activityView
-    }()
-    
-    
-    
-    lazy var activityIndicator: UIActivityIndicatorView = {
-        
-        let indicator = UIActivityIndicatorView()
-        indicator.activityIndicatorViewStyle = .whiteLarge
-        indicator.hidesWhenStopped = true
-        indicator.startAnimating()
-        indicator.clipsToBounds = true
-        
-        indicator.translatesAutoresizingMaskIntoConstraints = false
-        
-        
-        
-       return indicator
-    }()
-
  
     
     
@@ -195,9 +153,9 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     lazy var backgroundImage: UIImageView = {
         
         let bkImage = UIImageView()
-        bkImage.image = UIImage(named: "captures")
+        bkImage.image = UIImage(named: "NewsFeed")
         bkImage.translatesAutoresizingMaskIntoConstraints = false
-        bkImage.contentMode = .scaleAspectFill
+        bkImage.contentMode = .scaleToFill
         bkImage.isUserInteractionEnabled = true
         bkImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(zoomOut)))
         
@@ -210,12 +168,10 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         let views = UIVisualEffectView(effect: blurEffect)
         views.translatesAutoresizingMaskIntoConstraints = false
         views.isHidden = false
-        views.alpha = 0.6
+        views.alpha = 0.9
         
         
         return views
-        
-        
         
     }()
     
@@ -232,9 +188,9 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         return containV
     }()
     
-    lazy var genderLabel: UITextField = {
+    lazy var genderLabel: ShakingTextField = {
         
-        let gpicker = UITextField()
+        let gpicker = ShakingTextField()
         gpicker.backgroundColor = .clear
         gpicker.text = "gender"
         gpicker.font = UIFont.boldSystemFont(ofSize: 12)
@@ -251,16 +207,16 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     }()
     
     
-    lazy var userNameLabel: UITextField = {
+    lazy var userNameLabel: ShakingTextField = {
         
         
         var mutableString = NSMutableAttributedString()
         let textEmail = "username"
-        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSFontAttributeName:UIFont(name: "Avenir Next", size: 16)!])
-        mutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
+        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSAttributedStringKey.font:UIFont(name: "Avenir Next", size: 16)!])
+        mutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
     
         
-        let user = UITextField()
+        let user = ShakingTextField()
         user.attributedPlaceholder = mutableString
         user.textColor = .white
         user.backgroundColor = .clear
@@ -271,15 +227,15 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     }()
     
     
-    lazy var passwordLabel: UITextField = {
+    lazy var passwordLabel: ShakingTextField = {
         
         
         var mutableString = NSMutableAttributedString()
         let textEmail = "password"
-        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSFontAttributeName:UIFont(name: "Avenir Next", size: 16)!])
-        mutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
+        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSAttributedStringKey.font:UIFont(name: "Avenir Next", size: 16)!])
+        mutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
         
-        let password = UITextField()
+        let password = ShakingTextField()
         password.attributedPlaceholder = mutableString
         password.isSecureTextEntry = true
         password.backgroundColor = .clear
@@ -333,14 +289,14 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
     }()
     
     
-    lazy var emailLabel: UITextField = {
+    lazy var emailLabel: ShakingTextField = {
         
         var mutableString = NSMutableAttributedString()
         let textEmail = "email"
-        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSFontAttributeName:UIFont(name: "Avenir Next", size: 14)!])
-        mutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
+        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSAttributedStringKey.font:UIFont(name: "Avenir Next", size: 14)!])
+        mutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
         
-        let email = UITextField()
+        let email = ShakingTextField()
         email.attributedPlaceholder = mutableString
         email.backgroundColor = .clear
         email.delegate = self
@@ -408,8 +364,7 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         
         UIApplication.shared.statusBarStyle = .lightContent
         view.isUserInteractionEnabled = true
-        indicatorContainerView.isHidden = true
-        activityIndicator.stopAnimating()
+        SVProgressHUD.dismiss()
 
         
         backgroundConstrainst()

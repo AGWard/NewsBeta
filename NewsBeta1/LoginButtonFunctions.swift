@@ -9,6 +9,7 @@
 
 import UIKit
 import Firebase
+import SVProgressHUD
 
 
 
@@ -93,15 +94,15 @@ extension LoginController {
                     
                     if passwordLabel.text?.isEmpty == false {
                         
-                        indicatorContainerView.isHidden = false
+                        
                         view.isUserInteractionEnabled = false
-                        activityIndicator.startAnimating()
+                        SVProgressHUD.show(withStatus: "Registering")
                         
                         guard let email = emailLabel.text, let password = passwordLabel.text, let name = userNameLabel.text, let gender = genderLabel.text else {
                             
-                            self.indicatorContainerView.isHidden = true
+
                             self.view.isUserInteractionEnabled = true
-                            self.activityIndicator.stopAnimating()
+                            SVProgressHUD.dismiss()
                             print("there is an issue with your checks on empty feilds")
                             return
                         }
@@ -114,42 +115,21 @@ extension LoginController {
                                              
                         
                     } else {
+
                         
-                        
-                        //prompt for when password feild is empty
-                        let alert = UIAlertController(title: "Password Missing", message: "Please enter a password", preferredStyle: .alert)
-                        let ok = UIAlertAction(title: "Got It", style: .default, handler: nil)
-                        alert.addAction(ok)
-                        
-                        present(alert, animated: true, completion: nil)
-                        
-                        
+                        passwordLabel.shake()
                     }
                     
                     
                 } else {
-                    
-                    
-                    //prompt for when username feild is empty
-                    let alert = UIAlertController(title: "Username Required", message: "Please enter a username", preferredStyle: .alert)
-                    let ok = UIAlertAction(title: "Got It", style: .default, handler: nil)
-                    alert.addAction(ok)
-                    
-                    present(alert, animated: true, completion: nil)
+
+                    userNameLabel.shake()
                 }
-                
-                
+ 
                 
             } else {
                 
-                
-                //prompt for when email feild is empty
-                
-                let alert = UIAlertController(title: "Email Required", message: "Please enter an email address", preferredStyle: .alert)
-                let ok = UIAlertAction(title: "Got It", style: .default, handler: nil)
-                alert.addAction(ok)
-                
-                present(alert, animated: true, completion: nil)
+                emailLabel.shake()
             }
             
         } else {
@@ -193,10 +173,10 @@ extension LoginController {
     
     func handleLogin() {
         
-        indicatorContainerView.isHidden = false
         view.isUserInteractionEnabled = false
-        activityIndicator.startAnimating()
         
+        
+        SVProgressHUD.show(withStatus: "Logging In")
  
         
         guard let email = emailLabel.text, let password = passwordLabel.text else {
@@ -222,9 +202,8 @@ extension LoginController {
         
         self.present(navController, animated: true, completion: nil)
         
-        self.indicatorContainerView.isHidden = true
         self.view.isUserInteractionEnabled = true
-        self.activityIndicator.stopAnimating()
+        SVProgressHUD.dismiss()
 
         
         
@@ -362,9 +341,8 @@ extension LoginController {
             
             self.present(navController, animated: true, completion: {
                 
-                self.indicatorContainerView.isHidden = true
                 self.view.isUserInteractionEnabled = true
-                self.activityIndicator.stopAnimating()
+                SVProgressHUD.dismiss()
                 
                 
                 
@@ -449,7 +427,7 @@ extension LoginController {
     
     
     
-    func zoomOut() {
+    @objc func zoomOut() {
         
         forgotPassword.isUserInteractionEnabled = true
         
@@ -464,7 +442,7 @@ extension LoginController {
         
     }
     
-    func verifyEmailTapped() {
+    @objc func verifyEmailTapped() {
         
         
         print("FIrebase stuff here")

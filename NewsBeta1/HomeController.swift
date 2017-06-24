@@ -8,17 +8,19 @@
 
 import UIKit
 import Firebase
+import SDWebImage
 
 
 
 
-class HomeController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CellSegaway2Delegate {
+class HomeController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CellSegaway2Delegate, PresentWebViewDelegate {
     
  
     
     let feedCellID = "cellID"
     let mainStreamID = "MainStreamID"
     let policeID = "policeCellID"
+    let subscriptionsID = "subscriptionsID"
     let kIPsID = "KIPCellID"
 
     let currentID = Auth.auth().currentUser?.uid
@@ -71,11 +73,11 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     lazy var titleLabel: UILabel = {
         
-        let button = UILabel(frame: CGRect(x: 0, y: 0, width: 90, height: 30))
+        let button = UILabel(frame: CGRect(x: 0, y: 0, width: 120, height: 30))
         button.text = firstIconHeading
         button.textAlignment = .center
         button.textColor = .red
-        button.font = UIFont.boldSystemFont(ofSize: 16)
+        button.font = UIFont(name: "Papyrus", size: 19)
 
         
         
@@ -88,9 +90,9 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     lazy var rightbarPic: UIImageView = {
         
         let pic = UIImageView()
-        pic.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        pic.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
         pic.contentMode = .scaleAspectFit
-        pic.image = UIImage(named: "settings")
+        pic.image = UIImage(named: "settingsOpt")
         pic.isUserInteractionEnabled = true
         pic.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profilePicTapped)))
         
@@ -102,7 +104,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     lazy var leftBarPic: UIImageView = {
         
         let pic = UIImageView()
-        pic.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        pic.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
         pic.contentMode = .scaleAspectFit
         pic.image = UIImage(named: "video2")
         pic.isUserInteractionEnabled = true
@@ -139,10 +141,6 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         checkIfUserIsLoggedIn()
         view.backgroundColor = .darkText
         
-//        DispatchQueue.global(qos: .background).async {
-////             self.userPhotoPage.grabPhotos()
-//        }
-       
        
        
     }
@@ -151,6 +149,15 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         super.didReceiveMemoryWarning()
         
         print("*************memory warning HomeCtroller")
+        if (self.isViewLoaded) && (self.view.window) == nil {
+            
+            self.view = nil
+            
+            
+        }
+        
+        SDImageCache.shared().clearMemory()
+        SDImageCache.shared().clearDisk(onCompletion: nil)
        
     }
     
@@ -222,7 +229,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
     
     
-    func handleLogout() {
+    @objc func handleLogout() {
         
         
         do {
@@ -258,7 +265,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     
-    func profilePicTapped() {
+    @objc func profilePicTapped() {
         
        
         
@@ -274,7 +281,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
     }
     
-    func postNewsAction() {
+    @objc func postNewsAction() {
         
         let mediaController = PostingPageController()
         mediaController.modalPresentationStyle = .popover
@@ -313,7 +320,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
-        menuBar.barLeftAnchor?.constant = scrollView.contentOffset.x / 4
+        menuBar.barLeftAnchor?.constant = scrollView.contentOffset.x / 5
         
         
     }
@@ -337,6 +344,8 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
             titleLabel.text = thirdIconHeading
         case 3:
             titleLabel.text = fourthIconHeading
+        case 4:
+            titleLabel.text = fifthIconHeading
         default:
             print("Run out of Menu Names!!!!")
         }
@@ -346,7 +355,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return 5
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -362,7 +371,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         } else if indexPath.item == 1 {
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: mainStreamID, for: indexPath) as! MainStreamCell
-        
+            cell.delegate = self
             return cell
  
         } else if indexPath.item == 2 {
@@ -374,9 +383,16 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
         } else if indexPath.item == 3 {
             
             
+            let subscripCell = collectionView.dequeueReusableCell(withReuseIdentifier: subscriptionsID, for: indexPath) as! SubscriptionsCell
+            subscripCell.delegate = self
+            return subscripCell
+            
+        } else if indexPath.item == 4 {
+            
             let kipCell = collectionView.dequeueReusableCell(withReuseIdentifier: kIPsID, for: indexPath) as! KIPCell
             
             return kipCell
+
             
         }
         
@@ -386,15 +402,36 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: view.bounds.width, height: view.bounds.height - 40)
         
-        
-        
-        
-        
+
         
     }
     
+    
+    
+    func presentShareController(viewS: UIActivityViewController?, alerts: UIAlertController?) {
+        
+        
+        if viewS != nil {
+            present(viewS!, animated: true, completion: nil)
+            
+        } else {
+            
+            present(alerts!, animated: true, completion: nil)
+            
+        }
+        
+    }
 
     
+    func presentWebView(url: String?, author: String?) {
+        let webView = WebViewController()
+        webView.modalPresentationStyle = .popover
+        webView.url = url
+        webView.author = author
+        let navC = UINavigationController(rootViewController: webView)
+        
+        present(navC, animated: true, completion: nil)
+    }
     
     
 }

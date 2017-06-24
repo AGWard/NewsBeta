@@ -20,6 +20,7 @@ class KIPCell: BaseCell, UITableViewDelegate, UITableViewDataSource {
         tview.translatesAutoresizingMaskIntoConstraints = false
         tview.delegate = self
         tview.dataSource = self
+    
         
         
         return tview
@@ -58,6 +59,7 @@ class KIPCell: BaseCell, UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: kipcellID, for: indexPath) as! KIPHistoryCell
         
         cell.textLabel?.text = kipList[indexPath.item]
+        
         
         return cell
     }
