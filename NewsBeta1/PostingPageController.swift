@@ -18,7 +18,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
     
     let currentID = Auth.auth().currentUser?.uid
     
-    private let area = ["Arima", "Arouca/Maloney", "Barataria/San Juan", "Black Rock", "Bon Air", "Cambee", "Caroni", "Chaguanas", "Charlotteville", "Couva", "Crown Point", "Cumuto", "D'Abadie/O'Meara", "Diego Martin", "Fyzabad", "La Brea", "La Horquette", "Laventille", "Lopinot", "Manzanilla", "Mayaro", "Moruga/Tableland", "Naparima", "Oropouche", "Point Fortin", "Pointe-A-Pierre", "Port Of Spain", "Princess Town", "Scarborough", "San Fernando", "Siparia", "St.Anns", "St.Augustine", "St.Joseph", "Tabaquite", "Toco", "Tunapuna", "International"]
+    fileprivate let area = ["Arima", "Arouca/Maloney", "Barataria/San Juan", "Black Rock", "Bon Air", "Cambee", "Caroni", "Chaguanas", "Charlotteville", "Couva", "Crown Point", "Cumuto", "D'Abadie/O'Meara", "Diego Martin", "Fyzabad", "La Brea", "La Horquette", "Laventille", "Lopinot", "Manzanilla", "Mayaro", "Moruga/Tableland", "Naparima", "Oropouche", "Point Fortin", "Pointe-A-Pierre", "Port Of Spain", "Princess Town", "Scarborough", "San Fernando", "Siparia", "St.Anns", "St.Augustine", "St.Joseph", "Tabaquite", "Toco", "Tunapuna", "International"]
     
     
     lazy var date = Date()
@@ -460,7 +460,7 @@ class PostingPageController: UIViewController, UITextFieldDelegate, UITextViewDe
         }
         
         let networkRequest = NetworkingService()
-        networkRequest.saveNewsFeed(uid: currentID!, headlines: newsHeadlines, newsBody: textEntered, image: selectedPic.image, videoImageURL: selectedVidURL, timestamp: timestampstring, timeUTC: utcTimeZoneStr, reporterName: registeredName!, userPorfileImage: registeredPicURL!)
+        networkRequest.saveNewsFeed(currentID!, headlines: newsHeadlines, newsBody: textEntered, image: selectedPic.image, videoImageURL: selectedVidURL, timestamp: timestampstring, timeUTC: utcTimeZoneStr, reporterName: registeredName!, userPorfileImage: registeredPicURL!)
         
         perform(#selector(dismissPostScreen), with: nil, afterDelay: 2)
     

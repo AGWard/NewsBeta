@@ -12,8 +12,8 @@ import Firebase
 
 protocol CellSegaway2Delegate {
     func profilePicTapped()
-    func otherUserTapped(userID: String, userName: String)
-    func presentShareController(viewS: UIActivityViewController?, alerts: UIAlertController?)
+    func otherUserTapped(_ userID: String, userName: String)
+    func presentShareController(_ viewS: UIActivityViewController?, alerts: UIAlertController?)
 }
 
 var reveredArrays = [DatabaseProperties]()
@@ -182,9 +182,9 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
         
     }
     
-    func shareOption(view: UIActivityViewController?, alert: UIAlertController?) {
+    func shareOption(_ view: UIActivityViewController?, alert: UIAlertController?) {
        
-        delegate?.presentShareController(viewS: view, alerts: alert)
+        delegate?.presentShareController(view, alerts: alert)
     }
     
 
@@ -194,17 +194,17 @@ class FeedCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func getPostedData() {
         
-        networkRequest.getPostedData(area: "FeedCell")
+        networkRequest.getPostedData("FeedCell")
 
  
     }
     
 
-    func otherUserTapped(userID: String, userName: String) {
+    func otherUserTapped(_ userID: String, userName: String) {
         
         //method for other users, linked in Home Controller
         
-        delegate?.otherUserTapped(userID: userID, userName: userName)
+        delegate?.otherUserTapped(userID, userName: userName)
         
     }
     

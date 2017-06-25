@@ -55,7 +55,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         
         //default a selected cell at loading
         
-        let selectedIndexPath = NSIndexPath(item: 0, section: 0)
+        let selectedIndexPath = IndexPath(item: 0, section: 0)
         collecV.selectItem(at: selectedIndexPath as IndexPath, animated: false, scrollPosition: .centeredHorizontally)
         setupHorizontalScrollBar()
         

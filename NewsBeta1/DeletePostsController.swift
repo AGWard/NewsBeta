@@ -132,7 +132,7 @@ class DeletePostsController: UIViewController {
             
             let path = self.timeStamp
             
-            self.networkRequest.deletePosts(feedpath: path!, imageName: self.imageName, videoName: self.videoName)
+            self.networkRequest.deletePosts(path!, imageName: self.imageName, videoName: self.videoName)
             
             }
         )

@@ -25,7 +25,7 @@ extension LoginController {
     
     // signup sign in button functions
     
-    func toggleTapped() {
+    @objc func toggleTapped() {
         
         let title = segmentedLoginRegToggle.titleForSegment(at: segmentedLoginRegToggle.selectedSegmentIndex)
         
@@ -59,7 +59,7 @@ extension LoginController {
     }
     
     
-    func loginTapped() {
+    @objc func loginTapped() {
         
         if segmentedLoginRegToggle.selectedSegmentIndex == 0 {
             
@@ -110,7 +110,7 @@ extension LoginController {
                         //******************************CREATION OF USER IN DATABASE*********************************//
                     
                         
-                        networkRequest.signUpNewUser(username: name, email: email, password: password, gender: gender)
+                        networkRequest.signUpNewUser(name, email: email, password: password, gender: gender)
                         
                                              
                         
@@ -186,7 +186,7 @@ extension LoginController {
         }
         
         
-        networkRequest.handleLogin(email: email, password: password)
+        networkRequest.handleLogin(email, password: password)
         
     }
     
@@ -294,7 +294,7 @@ extension LoginController {
         super.touchesBegan(touches, with: event)
     }
     
-    func keyboardWillShow(notification: Notification) {
+    @objc func keyboardWillShow(_ notification: Notification) {
         
         UIView.animate(withDuration: 0.8) {
             
@@ -312,7 +312,7 @@ extension LoginController {
         
     }
     
-    func keyboardWillHide(notification: Notification) {
+    @objc func keyboardWillHide(_ notification: Notification) {
         UIView.animate(withDuration: 0.8) {
             
             //            self.containerViewTop?.constant = -170
@@ -360,7 +360,7 @@ extension LoginController {
 
     
     
-    func forgotPasswordTapped() {
+    @objc func forgotPasswordTapped() {
         
         
         forgotPassword.isUserInteractionEnabled = false

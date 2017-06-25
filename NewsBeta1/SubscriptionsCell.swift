@@ -157,9 +157,9 @@ class SubscriptionsCell: BaseCell, UICollectionViewDataSource, UICollectionViewD
         
     }
     
-    func shareOption(view: UIActivityViewController?, alert: UIAlertController?) {
+    func shareOption(_ view: UIActivityViewController?, alert: UIAlertController?) {
         
-        delegate?.presentShareController(viewS: view, alerts: alert)
+        delegate?.presentShareController(view, alerts: alert)
     }
     
     
@@ -175,11 +175,11 @@ class SubscriptionsCell: BaseCell, UICollectionViewDataSource, UICollectionViewD
 //    }
     
     
-    func otherUserTapped(userID: String, userName: String) {
+    func otherUserTapped(_ userID: String, userName: String) {
         
         //method for other users, linked in Home Controller
         
-        delegate?.otherUserTapped(userID: userID, userName: userName)
+        delegate?.otherUserTapped(userID, userName: userName)
         
     }
     

@@ -7,7 +7,7 @@
 //
 
 protocol PresentWebViewDelegate: class {
-    func presentWebView(url: String?, author: String?)
+    func presentWebView(_ url: String?, author: String?)
 }
 
 
@@ -138,7 +138,7 @@ class MainStreamCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let arrayArticles = articlesArray?[indexPath.item]
-        self.delegate?.presentWebView(url: arrayArticles?.url, author: arrayArticles?.author)
+        self.delegate?.presentWebView(arrayArticles?.url, author: arrayArticles?.author)
 
     }
     

@@ -32,7 +32,7 @@ extension LoginController {
         containerViewTop?.isActive = false
         containerViewHeightAnchor = continerView.heightAnchor.constraint(equalToConstant: 120)
         containerViewHeightAnchor?.isActive = true
-        containerViewHeightAnchor?.priority = UILayoutPriority(rawValue: 1000)
+        containerViewHeightAnchor?.priority = UILayoutPriority(exactly: 1000)!
         continerView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor, constant: 10).isActive = true
         continerView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor, constant: -10).isActive = true
         continerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -192,13 +192,13 @@ extension LoginController {
 
 extension UISegmentedControl {
     func removeBorders() {
-        setBackgroundImage(imageWithColor(color: UIColor(red: 77/255.0, green: 74/255.0, blue: 92/255.0, alpha: 1)), for: .normal, barMetrics: .default)
-        setBackgroundImage(imageWithColor(color: .white), for: .selected, barMetrics: .default)
-        setDividerImage(imageWithColor(color: .clear), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
+        setBackgroundImage(imageWithColor(UIColor(red: 77/255.0, green: 74/255.0, blue: 92/255.0, alpha: 1)), for: .normal, barMetrics: .default)
+        setBackgroundImage(imageWithColor(.white), for: .selected, barMetrics: .default)
+        setDividerImage(imageWithColor(.clear), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
     }
     
     // create a 1x1 image with this color
-    private func imageWithColor(color: UIColor) -> UIImage {
+    fileprivate func imageWithColor(_ color: UIColor) -> UIImage {
         let rect = CGRect(x: 0, y: 0, width: 1.0, height: 1.0)
         UIGraphicsBeginImageContext(rect.size)
         let context = UIGraphicsGetCurrentContext()

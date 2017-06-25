@@ -221,7 +221,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
             
             let networkRequest = NetworkingService()
             
-            networkRequest.getUserInfo(parentRef: firebaseParentUser, childRef: currentID!, screen: "alreadyHome")
+            networkRequest.getUserInfo(firebaseParentUser, childRef: currentID!, screen: "alreadyHome")
         
             
         }
@@ -250,7 +250,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
 
     
-    func otherUserTapped(userID: String, userName: String) {
+    func otherUserTapped(_ userID: String, userName: String) {
         
        
         
@@ -408,7 +408,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     
     
-    func presentShareController(viewS: UIActivityViewController?, alerts: UIAlertController?) {
+    func presentShareController(_ viewS: UIActivityViewController?, alerts: UIAlertController?) {
         
         
         if viewS != nil {
@@ -423,7 +423,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
 
     
-    func presentWebView(url: String?, author: String?) {
+    func presentWebView(_ url: String?, author: String?) {
         let webView = WebViewController()
         webView.modalPresentationStyle = .popover
         webView.url = url

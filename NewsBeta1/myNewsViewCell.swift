@@ -142,7 +142,7 @@ class myNewsViewCell: BaseCell {
             
             let path = self.label.text
             
-            self.networkRequest.deletePosts(feedpath: path!, imageName: self.imgNames.text, videoName: self.vidNames.text)
+            self.networkRequest.deletePosts(path!, imageName: self.imgNames.text, videoName: self.vidNames.text)
             
             }
         )

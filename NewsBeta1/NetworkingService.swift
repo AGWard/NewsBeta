@@ -55,7 +55,7 @@ class NetworkingService {
     
     //register a new user
     
-    func signUpNewUser(username: String, email: String, password: String, gender: String) {
+    func signUpNewUser(_ username: String, email: String, password: String, gender: String) {
         
         
         
@@ -66,7 +66,7 @@ class NetworkingService {
             if error == nil {
                 
                 
-                self.setUserInfo(user: user!, username: username, email: email, password: password, gender: gender)
+                self.setUserInfo(user!, username: username, email: email, password: password, gender: gender)
                 
                 
                 
@@ -149,7 +149,7 @@ class NetworkingService {
     }
     
     
-    private func setUserInfo(user: User, username: String, email: String, password: String, gender: String) {
+    fileprivate func setUserInfo(_ user: User, username: String, email: String, password: String, gender: String) {
         
 
         
@@ -161,7 +161,7 @@ class NetworkingService {
             
             if err == nil {
                 
-                self.saveInfo(user: user, username: username, email: email, password: password, gender: gender)
+                self.saveInfo(user, username: username, email: email, password: password, gender: gender)
                 
             } else {
                 
@@ -176,7 +176,7 @@ class NetworkingService {
     }
     
     
-    private func saveInfo(user: User, username: String, email: String, password: String, gender: String) {
+    fileprivate func saveInfo(_ user: User, username: String, email: String, password: String, gender: String) {
         
         
         let userInfo = ["name": username, "email": user.email, "password": password, "gender": gender, "uid": user.uid]
@@ -188,15 +188,15 @@ class NetworkingService {
         print("User info has been saved @ firebase")
         
  
-        getUserInfo(parentRef: firebaseParentUser, childRef: user.uid, screen: "login")
+        getUserInfo(firebaseParentUser, childRef: user.uid, screen: "login")
         
     }
     
     
     
-    func saveNewsFeed(uid: String, headlines: String, newsBody: String, image: UIImage?, videoImageURL: URL?, timestamp: String, timeUTC: String, reporterName: String, userPorfileImage: String) {
+    func saveNewsFeed(_ uid: String, headlines: String, newsBody: String, image: UIImage?, videoImageURL: URL?, timestamp: String, timeUTC: String, reporterName: String, userPorfileImage: String) {
         
-        let imageName = NSUUID().uuidString
+        let imageName = UUID().uuidString
         let imagePath = "posted\(imageName).jpg"
         
         let folder = "NewsFeed"
@@ -233,7 +233,7 @@ class NetworkingService {
                         
                     }
                     
-                    self.postData(videoMeta: metadata, imageMetadata: metadat, uid: uid, headlines: headlines, newsBody: newsBody, timestamp: timestamp, timeUTC: timeUTC, reporterName: reporterName, userPorfileImage: userPorfileImage, videoName: videoName, imageName: imagePath)
+                    self.postData(metadata, imageMetadata: metadat, uid: uid, headlines: headlines, newsBody: newsBody, timestamp: timestamp, timeUTC: timeUTC, reporterName: reporterName, userPorfileImage: userPorfileImage, videoName: videoName, imageName: imagePath)
                     
                 })
 
@@ -255,7 +255,7 @@ class NetworkingService {
                     
                 }
                 
-                self.postData(videoMeta: nil, imageMetadata: metadat, uid: uid, headlines: headlines, newsBody: newsBody, timestamp: timestamp, timeUTC: timeUTC, reporterName: reporterName, userPorfileImage: userPorfileImage, videoName: nil, imageName: imagePath)
+                self.postData(nil, imageMetadata: metadat, uid: uid, headlines: headlines, newsBody: newsBody, timestamp: timestamp, timeUTC: timeUTC, reporterName: reporterName, userPorfileImage: userPorfileImage, videoName: nil, imageName: imagePath)
                 
             })
             
@@ -266,7 +266,7 @@ class NetworkingService {
     
    
     
-    private func postData(videoMeta: StorageMetadata?, imageMetadata: StorageMetadata?, uid: String, headlines: String, newsBody: String, timestamp: String, timeUTC: String, reporterName: String, userPorfileImage: String, videoName: String?, imageName: String) {
+    fileprivate func postData(_ videoMeta: StorageMetadata?, imageMetadata: StorageMetadata?, uid: String, headlines: String, newsBody: String, timestamp: String, timeUTC: String, reporterName: String, userPorfileImage: String, videoName: String?, imageName: String) {
         
         
         let ref = Database.database().reference(fromURL: "https://news-cc704.firebaseio.com/")
@@ -329,7 +329,7 @@ class NetworkingService {
     
     
     
-    func getUserInfo(parentRef: String, childRef: String, screen: String) {
+    func getUserInfo(_ parentRef: String, childRef: String, screen: String) {
         
         let ref = database.child(parentRef).child(childRef)
         
@@ -370,7 +370,7 @@ class NetworkingService {
     }
     
     
-    func getPostedData(area: String?) {
+    func getPostedData(_ area: String?) {
         
         var arraysN: [DatabaseProperties] = []
         
@@ -430,7 +430,7 @@ class NetworkingService {
     
     
     
-    func setUserProfilePic(profileImage: UIImage, uid: String, identifier: String) {
+    func setUserProfilePic(_ profileImage: UIImage, uid: String, identifier: String) {
         
         
         
@@ -468,7 +468,7 @@ class NetworkingService {
                         
                         print("profile pic saved @ firebase")
                         
-                        self.getUserInfo(parentRef: firebaseParentUser, childRef: uid, screen: "user")
+                        self.getUserInfo(firebaseParentUser, childRef: uid, screen: "user")
                         
                     })
                     
@@ -482,7 +482,7 @@ class NetworkingService {
     }
     
     
-    func handleLogin(email: String, password: String) {
+    func handleLogin(_ email: String, password: String) {
       Auth.auth().signIn(withEmail: email, password: password) {(user, error) in
         
         if error != nil {
@@ -536,14 +536,14 @@ class NetworkingService {
         
         let uid = Auth.auth().currentUser?.uid
         
-        self.getUserInfo(parentRef: firebaseParentUser, childRef: uid!, screen: "home")
+        self.getUserInfo(firebaseParentUser, childRef: uid!, screen: "home")
         
         
         }
         
     }
     
-    func deletePosts(feedpath: String, imageName: String?, videoName: String?) {
+    func deletePosts(_ feedpath: String, imageName: String?, videoName: String?) {
         
         
         let folder = "NewsFeed"
@@ -555,7 +555,7 @@ class NetworkingService {
 
 
         database.child(firebaseParentPostedData).child(feedpath).removeValue()
-        self.getPostedData(area: "DeletePost")
+        self.getPostedData("DeletePost")
         
         if videoName == "No Video Name Required" {
             
@@ -606,7 +606,7 @@ class NetworkingService {
     }
     
     
-    func readPost(userID: String) {
+    func readPost(_ userID: String) {
         
         //do some enable/diable button here
         
@@ -640,7 +640,7 @@ class NetworkingService {
                                     
                                     let update = ["reads" : count]
                                     ref.updateChildValues(update)
-                                    self.getPostedData(area: nil)
+                                    self.getPostedData(nil)
                                     
                                     
                                     //hide make visble read/unread button here & enable/disable
@@ -674,7 +674,7 @@ class NetworkingService {
     }
     
     
-    func unreadPost(userId: String) {
+    func unreadPost(_ userId: String) {
         
         //add button hidden enabled here
         
@@ -704,14 +704,14 @@ class NetworkingService {
                                                 self.trinicell?.readCounter.text = "\(count) reads"
                                                 let update = ["reads" : count]
                                                 self.database.child("PostedData/\(userId)").updateChildValues(update)
-                                                self.getPostedData(area: nil)
+                                                self.getPostedData(nil)
                                                 
                                             }else {
                                                 
                                                 self.trinicell?.readCounter.text = "0 reads"
                                                 let updates = ["reads" : "0"]
                                                 self.database.child("PostedData/\(userId)").updateChildValues(updates)
-                                                self.getPostedData(area: nil)
+                                                self.getPostedData(nil)
                                             }
                                             
                                         }
@@ -738,7 +738,7 @@ class NetworkingService {
     
     
     
-    private func refreshReadCount() {
+    fileprivate func refreshReadCount() {
         
         var readArray: [DatabaseProperties] = []
         
@@ -765,7 +765,7 @@ class NetworkingService {
     }
     
     
-    func subscribe(user: String) {
+    func subscribe(_ user: String) {
         
         if user == id {
             
@@ -839,7 +839,7 @@ class NetworkingService {
         
     }
     
-    func unsubscribe(userID: String) {
+    func unsubscribe(_ userID: String) {
         
         let subscriberRef = database.child("Users/\(userID)").child("subscribers").child(id!)
         subscriberRef.removeValue { (error, data) in
@@ -874,7 +874,7 @@ class NetworkingService {
                                     let count = "\(subscrptions.count)"
                                     let updateValues = ["subscriptionCount" : count]
                                     ref.updateChildValues(updateValues)
-                                    self.getPostedData(area: nil)
+                                    self.getPostedData(nil)
                                     
                                 }
                             }
@@ -895,7 +895,7 @@ class NetworkingService {
     }
     
     
-    func postAbuseReport(byUser: String, postID: String, abuseDetails: String) {
+    func postAbuseReport(_ byUser: String, postID: String, abuseDetails: String) {
         
         let key = database.childByAutoId().key
         let ref = database.child("Reports").child("\(postID)-\(key)")

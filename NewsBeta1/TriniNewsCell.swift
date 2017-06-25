@@ -13,8 +13,8 @@ import Firebase
 // delegate for feedpic
 protocol CellSegwayDelegate: class {
     func feedPicTapped()
-    func otherUserTapped(userID: String, userName: String)
-    func shareOption(view: UIActivityViewController?, alert: UIAlertController?)
+    func otherUserTapped(_ userID: String, userName: String)
+    func shareOption(_ view: UIActivityViewController?, alert: UIAlertController?)
 }
 
 
@@ -553,7 +553,7 @@ class TriniNewsCell: BaseCell {
             
             //if not current user then view profile without access
             
-            self.delegate?.otherUserTapped(userID: (dataBaseCells?.userID!)!, userName: (dataBaseCells?.reporterName!)!)
+            self.delegate?.otherUserTapped((dataBaseCells?.userID!)!, userName: (dataBaseCells?.reporterName!)!)
             
         }
         
@@ -562,10 +562,10 @@ class TriniNewsCell: BaseCell {
     }
     
     
-    func shareOptionsTapped(view: UIActivityViewController?, alert: UIAlertController?) {
+    func shareOptionsTapped(_ view: UIActivityViewController?, alert: UIAlertController?) {
         
         
-        self.delegate?.shareOption(view: view, alert: alert)
+        self.delegate?.shareOption(view, alert: alert)
 
         
     }
@@ -584,20 +584,20 @@ class TriniNewsCell: BaseCell {
     
     @objc func moreOptionsButtonTapped() {
         
-        moreOptionsView.showOptions(image: postedImageView.image!, headline: newsHeadingLabel.text!, userName: userID.text!, screen: true)
+        moreOptionsView.showOptions(postedImageView.image!, headline: newsHeadingLabel.text!, userName: userID.text!, screen: true)
         
         
     }
     
     
-    @objc func doubleTapped(tap: UITapGestureRecognizer) {
+    @objc func doubleTapped(_ tap: UITapGestureRecognizer) {
         
         guard let user = timeID.text else { return }
         
         if readIcon.isHidden == true {
             
             readIcon.isHidden = false
-            netRequest.readPost(userID: user)
+            netRequest.readPost(user)
 
         }
         
@@ -610,7 +610,7 @@ class TriniNewsCell: BaseCell {
         
         guard let user = timeID.text else { return }
         readIcon.isHidden = true
-        netRequest.unreadPost(userId: user)
+        netRequest.unreadPost(user)
         
     }
 
@@ -661,7 +661,7 @@ class TriniNewsCell: BaseCell {
                 player?.play()
                 activityIndicator.startAnimating()
                 playButton.isHidden = true
-                loopVideo(videoPlayer: player!)
+                loopVideo(player!)
 
                 
                  print("attempt to play video")
@@ -675,7 +675,7 @@ class TriniNewsCell: BaseCell {
     }
     
     
-    func loopVideo(videoPlayer: AVPlayer) {
+    func loopVideo(_ videoPlayer: AVPlayer) {
         NotificationCenter.default.addObserver(forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil, queue: nil) { notification in
             videoPlayer.seek(to: kCMTimeZero)
             videoPlayer.play()
@@ -698,7 +698,7 @@ class TriniNewsCell: BaseCell {
     
     func postAbuseReport(abuseID: String) {
         
-        netRequest.postAbuseReport(byUser: currentID!, postID: timeID.text!, abuseDetails: abuseID)
+        netRequest.postAbuseReport(currentID!, postID: timeID.text!, abuseDetails: abuseID)
         
         
     }
@@ -706,7 +706,7 @@ class TriniNewsCell: BaseCell {
     
     func showAbuseOptions() {
     
-        abuseOptions.showOptions(image: nil, headline: nil, userName: nil, screen: nil)
+        abuseOptions.showOptions(nil, headline: nil, userName: nil, screen: nil)
         
 
         

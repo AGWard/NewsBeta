@@ -212,9 +212,10 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         
         var mutableString = NSMutableAttributedString()
         let textEmail = "username"
-        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSAttributedStringKey.font:UIFont(name: "Avenir Next", size: 16)!])
-        mutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
-    
+        let attribute = [ NSFontAttributeName: UIFont(name: "Avenir Next", size: 16.0)! ]
+        mutableString = NSMutableAttributedString(string: textEmail, attributes: attribute)
+        mutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
+
         
         let user = ShakingTextField()
         user.attributedPlaceholder = mutableString
@@ -232,8 +233,9 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         
         var mutableString = NSMutableAttributedString()
         let textEmail = "password"
-        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSAttributedStringKey.font:UIFont(name: "Avenir Next", size: 16)!])
-        mutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
+        let attribute = [ NSFontAttributeName: UIFont(name: "Avenir Next", size: 16.0)! ]
+        mutableString = NSMutableAttributedString(string: textEmail, attributes: attribute)
+        mutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
         
         let password = ShakingTextField()
         password.attributedPlaceholder = mutableString
@@ -293,8 +295,9 @@ class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelega
         
         var mutableString = NSMutableAttributedString()
         let textEmail = "email"
-        mutableString = NSMutableAttributedString(string: textEmail, attributes: [NSAttributedStringKey.font:UIFont(name: "Avenir Next", size: 14)!])
-        mutableString.addAttribute(NSAttributedStringKey.foregroundColor, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
+        let attribute = [ NSFontAttributeName: UIFont(name: "Avenir Next", size: 16.0)! ]
+        mutableString = NSMutableAttributedString(string: textEmail, attributes: attribute)
+        mutableString.addAttribute(NSForegroundColorAttributeName, value: UIColor.lightGray, range: NSRange(location: 0, length: textEmail.characters.count))
         
         let email = ShakingTextField()
         email.attributedPlaceholder = mutableString

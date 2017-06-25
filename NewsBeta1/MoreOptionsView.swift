@@ -68,7 +68,7 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
     
     
     
-    func showOptions(image: UIImage?, headline: String?, userName: String?, screen: Bool?) {
+    func showOptions(_ image: UIImage?, headline: String?, userName: String?, screen: Bool?) {
         
         imageToShare = image
         headlineToShare = headline
@@ -105,7 +105,7 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
         
     }
     
-    @objc func handleDismiss(options: MenuList) {
+    @objc func handleDismiss(_ options: MenuList) {
         
         
         
@@ -131,18 +131,18 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
                     let activityVC = UIActivityViewController(activityItems: [self.headlineToShare!, self.imageToShare!], applicationActivities: nil)
                     activityVC.popoverPresentationController?.sourceView = self.homeController?.view
                     if self.homeScreen == true {
-                        self.triniNewsCell?.shareOptionsTapped(view: activityVC, alert: nil)
+                        self.triniNewsCell?.shareOptionsTapped(activityVC, alert: nil)
                         break
                     } else if self.homeScreen == false {
-                        self.subscripPage?.shareOptionsTapped(view: activityVC, alert: nil)
+                        self.subscripPage?.shareOptionsTapped(activityVC, alert: nil)
                         break
                     }
                     break
                 case "Subscribe":
-                    self.networkRequest.subscribe(user: self.userNameID!)
+                    self.networkRequest.subscribe(self.userNameID!)
                     break
                 case "Un-Subscribe":
-                    self.networkRequest.unsubscribe(userID: self.userNameID!)
+                    self.networkRequest.unsubscribe(self.userNameID!)
                     break
                 case "Report Abuse":
                     self.triniNewsCell?.showAbuseOptions()
@@ -156,16 +156,16 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
                         let alert = UIAlertController(title: "Thank You", message: "Your report has been rec'd and an Administrator will review. If you require an urgent response please contact us @ ttnewsfeed@gmail.com", preferredStyle: .alert)
                         let OK = UIAlertAction(title: "OK", style: .default, handler: nil)
                         alert.addAction(OK)
-                        self.triniNewsCell?.shareOptionsTapped(view: nil, alert: alert)
+                        self.triniNewsCell?.shareOptionsTapped(nil, alert: alert)
                         self.selectedPath = nil
                     }
                 case "Not Appropriate", "Photo Rights!", "Hate Speech!":
                     if self.selectedPath?.row != 3 && self.selectedPath != nil {
-                    self.subscripPage?.postAbuseReport(abuseID: self.menuList[(self.selectedPath?.row)!].names)
+                    self.subscripPage?.postAbuseReport(self.menuList[(self.selectedPath?.row)!].names)
                         let alert = UIAlertController(title: "Thank You", message: "Your report has been rec'd and an Administrator will review. If you require an urgent response please contact us @ ttnewsfeed@gmail.com", preferredStyle: .alert)
                         let OK = UIAlertAction(title: "OK", style: .default, handler: nil)
                         alert.addAction(OK)
-                        self.subscripPage?.shareOptionsTapped(view: nil, alert: alert)
+                        self.subscripPage?.shareOptionsTapped(nil, alert: alert)
                         self.selectedPath = nil
                     }
 
@@ -203,7 +203,7 @@ class MoreOptionsView: NSObject, UICollectionViewDataSource, UICollectionViewDel
         
      let name = menuList[indexPath.item]
             
-            handleDismiss(options: name)
+            handleDismiss(name)
         
     }
 

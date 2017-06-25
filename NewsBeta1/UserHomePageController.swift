@@ -548,7 +548,7 @@ class UserHomePageController: UIViewController, UINavigationControllerDelegate, 
             if let userID = currentID {
                 
                 let networkRequest = NetworkingService()
-                networkRequest.setUserProfilePic(profileImage: profileRealImage.image!, uid: userID, identifier: "profile")
+                networkRequest.setUserProfilePic(profileRealImage.image!, uid: userID, identifier: "profile")
                 
                 
                 self.dismiss(animated: true, completion: nil)

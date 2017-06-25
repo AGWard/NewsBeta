@@ -240,7 +240,7 @@ class SubscriptionsFeedCell: BaseCell {
             
             //if not current user then view profile without access
             
-            self.delegate?.otherUserTapped(userID: id, userName: userName.text!)
+            self.delegate?.otherUserTapped(id, userName: userName.text!)
             
         }
         
@@ -258,23 +258,23 @@ class SubscriptionsFeedCell: BaseCell {
     
     @objc func moreOptions() {
 
-        moreOptionsView.showOptions(image: postedImageView.image!, headline: newsHeadingLabel.text!, userName: userIdNumber.text!, screen: false)
+        moreOptionsView.showOptions(postedImageView.image!, headline: newsHeadingLabel.text!, userName: userIdNumber.text!, screen: false)
         
     }
     
     
-    func shareOptionsTapped(view: UIActivityViewController?, alert: UIAlertController?) {
+    func shareOptionsTapped(_ view: UIActivityViewController?, alert: UIAlertController?) {
         
         
-        self.delegate?.shareOption(view: view, alert: alert)
+        self.delegate?.shareOption(view, alert: alert)
         
         
     }
     
     
-    func postAbuseReport(abuseID: String) {
+    func postAbuseReport(_ abuseID: String) {
         
-        netRequest.postAbuseReport(byUser: currentID!, postID: timeID.text!, abuseDetails: abuseID)
+        netRequest.postAbuseReport(currentID!, postID: timeID.text!, abuseDetails: abuseID)
         
         
     }
@@ -283,7 +283,7 @@ class SubscriptionsFeedCell: BaseCell {
     
     func showAbuseOptions() {
         
-        abuseOptions.showOptions(image: nil, headline: nil, userName: nil, screen: nil)
+        abuseOptions.showOptions(nil, headline: nil, userName: nil, screen: nil)
         
         
         
